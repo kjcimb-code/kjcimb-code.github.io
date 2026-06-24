@@ -533,9 +533,10 @@ function renderPanel(mode) {
   // OR Savings Card
   const orCard = document.getElementById(pre+"OrCard");
   if (or) {
-    // get the no-OR premium for same plan/age/gender
-    const annNoOR = (mode==="con" ? CONV : SYAR)[pk].noOR[g][Math.min(Math.max(age-1,0),74)];
-    const annWithOR = ann;
+    const DATA_SRC = mode==="con" ? CONV : SYAR;
+    // Selalu ambil noOR dari data noOR, withOR dari data withOR
+    const annNoOR   = DATA_SRC[pk].noOR[g][Math.min(Math.max(age-1,0),74)];
+    const annWithOR = DATA_SRC[pk].withOR[g][Math.min(Math.max(age-1,0),74)];
     // Hitung dari premi BULANAN × 12 (bukan dari angka tahunan tabel yang sudah ada discount)
     const mthNoOR   = annNoOR   / 11;
     const mthWithOR = annWithOR / 11;
