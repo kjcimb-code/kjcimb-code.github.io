@@ -431,7 +431,7 @@
         </label>
       </div>
 
-      <div class="field">
+      <div class="field" id="categoryField">
         <label>Jenis</label>
         <div class="type-grid" id="categoryGrid" style="grid-template-columns:repeat(4,1fr);">
           <button type="button" data-cat="visit" class="active">Visit</button>
@@ -643,6 +643,7 @@
   const existingList = document.getElementById('existingList');
   const modalTitle = document.getElementById('modalTitle');
   const modalSub = document.getElementById('modalSub');
+  const categoryField = document.getElementById('categoryField');
   const categoryGrid = document.getElementById('categoryGrid');
   const subSlotGrid = document.getElementById('subSlotGrid');
   const subSlotField = document.getElementById('subSlotField');
@@ -946,7 +947,9 @@
   // ============================================================
   let currentCategory = 'visit';
   // Cabang & Izin allow multi-select (Pagi + Siang together); Visit stays single-select.
+  // Block-all-team mode also allows multi-select since no single category applies.
   function isMultiSubCategory(){
+    if (document.getElementById('blockAllToggle').checked) return true;
     return currentCategory === 'cabang' || currentCategory === 'izin';
   }
   function getSelectedSubs(){
@@ -1051,6 +1054,8 @@
   });
 
   function updateCategoryUI(){
+    const blockAll = document.getElementById('blockAllToggle').checked;
+    categoryField.style.display = blockAll ? 'none' : 'block';
     if (currentCategory === 'cuti') {
       subSlotField.style.display = 'none';
       singleDateField.style.display = 'none';
@@ -1064,7 +1069,7 @@
       rangeDateField.style.display = 'none';
       remarksField.style.display = 'block';
       document.getElementById('entryDate').required = true;
-      entryTypeInput.required = true;
+      entryTypeInput.required = !blockAll; // optional when blocking the whole team
     }
     subSlotHint.style.display = (isMultiSubCategory() && !editingEntryId) ? 'block' : 'none';
   }
@@ -1119,12 +1124,12 @@
         categoryGrid.querySelectorAll('button').forEach(b => b.classList.remove('active'));
         categoryGrid.querySelector('button[data-cat="visit"]').classList.add('active');
         currentCategory = 'visit';
-        updateCategoryUI();
       }
     } else {
       userField.style.display = '';
       cutiBtn.disabled = false;
     }
+    updateCategoryUI();
   }
   document.getElementById('blockAllToggle').addEventListener('change', updateBlockAllUI);
 
@@ -1336,7 +1341,7 @@
     // Build type + selected sub-slots based on category
     const CAT_LABEL_MAP = { visit:'Visit', cabang:'Cabang', izin:'Izin' };
     const catLabel = CAT_LABEL_MAP[currentCategory] || 'Visit';
-    const type = (currentCategory === 'cuti') ? null : `${catLabel}: ${remarks}`;
+    const type = (currentCategory === 'cuti') ? null : (remarks ? `${catLabel}: ${remarks}` : (blockAll ? `${catLabel}: Meeting tim` : `${catLabel}: `));
     const selectedSubs = (currentCategory === 'cuti') ? ['cuti'] : getSelectedSubs(); // e.g. ['pagi'] or ['pagi','siang']
 
     try {
@@ -1374,7 +1379,7 @@
       const rows = [];
       allUsers.forEach(u => {
         selectedSubs.forEach(slot => {
-          rows.push({ username: u.username, date, slot, type: type || `${catLabel}: Meeting tim`, description: null });
+          rows.push({ username: u.username, date, slot, type, description: null });
         });
       });
       const { error } = await sbClient.from('schedules').insert(rows);
