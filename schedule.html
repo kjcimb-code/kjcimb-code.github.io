@@ -757,7 +757,7 @@
 
   function stripCategoryPrefix(type){
     if (!type) return '';
-    const m = type.match(/^(?:Visit|Cabang|Internal|Izin):\s*(.*)$/);
+    const m = type.match(/^(?:Visit|Cabang|Internal|Izin|Meeting):\s*(.*)$/);
     return m ? m[1] : type;
   }
 
@@ -1335,10 +1335,10 @@
       cat = 'cuti';
     } else {
       sub = (entry.slot === 'siang') ? 'siang' : 'pagi';
-      const m = remarks.match(/^(Visit|Cabang|Internal|Izin):\s*(.*)$/);
+      const m = remarks.match(/^(Visit|Cabang|Internal|Izin|Meeting):\s*(.*)$/);
       if (m) {
         const catRaw = m[1].toLowerCase();
-        cat = (catRaw === 'internal') ? 'cabang' : catRaw;
+        cat = (catRaw === 'internal' || catRaw === 'meeting') ? (catRaw === 'meeting' ? 'visit' : 'cabang') : catRaw;
         remarks = m[2];
       } else if (entry.slot === 'izin') {
         cat = 'izin';
@@ -1438,7 +1438,8 @@
 
     // Build type + selected sub-slots based on category
     const CAT_LABEL_MAP = { visit:'Visit', cabang:'Internal', izin:'Izin' };
-    const catLabel = CAT_LABEL_MAP[currentCategory] || 'Visit';
+    // Block-all-team entries aren't really "Visit/Internal/Izin" — they're a standalone meeting block, so tag them distinctly.
+    const catLabel = blockAll ? 'Meeting' : (CAT_LABEL_MAP[currentCategory] || 'Visit');
     const type = (currentCategory === 'cuti') ? null : (remarks ? `${catLabel}: ${remarks}` : (blockAll ? `${catLabel}: Meeting tim` : `${catLabel}: `));
     const selectedSubs = (currentCategory === 'cuti') ? ['cuti'] : getSelectedSubs(); // e.g. ['pagi'] or ['pagi','siang']
 
