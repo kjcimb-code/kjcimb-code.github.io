@@ -270,7 +270,7 @@
   .type-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
   .type-grid button{background:var(--ink-2);border:1px solid var(--line);color:var(--text-1);padding:11px 4px;border-radius:11px;font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s ease;}
   .type-grid button:hover:not(.active):not(:disabled){border-color:rgba(255,255,255,.25);}
-  .type-grid button.active{background:linear-gradient(120deg, var(--maroon-1), var(--maroon-btn));border-color:transparent;color:#fff;}
+  .type-grid button.active{background:linear-gradient(120deg, var(--maroon-1), var(--maroon-btn));border-color:transparent;color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.25),0 4px 10px rgba(0,0,0,.35);}
   .type-grid button:disabled{cursor:not-allowed;opacity:.35;}
   .modal-actions{display:flex;gap:8px;margin-top:18px;}
   .modal-actions button{flex:1;padding:12px;border-radius:10px;border:none;font-family:var(--sans);font-size:13.5px;font-weight:600;cursor:pointer;}
@@ -352,7 +352,10 @@
   <div class="month-summary" id="monthSummary" style="display:none;"></div>
 
   <div class="bottom-actions">
-    <button class="icon-btn" id="resetPwBtn" style="display:none;" title="Reset Password">🔑 Reset Password</button>
+    <div class="bottom-row">
+      <button class="icon-btn" id="resetPwBtn" style="display:none;" title="Reset Password">🔑 Reset Password</button>
+      <button class="icon-btn" id="calcBtn" title="Kalkulator" onclick="window.location.href='/'">🧮 Kalkulator</button>
+    </div>
     <div class="bottom-row">
       <button class="icon-btn" id="exportBtn" title="Export">📤 Export</button>
       <button class="icon-btn logout-btn" id="logoutBtn" title="Keluar">⏻ Keluar</button>
@@ -385,8 +388,9 @@
 
       <div class="field">
         <label>Jenis</label>
-        <div class="type-grid" id="categoryGrid" style="grid-template-columns:repeat(3,1fr);">
+        <div class="type-grid" id="categoryGrid" style="grid-template-columns:repeat(4,1fr);">
           <button type="button" data-cat="visit" class="active">Visit</button>
+          <button type="button" data-cat="cabang">Cabang</button>
           <button type="button" data-cat="izin">Izin</button>
           <button type="button" data-cat="cuti">Cuti</button>
         </div>
@@ -794,11 +798,13 @@
       grid.appendChild(div);
     });
 
-    // Monthly summary: total Visit count for this month only
+    // Monthly summary: total Visit + total Cabang count for this month only
     let visitCount = 0;
+    let cabangCount = 0;
     Object.values(entriesByDate).forEach(dayEntries => {
       dayEntries.forEach(e => {
         if (e.type && e.type.startsWith('Visit:')) visitCount++;
+        if (e.type && e.type.startsWith('Cabang:')) cabangCount++;
       });
     });
     const summaryEl = document.getElementById('monthSummary');
@@ -806,7 +812,11 @@
       summaryEl.innerHTML = `
         <div class="summary-item">
           <span class="summary-num">${visitCount}</span>
-          <span class="summary-lbl">Total Client Visit di bulan ${MONTH_NAMES[viewMonth]}</span>
+          <span class="summary-lbl">Client Visit — ${MONTH_NAMES[viewMonth]}</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-num">${cabangCount}</span>
+          <span class="summary-lbl">Ke Cabang — ${MONTH_NAMES[viewMonth]}</span>
         </div>
       `;
     }
@@ -1049,7 +1059,7 @@
       cat = 'cuti';
     } else {
       sub = (entry.slot === 'siang') ? 'siang' : 'pagi';
-      const m = remarks.match(/^(Visit|Izin):\s*(.*)$/);
+      const m = remarks.match(/^(Visit|Cabang|Izin):\s*(.*)$/);
       if (m) {
         cat = m[1].toLowerCase();
         remarks = m[2];
@@ -1113,7 +1123,8 @@
       type = null;
     } else {
       slot = currentSub; // 'pagi' or 'siang'
-      const catLabel = currentCategory === 'izin' ? 'Izin' : 'Visit';
+      const CAT_LABEL_MAP = { visit:'Visit', cabang:'Cabang', izin:'Izin' };
+      const catLabel = CAT_LABEL_MAP[currentCategory] || 'Visit';
       type = `${catLabel}: ${remarks}`;
     }
 
