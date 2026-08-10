@@ -277,7 +277,48 @@
   .modal-actions button{flex:1;padding:12px;border-radius:10px;border:none;font-family:var(--sans);font-size:13.5px;font-weight:600;cursor:pointer;}
   .btn-save{background:linear-gradient(120deg, var(--maroon-1), var(--maroon-btn));color:#fff;}
   .btn-cancel{background:none;border:1px solid var(--line) !important;color:var(--text-1);}
-  .modal-close{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--text-2);font-size:18px;cursor:pointer;}
+  .modal-close{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.06);border:none;color:var(--text-1);font-size:20px;width:38px;height:38px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:background .15s ease;}
+  .modal-close:hover{background:rgba(255,255,255,.14);color:#fff;}
+  .modal-close:active{background:rgba(255,255,255,.2);}
+
+  .confirm-modal{max-width:340px;padding:28px 22px 22px;text-align:center;}
+  .confirm-icon{
+    width:56px;height:56px;margin:0 auto 14px;border-radius:50%;
+    background:linear-gradient(135deg, #EF4444, #B91C1C);
+    display:flex;align-items:center;justify-content:center;
+    font-size:28px;box-shadow:0 6px 18px rgba(185,28,28,.4);
+  }
+  .confirm-title{font-family:var(--sans);font-size:16px;font-weight:700;color:var(--text-0);line-height:1.35;margin:0 0 8px;}
+  .confirm-detail{font-family:var(--sans);font-size:12.5px;color:var(--text-2);background:var(--ink-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:4px;}
+  .btn-danger{background:linear-gradient(120deg, #EF4444, #B91C1C);color:#fff;}
+
+  .range-summary{display:flex;align-items:center;gap:10px;background:var(--ink-2);border:1px solid var(--line);border-radius:11px;padding:10px 14px;margin-bottom:10px;}
+  .range-summary-item{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0;}
+  .range-summary-item span:last-child{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--text-0);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .range-summary-lbl{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-2);}
+  .range-summary-arrow{color:var(--text-2);font-size:14px;flex-shrink:0;}
+  .range-cal{background:var(--ink-2);border:1px solid var(--line);border-radius:14px;padding:12px;}
+  .range-cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .range-cal-nav button{background:rgba(255,255,255,.06);border:none;color:var(--text-0);width:28px;height:28px;border-radius:8px;font-size:15px;cursor:pointer;}
+  .range-cal-nav button:hover{background:rgba(255,255,255,.14);}
+  #rangeCalTitle{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--text-0);}
+  .range-cal-dow{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:4px;}
+  .range-cal-dow div{text-align:center;font-family:var(--mono);font-size:9px;color:var(--text-2);text-transform:uppercase;padding:4px 0;}
+  .range-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);row-gap:2px;}
+  .rc-cell{position:relative;text-align:center;padding:8px 0;font-family:var(--sans);font-size:12.5px;color:var(--text-0);cursor:pointer;user-select:none;}
+  .rc-empty{cursor:default;}
+  .rc-cell.rc-today{font-weight:700;color:var(--maroon-1);}
+  .rc-cell.rc-inrange{background:rgba(138,0,9,.22);}
+  .rc-cell.rc-start, .rc-cell.rc-end{color:#fff;}
+  .rc-cell.rc-start::before, .rc-cell.rc-end::before{
+    content:'';position:absolute;top:2px;bottom:2px;left:2px;right:2px;
+    background:linear-gradient(120deg, var(--maroon-1), var(--maroon-btn));border-radius:8px;z-index:0;
+  }
+  .rc-cell.rc-start{border-radius:8px 0 0 8px;}
+  .rc-cell.rc-end{border-radius:0 8px 8px 0;}
+  .rc-cell.rc-start.rc-end{border-radius:8px;}
+  .rc-cell.rc-start span, .rc-cell.rc-end span{position:relative;z-index:1;}
+  .rc-cell > *{position:relative;z-index:1;}
   .existing-list{margin-top:2px;display:flex;flex-direction:column;}
   .existing-section-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;margin:12px 0 6px;}
   .existing-section-label:first-child{margin-top:0;}
@@ -403,8 +444,8 @@
       <div class="field" id="subSlotField">
         <label>Waktu <span class="req-star">*</span></label>
         <div class="type-grid" id="subSlotGrid" style="grid-template-columns:repeat(2,1fr);">
-          <button type="button" data-sub="pagi" class="active">Pagi</button>
-          <button type="button" data-sub="siang">Siang</button>
+          <button type="button" data-sub="pagi" class="active">🌅 Pagi</button>
+          <button type="button" data-sub="siang">☀️ Siang</button>
         </div>
         <div id="subSlotHint" style="display:none;font-family:var(--sans);font-size:11px;color:var(--text-2);margin-top:6px;">Bisa pilih Pagi saja, Siang saja, atau keduanya.</div>
       </div>
@@ -419,16 +460,24 @@
 
       <div class="field" id="rangeDateField" style="display:none;">
         <label>Tanggal Cuti <span class="req-star">*</span></label>
-        <div style="display:flex;gap:8px;">
-          <div class="date-combo" style="flex:1;">
-            <input type="date" id="entryDateFrom" placeholder="Dari">
-            <div class="date-display" id="entryDateFromHelper">Dari</div>
-          </div>
-          <div class="date-combo" style="flex:1;">
-            <input type="date" id="entryDateUntil" placeholder="Sampai">
-            <div class="date-display" id="entryDateUntilHelper">Sampai</div>
-          </div>
+        <div class="range-summary">
+          <div class="range-summary-item"><span class="range-summary-lbl">Dari</span><span id="rangeFromLbl">Pilih tanggal</span></div>
+          <div class="range-summary-arrow">→</div>
+          <div class="range-summary-item"><span class="range-summary-lbl">Sampai</span><span id="rangeUntilLbl">Pilih tanggal</span></div>
         </div>
+        <div class="range-cal">
+          <div class="range-cal-nav">
+            <button type="button" id="rangeCalPrev">‹</button>
+            <div id="rangeCalTitle">—</div>
+            <button type="button" id="rangeCalNext">›</button>
+          </div>
+          <div class="range-cal-dow">
+            <div>M</div><div>S</div><div>S</div><div>R</div><div>K</div><div>J</div><div>S</div>
+          </div>
+          <div class="range-cal-grid" id="rangeCalGrid"></div>
+        </div>
+        <input type="hidden" id="entryDateFrom">
+        <input type="hidden" id="entryDateUntil">
       </div>
 
       <div class="field" id="remarksField">
@@ -441,6 +490,19 @@
         <button type="submit" class="btn-save">Simpan</button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- Delete confirmation modal -->
+<div class="overlay centered" id="confirmDeleteOverlay">
+  <div class="modal confirm-modal">
+    <div class="confirm-icon">❗</div>
+    <h2 class="confirm-title">Apakah kamu yakin ingin menghapus jadwal ini?</h2>
+    <div class="confirm-detail" id="confirmDeleteDetail"></div>
+    <div class="modal-actions">
+      <button type="button" class="btn-cancel" id="confirmDeleteCancel">Batal</button>
+      <button type="button" class="btn-danger" id="confirmDeleteOk">Ya, Hapus</button>
+    </div>
   </div>
 </div>
 
@@ -904,24 +966,89 @@
   const entryDateHelper = document.getElementById('entryDateHelper');
   const entryDateFromInput = document.getElementById('entryDateFrom');
   const entryDateUntilInput = document.getElementById('entryDateUntil');
-  const entryDateFromHelper = document.getElementById('entryDateFromHelper');
-  const entryDateUntilHelper = document.getElementById('entryDateUntilHelper');
+  const rangeFromLbl = document.getElementById('rangeFromLbl');
+  const rangeUntilLbl = document.getElementById('rangeUntilLbl');
+  const rangeCalTitle = document.getElementById('rangeCalTitle');
+  const rangeCalGrid = document.getElementById('rangeCalGrid');
 
   function updateDateHelpers(){
     entryDateHelper.textContent = fmtDateHelper(entryDateInput.value) || 'Pilih tanggal';
-    entryDateFromHelper.textContent = fmtDateHelper(entryDateFromInput.value) || 'Dari';
-    entryDateUntilHelper.textContent = fmtDateHelper(entryDateUntilInput.value) || 'Sampai';
   }
   entryDateInput.addEventListener('change', updateDateHelpers);
-  entryDateFromInput.addEventListener('change', () => {
-    // "Until" can never be earlier than "From" — auto-correct it up to match.
-    entryDateUntilInput.min = entryDateFromInput.value;
-    if (entryDateFromInput.value && entryDateUntilInput.value && entryDateUntilInput.value < entryDateFromInput.value) {
-      entryDateUntilInput.value = entryDateFromInput.value;
+
+  // ------------------------------------------------------------
+  // Cuti range calendar (Skyscanner-style: tap start, tap end, range highlights)
+  // ------------------------------------------------------------
+  let rangeCalYear, rangeCalMonth;
+  let rangeStart = null, rangeEnd = null; // 'YYYY-MM-DD' strings
+
+  function fmtRangeLbl(dateStr){
+    if (!dateStr) return 'Pilih tanggal';
+    const d = new Date(dateStr + 'T00:00:00');
+    return `${d.getDate()} ${MONTH_NAMES[d.getMonth()].slice(0,3)} ${d.getFullYear()}`;
+  }
+
+  function syncRangeInputsAndLabels(){
+    entryDateFromInput.value = rangeStart || '';
+    entryDateUntilInput.value = rangeEnd || rangeStart || '';
+    rangeFromLbl.textContent = fmtRangeLbl(rangeStart);
+    rangeUntilLbl.textContent = fmtRangeLbl(rangeEnd || rangeStart);
+  }
+
+  function initRangeCalendar(anchorDateStr){
+    const d = anchorDateStr ? new Date(anchorDateStr + 'T00:00:00') : new Date();
+    rangeCalYear = d.getFullYear();
+    rangeCalMonth = d.getMonth();
+    rangeStart = anchorDateStr || null;
+    rangeEnd = null;
+    syncRangeInputsAndLabels();
+    renderRangeCalendar();
+  }
+
+  function renderRangeCalendar(){
+    rangeCalTitle.textContent = `${MONTH_NAMES[rangeCalMonth]} ${rangeCalYear}`;
+    const firstDow = new Date(rangeCalYear, rangeCalMonth, 1).getDay();
+    const daysInMonth = new Date(rangeCalYear, rangeCalMonth + 1, 0).getDate();
+    const todayStr = fmtDate(new Date());
+    let cellsHtml = '';
+    for (let i = 0; i < firstDow; i++) cellsHtml += `<div class="rc-cell rc-empty"></div>`;
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateStr = `${rangeCalYear}-${pad(rangeCalMonth+1)}-${pad(day)}`;
+      let cls = 'rc-cell';
+      if (dateStr === todayStr) cls += ' rc-today';
+      if (rangeStart && dateStr === rangeStart) cls += ' rc-start';
+      if (rangeEnd && dateStr === rangeEnd) cls += ' rc-end';
+      if (rangeStart && !rangeEnd && dateStr === rangeStart) cls += ' rc-start rc-end';
+      if (rangeStart && rangeEnd && dateStr > rangeStart && dateStr < rangeEnd) cls += ' rc-inrange';
+      cellsHtml += `<div class="${cls}" data-date="${dateStr}"><span>${day}</span></div>`;
     }
-    updateDateHelpers();
+    rangeCalGrid.innerHTML = cellsHtml;
+    rangeCalGrid.querySelectorAll('.rc-cell:not(.rc-empty)').forEach(cell => {
+      cell.addEventListener('click', () => {
+        const dateStr = cell.dataset.date;
+        if (!rangeStart || (rangeStart && rangeEnd)) {
+          rangeStart = dateStr;
+          rangeEnd = null;
+        } else if (dateStr < rangeStart) {
+          rangeEnd = rangeStart;
+          rangeStart = dateStr;
+        } else {
+          rangeEnd = dateStr;
+        }
+        syncRangeInputsAndLabels();
+        renderRangeCalendar();
+      });
+    });
+  }
+
+  document.getElementById('rangeCalPrev').addEventListener('click', () => {
+    rangeCalMonth--; if (rangeCalMonth < 0) { rangeCalMonth = 11; rangeCalYear--; }
+    renderRangeCalendar();
   });
-  entryDateUntilInput.addEventListener('change', updateDateHelpers);
+  document.getElementById('rangeCalNext').addEventListener('click', () => {
+    rangeCalMonth++; if (rangeCalMonth > 11) { rangeCalMonth = 0; rangeCalYear++; }
+    renderRangeCalendar();
+  });
 
   function updateCategoryUI(){
     if (currentCategory === 'cuti') {
@@ -930,8 +1057,6 @@
       rangeDateField.style.display = 'block';
       remarksField.style.display = 'none';
       document.getElementById('entryDate').required = false;
-      document.getElementById('entryDateFrom').required = true;
-      document.getElementById('entryDateUntil').required = true;
       entryTypeInput.required = false;
     } else {
       subSlotField.style.display = 'block';
@@ -939,8 +1064,6 @@
       rangeDateField.style.display = 'none';
       remarksField.style.display = 'block';
       document.getElementById('entryDate').required = true;
-      document.getElementById('entryDateFrom').required = false;
-      document.getElementById('entryDateUntil').required = false;
       entryTypeInput.required = true;
     }
     subSlotHint.style.display = (isMultiSubCategory() && !editingEntryId) ? 'block' : 'none';
@@ -1016,9 +1139,8 @@
 
     entryForm.reset();
     document.getElementById('entryDate').value = dateStr;
-    document.getElementById('entryDateFrom').value = dateStr;
-    document.getElementById('entryDateUntil').value = dateStr;
     updateDateHelpers();
+    initRangeCalendar(dateStr);
     resetCategoryPicker(presetSub);
     entryUserSel.value = currentUser.username;
     stopEdit();
@@ -1065,16 +1187,16 @@
       existingList.innerHTML = sectionsHtml;
 
       existingList.querySelectorAll('.delEntry').forEach(btn => {
-        btn.addEventListener('click', async () => {
+        btn.addEventListener('click', () => {
           const id = btn.getAttribute('data-id');
           const entry = existing.find(x => String(x.id) === String(id));
           const who = entry ? userMeta(entry.username).display_name : '';
           const label = entry ? (entry.type || 'Cuti') : '';
-          const ok = confirm(`Hapus jadwal ini?\n\n${who} — ${label}\n\nTindakan ini tidak bisa dibatalkan.`);
-          if (!ok) return;
-          await sbClient.from('schedules').delete().eq('id', id);
-          await render();
-          openModal(dateStr);
+          askDeleteConfirm(`${who} — ${label}`, async () => {
+            await sbClient.from('schedules').delete().eq('id', id);
+            await render();
+            openModal(dateStr);
+          });
         });
       });
       existingList.querySelectorAll('.editEntry').forEach(btn => {
@@ -1088,6 +1210,10 @@
 
     overlay.style.display = 'flex';
     document.body.style.overflow = 'hidden';
+    if (!modalHistoryPushed) {
+      modalHistoryPushed = true;
+      history.pushState({ scheduleModal: true }, '');
+    }
   }
 
   function startEdit(entry){
@@ -1127,8 +1253,7 @@
 
     document.getElementById('entryType').value = remarks;
     document.getElementById('entryDate').value = entry.date;
-    document.getElementById('entryDateFrom').value = entry.date;
-    document.getElementById('entryDateUntil').value = entry.date;
+    initRangeCalendar(entry.date);
     updateDateHelpers();
 
     entryForm.querySelector('.btn-save').textContent = 'Update';
@@ -1140,10 +1265,52 @@
     entryForm.querySelector('.btn-save').textContent = 'Simpan';
   }
 
-  function closeModal(){ overlay.style.display = 'none'; document.body.style.overflow = ''; selectedDate = null; stopEdit(); }
-  document.getElementById('modalClose').addEventListener('click', closeModal);
-  document.getElementById('cancelBtn').addEventListener('click', closeModal);
+  let modalHistoryPushed = false;
+  function closeModal(fromPopState){
+    overlay.style.display = 'none';
+    document.body.style.overflow = '';
+    selectedDate = null;
+    stopEdit();
+    if (modalHistoryPushed) {
+      modalHistoryPushed = false;
+      if (!fromPopState) history.back(); // pop the synthetic state we pushed when opening
+    }
+  }
+  window.addEventListener('popstate', () => {
+    if (modalHistoryPushed && overlay.style.display === 'flex') {
+      modalHistoryPushed = false;
+      closeModal(true);
+    }
+  });
+  document.getElementById('modalClose').addEventListener('click', () => closeModal());
+  document.getElementById('cancelBtn').addEventListener('click', () => closeModal());
   overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+
+  // ------------------------------------------------------------
+  // Custom delete confirmation modal
+  // ------------------------------------------------------------
+  const confirmDeleteOverlay = document.getElementById('confirmDeleteOverlay');
+  const confirmDeleteDetail = document.getElementById('confirmDeleteDetail');
+  const confirmDeleteOk = document.getElementById('confirmDeleteOk');
+  const confirmDeleteCancel = document.getElementById('confirmDeleteCancel');
+  let pendingDeleteAction = null;
+
+  function askDeleteConfirm(detailText, onConfirm){
+    confirmDeleteDetail.textContent = detailText;
+    pendingDeleteAction = onConfirm;
+    confirmDeleteOverlay.style.display = 'flex';
+  }
+  function closeDeleteConfirm(){
+    confirmDeleteOverlay.style.display = 'none';
+    pendingDeleteAction = null;
+  }
+  confirmDeleteCancel.addEventListener('click', closeDeleteConfirm);
+  confirmDeleteOverlay.addEventListener('click', (e) => { if (e.target === confirmDeleteOverlay) closeDeleteConfirm(); });
+  confirmDeleteOk.addEventListener('click', async () => {
+    const action = pendingDeleteAction;
+    closeDeleteConfirm();
+    if (action) await action();
+  });
 
   document.getElementById('openRequestBtn').addEventListener('click', () => {
     openModal(fmtDate(today));
