@@ -402,6 +402,7 @@
           <button type="button" data-sub="pagi" class="active">Pagi</button>
           <button type="button" data-sub="siang">Siang</button>
         </div>
+        <div id="subSlotHint" style="display:none;font-family:var(--sans);font-size:11px;color:var(--text-2);margin-top:6px;">Bisa pilih Pagi saja, Siang saja, atau keduanya.</div>
       </div>
 
       <div class="field" id="singleDateField">
@@ -579,6 +580,7 @@
   const categoryGrid = document.getElementById('categoryGrid');
   const subSlotGrid = document.getElementById('subSlotGrid');
   const subSlotField = document.getElementById('subSlotField');
+  const subSlotHint = document.getElementById('subSlotHint');
   const singleDateField = document.getElementById('singleDateField');
   const rangeDateField = document.getElementById('rangeDateField');
   const remarksField = document.getElementById('remarksField');
@@ -864,10 +866,17 @@
   });
 
   // ============================================================
-  // Category picker (Visit / Izin / Cuti) + sub Pagi/Siang
+  // Category picker (Visit / Cabang / Izin / Cuti) + sub Pagi/Siang
   // ============================================================
   let currentCategory = 'visit';
-  let currentSub = 'pagi';
+  // Cabang & Izin allow multi-select (Pagi + Siang together); Visit stays single-select.
+  function isMultiSubCategory(){
+    return currentCategory === 'cabang' || currentCategory === 'izin';
+  }
+  function getSelectedSubs(){
+    const subs = Array.from(subSlotGrid.querySelectorAll('button.active')).map(b => b.dataset.sub);
+    return subs.length ? subs : ['pagi'];
+  }
 
   const DOW_SHORT_ID = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
   function fmtDateHelper(dateStr){
@@ -890,7 +899,14 @@
     entryDateUntilHelper.textContent = fmtDateHelper(entryDateUntilInput.value) || 'Sampai';
   }
   entryDateInput.addEventListener('change', updateDateHelpers);
-  entryDateFromInput.addEventListener('change', updateDateHelpers);
+  entryDateFromInput.addEventListener('change', () => {
+    // "Until" can never be earlier than "From" — auto-correct it up to match.
+    entryDateUntilInput.min = entryDateFromInput.value;
+    if (entryDateFromInput.value && entryDateUntilInput.value && entryDateUntilInput.value < entryDateFromInput.value) {
+      entryDateUntilInput.value = entryDateFromInput.value;
+    }
+    updateDateHelpers();
+  });
   entryDateUntilInput.addEventListener('change', updateDateHelpers);
 
   function updateCategoryUI(){
@@ -913,6 +929,7 @@
       document.getElementById('entryDateUntil').required = false;
       entryTypeInput.required = true;
     }
+    subSlotHint.style.display = (isMultiSubCategory() && !editingEntryId) ? 'block' : 'none';
   }
 
   categoryGrid.addEventListener('click', (e) => {
@@ -921,20 +938,29 @@
     categoryGrid.querySelectorAll('button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     currentCategory = btn.dataset.cat;
+    if (!editingEntryId) {
+      // Switching category resets sub-slot back to a clean single "Pagi" selection.
+      subSlotGrid.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      subSlotGrid.querySelector('button[data-sub="pagi"]').classList.add('active');
+    }
     updateCategoryUI();
   });
 
   subSlotGrid.addEventListener('click', (e) => {
     const btn = e.target.closest('button[data-sub]');
     if (!btn) return;
-    subSlotGrid.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentSub = btn.dataset.sub;
+    if (isMultiSubCategory() && !editingEntryId) {
+      btn.classList.toggle('active');
+      // Never allow zero selection — re-activate the one just clicked.
+      if (!subSlotGrid.querySelector('button.active')) btn.classList.add('active');
+    } else {
+      subSlotGrid.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
   });
 
   function resetCategoryPicker(){
     currentCategory = 'visit';
-    currentSub = 'pagi';
     categoryGrid.querySelectorAll('button').forEach(b => b.classList.remove('active'));
     categoryGrid.querySelector('button[data-cat="visit"]').classList.add('active');
     subSlotGrid.querySelectorAll('button').forEach(b => b.classList.remove('active'));
@@ -1075,7 +1101,6 @@
     currentCategory = cat;
     subSlotGrid.querySelectorAll('button').forEach(b => b.classList.remove('active'));
     subSlotGrid.querySelector(`button[data-sub="${sub}"]`).classList.add('active');
-    currentSub = sub;
     updateCategoryUI();
 
     document.getElementById('entryType').value = remarks;
@@ -1116,22 +1141,17 @@
     const blockAll = document.getElementById('blockAllToggle').checked;
     const remarks = document.getElementById('entryType').value.trim();
 
-    // Build slot + type based on category
-    let slot, type;
-    if (currentCategory === 'cuti') {
-      slot = 'cuti';
-      type = null;
-    } else {
-      slot = currentSub; // 'pagi' or 'siang'
-      const CAT_LABEL_MAP = { visit:'Visit', cabang:'Cabang', izin:'Izin' };
-      const catLabel = CAT_LABEL_MAP[currentCategory] || 'Visit';
-      type = `${catLabel}: ${remarks}`;
-    }
+    // Build type + selected sub-slots based on category
+    const CAT_LABEL_MAP = { visit:'Visit', cabang:'Cabang', izin:'Izin' };
+    const catLabel = CAT_LABEL_MAP[currentCategory] || 'Visit';
+    const type = (currentCategory === 'cuti') ? null : `${catLabel}: ${remarks}`;
+    const selectedSubs = (currentCategory === 'cuti') ? ['cuti'] : getSelectedSubs(); // e.g. ['pagi'] or ['pagi','siang']
 
     try {
     if (editingEntryId) {
       const username = entryUserSel.value;
       const date = document.getElementById('entryDate').value;
+      const slot = (currentCategory === 'cuti') ? 'cuti' : selectedSubs[0];
       const { error } = await sbClient.from('schedules').update({
         username, date, slot, type, description: null
       }).eq('id', editingEntryId);
@@ -1159,9 +1179,12 @@
 
     } else if (blockAll) {
       const date = document.getElementById('entryDate').value;
-      const rows = allUsers.map(u => ({
-        username: u.username, date, slot, type: type || `${currentCategory === 'izin' ? 'Izin' : 'Visit'}: Meeting tim`, description: null
-      }));
+      const rows = [];
+      allUsers.forEach(u => {
+        selectedSubs.forEach(slot => {
+          rows.push({ username: u.username, date, slot, type: type || `${catLabel}: Meeting tim`, description: null });
+        });
+      });
       const { error } = await sbClient.from('schedules').insert(rows);
       if (error) { alert('Gagal menyimpan: ' + error.message); return; }
       await render();
@@ -1169,9 +1192,8 @@
     } else {
       const date = document.getElementById('entryDate').value;
       const username = entryUserSel.value;
-      const { error } = await sbClient.from('schedules').insert({
-        username, date, slot, type, description: null
-      });
+      const rows = selectedSubs.map(slot => ({ username, date, slot, type, description: null }));
+      const { error } = await sbClient.from('schedules').insert(rows);
       if (error) { alert('Gagal menyimpan: ' + error.message); return; }
       await render();
     }
