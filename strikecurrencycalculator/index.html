@@ -224,7 +224,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
   </div>
   <div class="hdr-bottom">
     <div class="hdr-title">Strike Currency Calculator</div>
-    <div class="hdr-sub">Implied return is indicative &nbsp;·&nbsp; Deposit rates ref: 06-Aug-2026 &nbsp;·&nbsp; Please use the official calculator for more accurate results.</div>
+    <div class="hdr-sub">Implied return is indicative &nbsp;·&nbsp; Deposit rates ref: 10-Aug-2026 &nbsp;·&nbsp; Please use the official calculator for more accurate results.</div>
   </div>
 </div>
 
@@ -517,21 +517,21 @@ const IDR_DEP=[{d:1,r:5.53},{d:7,r:5.76},{d:14,r:5.76},{d:30,r:5.81},{d:60,r:5.8
 // Currency (Y) USD — deposit interest (CALL mode)
 const USD_DEP=[{d:1,r:3.48},{d:7,r:3.5},{d:14,r:3.52},{d:30,r:4.06},{d:60,r:4.18},{d:90,r:4.24},{d:120,r:4.31},{d:150,r:4.37},{d:180,r:4.42},{d:360,r:4.43}];
 // DEPO RATE OPTION IDR1 — GK model rd
-const IDR_OPT=[{d:1,r:6.25},{d:7,r:6.2},{d:14,r:6.22},{d:30,r:6.32},{d:60,r:6.32},{d:90,r:6.31},{d:120,r:6.33},{d:150,r:6.35},{d:180,r:6.38},{d:360,r:6.55}];
+const IDR_OPT=[{d:1,r:5.93},{d:7,r:6.2},{d:14,r:6.22},{d:30,r:6.33},{d:60,r:6.33},{d:90,r:6.33},{d:120,r:6.34},{d:150,r:6.36},{d:180,r:6.38},{d:360,r:6.55}];
 // DEPO RATE OPTION USD1 — GK model rf
-const USD_OPT=[{d:1,r:3.66},{d:7,r:3.64},{d:14,r:3.64},{d:30,r:3.64},{d:60,r:3.71},{d:90,r:3.75},{d:120,r:3.79},{d:150,r:3.84},{d:180,r:3.87},{d:360,r:4.02}];
-const AUD_OPT=[{d:1,r:4.35},{d:7,r:4.35},{d:14,r:4.36},{d:30,r:4.36},{d:60,r:4.37},{d:90,r:4.39},{d:120,r:4.42},{d:150,r:4.44},{d:180,r:4.46},{d:360,r:4.54}];
-const EUR_OPT=[{d:1,r:2.25},{d:7,r:2.19},{d:14,r:2.19},{d:30,r:2.19},{d:60,r:2.26},{d:90,r:2.32},{d:120,r:2.35},{d:150,r:2.38},{d:180,r:2.42},{d:360,r:2.55}];
-const GBP_OPT=[{d:1,r:3.73},{d:7,r:3.73},{d:14,r:3.73},{d:30,r:3.74},{d:60,r:3.76},{d:90,r:3.77},{d:120,r:3.81},{d:150,r:3.85},{d:180,r:3.88},{d:360,r:4.04}];
-const NZD_OPT=[{d:1,r:2.43},{d:7,r:2.5},{d:14,r:2.5},{d:30,r:2.55},{d:60,r:2.64},{d:90,r:2.69},{d:120,r:2.74},{d:150,r:2.8},{d:180,r:2.84},{d:360,r:3.12}];
-const SGD_OPT=[{d:1,r:0.86},{d:7,r:0.93},{d:14,r:1.01},{d:30,r:1.19},{d:60,r:1.2},{d:90,r:1.22},{d:120,r:1.23},{d:150,r:1.25},{d:180,r:1.26},{d:360,r:1.37}];
+const USD_OPT=[{d:1,r:3.65},{d:7,r:3.63},{d:14,r:3.63},{d:30,r:3.64},{d:60,r:3.7},{d:90,r:3.74},{d:120,r:3.78},{d:150,r:3.82},{d:180,r:3.86},{d:360,r:4.02}];
+const AUD_OPT=[{d:1,r:4.35},{d:7,r:4.35},{d:14,r:4.36},{d:30,r:4.36},{d:60,r:4.38},{d:90,r:4.4},{d:120,r:4.43},{d:150,r:4.46},{d:180,r:4.48},{d:360,r:4.58}];
+const EUR_OPT=[{d:1,r:2.23},{d:7,r:2.19},{d:14,r:2.19},{d:30,r:2.19},{d:60,r:2.28},{d:90,r:2.33},{d:120,r:2.36},{d:150,r:2.39},{d:180,r:2.42},{d:360,r:2.56}];
+const GBP_OPT=[{d:1,r:3.73},{d:7,r:3.73},{d:14,r:3.73},{d:30,r:3.74},{d:60,r:3.76},{d:90,r:3.78},{d:120,r:3.81},{d:150,r:3.85},{d:180,r:3.89},{d:360,r:4.07}];
+const NZD_OPT=[{d:1,r:2.44},{d:7,r:2.5},{d:14,r:2.5},{d:30,r:2.58},{d:60,r:2.65},{d:90,r:2.7},{d:120,r:2.75},{d:150,r:2.81},{d:180,r:2.85},{d:360,r:3.13}];
+const SGD_OPT=[{d:1,r:1.05},{d:7,r:1.08},{d:14,r:1.12},{d:30,r:1.22},{d:60,r:1.23},{d:90,r:1.25},{d:120,r:1.26},{d:150,r:1.27},{d:180,r:1.28},{d:360,r:1.39}];
 
 
-const AUD_DEP=[{d:1,r:0.21},{d:7,r:0.21},{d:14,r:1.04},{d:30,r:3.2},{d:60,r:3.2},{d:90,r:3.2},{d:120,r:3.22},{d:150,r:3.23},{d:180,r:3.25},{d:360,r:3.21}];
-const EUR_DEP=[{d:1,r:0.21},{d:7,r:0.21},{d:14,r:0.58},{d:30,r:1.7},{d:60,r:1.7},{d:90,r:1.7},{d:120,r:1.72},{d:150,r:1.73},{d:180,r:1.75},{d:360,r:1.75}];
-const GBP_DEP=[{d:1,r:0.21},{d:7,r:0.21},{d:14,r:1.11},{d:30,r:3.45},{d:60,r:3.45},{d:90,r:3.45},{d:120,r:3.47},{d:150,r:3.48},{d:180,r:3.5},{d:360,r:3.5}];
-const NZD_DEP=[{d:1,r:0.21},{d:7,r:0.21},{d:14,r:0.73},{d:30,r:2.2},{d:60,r:2.2},{d:90,r:2.2},{d:120,r:2.22},{d:150,r:2.23},{d:180,r:2.25},{d:360,r:2.29}];
-const SGD_DEP=[{d:1,r:0.21},{d:7,r:0.21},{d:14,r:0.47},{d:30,r:1.35},{d:60,r:1.4},{d:90,r:1.45},{d:120,r:1.48},{d:150,r:1.51},{d:180,r:1.55},{d:360,r:1.54}];
+const AUD_DEP=[{d:1,r:0.32},{d:7,r:0.32},{d:14,r:1.25},{d:30,r:3.42},{d:60,r:3.41},{d:90,r:3.42},{d:120,r:3.43},{d:150,r:3.45},{d:180,r:3.47},{d:360,r:3.42}];
+const EUR_DEP=[{d:1,r:0.32},{d:7,r:0.32},{d:14,r:0.8},{d:30,r:1.92},{d:60,r:1.91},{d:90,r:1.92},{d:120,r:1.93},{d:150,r:1.95},{d:180,r:1.97},{d:360,r:1.96}];
+const GBP_DEP=[{d:1,r:0.32},{d:7,r:0.32},{d:14,r:1.33},{d:30,r:3.67},{d:60,r:3.66},{d:90,r:3.67},{d:120,r:3.68},{d:150,r:3.7},{d:180,r:3.72},{d:360,r:3.71}];
+const NZD_DEP=[{d:1,r:0.32},{d:7,r:0.32},{d:14,r:0.95},{d:30,r:2.42},{d:60,r:2.41},{d:90,r:2.42},{d:120,r:2.43},{d:150,r:2.45},{d:180,r:2.47},{d:360,r:2.51}];
+const SGD_DEP=[{d:1,r:0.32},{d:7,r:0.32},{d:14,r:0.69},{d:30,r:1.57},{d:60,r:1.61},{d:90,r:1.67},{d:120,r:1.7},{d:150,r:1.73},{d:180,r:1.77},{d:360,r:1.76}];
 
 const CCY_DEP={'USD':USD_DEP,'AUD':AUD_DEP,'EUR':EUR_DEP,'GBP':GBP_DEP,'NZD':NZD_DEP,'SGD':SGD_DEP};
 const CCY_OPT={'USD':USD_OPT,'AUD':AUD_OPT,'EUR':EUR_OPT,'GBP':GBP_OPT,'NZD':NZD_OPT,'SGD':SGD_OPT};
@@ -971,134 +971,156 @@ function generatePDF(){
   var ccy=curCCY||'USD';
   var S=document.getElementById('iSpot').value||'—';
   var K=document.getElementById('iStrike').value||'—';
-  var pts=(ptsSign<0?'−':'+')+''+(document.getElementById('iPoints').value||'0')+' pts';
+  var pts=(ptsSign<0?'&minus;':'+')+''+(document.getElementById('iPoints').value||'0')+' pts';
   var dTx=document.getElementById('dTx').textContent||'—';
   var dVal=document.getElementById('dVal').textContent||'—';
   var dFix=document.getElementById('dFix').textContent||'—';
   var dMat=document.getElementById('dMat').textContent||'—';
-  var dep=(document.getElementById('dDepDays').textContent||'—').replace(' days','').replace(' hari','');
+  var dep=(document.getElementById('dDepDays').textContent||'').replace(/\D+/g,'')||'—';
   var custPct=document.getElementById('sCustPct').textContent||'—';
   var custIDR=document.getElementById('sCustIDR').textContent||'—';
   var custNetPct=document.getElementById('sCustNetPct').textContent||'—';
-  var custNetIDR=(document.getElementById('sCustNetIDR').textContent||'—').split('(')[0].trim();
+  var custNetIDR=(document.getElementById('sCustNetIDR').textContent||'').split('(')[0].trim()||'—';
   var modeStr=MODE==='PUT'?'PUT':'CALL';
   var convVal=(_N>0&&_K>0)?(MODE==='PUT'?fN(_N/_K,2):fI(_N*_K)):'—';
 
-  // Inject PDF-specific styles into head (won't corrupt main styles)
-  var pdfStyles=document.getElementById('pdfStyles');
-  pdfStyles.textContent=[
-    '@media print{',
-    '  .app{display:none!important}',
-    '  #printSheet{display:block!important}',
-    '  @page{margin:10mm 12mm;size:A4 portrait}',
-    '  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}',
-    '}',
-    '#printSheet{display:none}'
-  ].join('');
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8">'
+  +'<style>'
+  +'*{margin:0;padding:0;box-sizing:border-box}'
+  +'body{font-family:Arial,sans-serif;font-size:12px;color:#111;background:#fff;padding:20px}'
+  +'.hdr{background:#8B0000;padding:14px 18px;margin-bottom:18px}'
+  +'.hdr table{width:100%;border-collapse:collapse}'
+  +'.hdr td{color:#fff;vertical-align:middle}'
+  +'.hdr .left{font-size:20px;font-weight:900;letter-spacing:1px}'
+  +'.hdr .sub{font-size:10px;font-weight:400;margin-top:3px;opacity:.85}'
+  +'.hdr .right{text-align:right;font-size:11px}'
+  +'.hdr .right b{font-size:13px;display:block;margin-bottom:2px}'
+  +'.title{font-size:13px;font-weight:700;text-align:center;text-transform:uppercase;letter-spacing:2px;color:#8B0000;border-bottom:2px solid #8B0000;padding-bottom:8px;margin-bottom:14px}'
+  +'.section{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#666;margin:14px 0 6px}'
+  +'.info td{padding:7px 10px;border:1px solid #ddd;font-size:11.5px}'
+  +'.info .lb{background:#f5f5f5;color:#555;width:40%}'
+  +'.info .vl{font-weight:700;font-family:Courier New,monospace}'
+  +'.tl-table{width:100%;border-collapse:collapse;margin-bottom:4px}'
+  +'.tl-table td{text-align:center;padding:4px 2px;border:none}'
+  +'.dot{width:14px;height:14px;border-radius:50%;margin:0 auto}'
+  +'.dot-r{background:#8B0000}'
+  +'.dot-b{background:#1a56db}'
+  +'.tl-line{border-top:2px solid #ccc;margin:7px 0}'
+  +'.tl-date{font-size:10px;font-weight:700;margin-top:3px}'
+  +'.tl-name{font-size:9px;color:#666;margin-top:1px}'
+  +'.tl-badge{font-size:9px;font-weight:700;margin-top:2px}'
+  +'.dep-bar{background:#dbeafe;border:1.5px solid #3b82f6;border-radius:5px;padding:5px 10px;text-align:center;font-size:10.5px;font-weight:700;color:#1d4ed8;margin:6px 50px 0}'
+  +'.yield-table{width:100%;border-collapse:collapse;margin-top:4px}'
+  +'.yield-table td{padding:12px 14px;border:2px solid #ddd;text-align:center;width:50%;vertical-align:top}'
+  +'.yield-table td.gross{border-color:#8B0000;background:#fff8f8}'
+  +'.yield-table td.net{border-color:#059669;background:#f0fdf4}'
+  +'.y-label{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#666;margin-bottom:5px}'
+  +'.y-pct{font-size:26px;font-weight:900;font-family:Courier New,monospace;line-height:1}'
+  +'.y-pct.r{color:#8B0000}.y-pct.g{color:#059669}'
+  +'.y-nom{font-size:10.5px;font-family:Courier New,monospace;font-weight:700;color:#333;margin-top:5px}'
+  +'.y-sub{font-size:9px;color:#999;margin-top:3px}'
+  +'.disc{font-size:8.5px;color:#999;text-align:center;border-top:1px solid #eee;padding-top:10px;margin-top:14px;line-height:1.6}'
+  +'.r2 table{width:100%;border-collapse:collapse;margin:6px 0;font-size:10.5px}'
+  +'.r2 table th{background:#8B0000;color:#fff;padding:5px 8px;text-align:center}'
+  +'.r2 table td{padding:4px 8px;border:1px solid #ddd;text-align:center}'
+  +'.r2 table tr:nth-child(even) td{background:#f9f9f9}'
+  +'.r2-h{font-size:10.5px;font-weight:700;color:#8B0000;border-left:3px solid #8B0000;padding-left:7px;margin:10px 0 5px}'
+  +'.r2 p,.r2 li{font-size:10.5px;line-height:1.65}'
+  +'.r2 ul{padding-left:14px;margin-bottom:6px}'
+  +'@page{margin:8mm 10mm;size:A4}'
+  +'@media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}'
+  +'.page-break{page-break-before:always}}'
+  +'</style></head><body>'
 
-  // Build page content - NO html/head/body/style tags (avoids corrupting main page)
-  var fontSt='font-family:Arial,Helvetica,sans-serif';
-  var hdrHTML='<div style="background:#790008;color:#fff;padding:14px 20px;border-radius:8px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">'
-    +'<div><div style="font-size:22px;font-weight:800;letter-spacing:.01em;line-height:1">CIMB Niaga</div>'
-    +'<div style="font-size:10px;font-weight:400;opacity:.85;margin-top:3px">Treasury &amp; Financial Institutions</div></div>'
-    +'<div style="text-align:right"><div style="font-size:13px;font-weight:700">Treasury EBB Sales</div>'
-    +'<div style="font-size:10px;opacity:.8;margin-top:2px">Strike Currency</div></div>'
-    +'</div>';
+  // ── HEADER (reusable) ──
+  +'<div class="hdr"><table><tr>'
+  +'<td class="left">CIMB Niaga<div class="sub">Treasury &amp; Financial Institutions</div></td>'
+  +'<td class="right"><b>Treasury EBB Sales</b>Strike Currency &nbsp;&middot;&nbsp; '+modeStr+'</td>'
+  +'</tr></table></div>'
 
-  var infoTbl='<table style="width:100%;border-collapse:collapse;margin-bottom:12px">'
-    +'<tr><td style="padding:7px 10px;background:#F8FAFC;color:#475569;font-size:11px;border:1px solid #E2E8F0;width:42%">Nominal Base Currency</td>'
-    +'<td style="padding:7px 10px;font-weight:600;font-family:Courier New,monospace;border:1px solid #E2E8F0">IDR '+N+'</td></tr>'
-    +'<tr><td style="padding:7px 10px;background:#F8FAFC;color:#475569;font-size:11px;border:1px solid #E2E8F0">If Converted &mdash; '+ccy+'</td>'
-    +'<td style="padding:7px 10px;font-weight:600;font-family:Courier New,monospace;border:1px solid #E2E8F0">'+ccy+' '+convVal+'</td></tr>'
-    +'<tr><td style="padding:7px 10px;background:#F8FAFC;color:#475569;font-size:11px;border:1px solid #E2E8F0">Spot Rate ('+ccy+'/IDR)</td>'
-    +'<td style="padding:7px 10px;font-weight:600;font-family:Courier New,monospace;border:1px solid #E2E8F0">'+S+'</td></tr>'
-    +'<tr><td style="padding:7px 10px;background:#F8FAFC;color:#475569;font-size:11px;border:1px solid #E2E8F0">Strike Price</td>'
-    +'<td style="padding:7px 10px;font-weight:600;font-family:Courier New,monospace;border:1px solid #E2E8F0">'+K+' <span style="color:#64748B;font-size:10px">('+pts+')</span></td></tr>'
-    +'</table>';
+  // ── PAGE 1 TITLE ──
+  +'<div class="title">Strike Currency &mdash; Indicative Rate</div>'
 
-  var tlHTML='<div style="margin:14px 0">'
-    +'<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#64748B;margin-bottom:10px">Timeline</div>'
-    +'<div style="display:flex;position:relative">'
-    +'<div style="position:absolute;top:7px;left:12%;right:12%;height:2px;background:#CBD5E1"></div>'
-    +'<div style="flex:1;text-align:center;position:relative;z-index:1"><div style="width:14px;height:14px;background:#790008;border-radius:50%;margin:0 auto 5px;border:2px solid #fff;box-shadow:0 0 0 2px #790008"></div><div style="font-size:10px;font-weight:700">'+dTx+'</div><div style="font-size:9px;color:#64748B">Transaction Date</div><div style="font-size:9px;font-weight:700;color:#790008">Start Option</div></div>'
-    +'<div style="flex:1;text-align:center;position:relative;z-index:1"><div style="width:14px;height:14px;background:#1D4ED8;border-radius:50%;margin:0 auto 5px;border:2px solid #fff;box-shadow:0 0 0 2px #1D4ED8"></div><div style="font-size:10px;font-weight:700">'+dVal+'</div><div style="font-size:9px;color:#64748B">Value Date</div><div style="font-size:9px;font-weight:700;color:#1D4ED8">Start Deposit</div></div>'
-    +'<div style="flex:1;text-align:center;position:relative;z-index:1"><div style="width:14px;height:14px;background:#790008;border-radius:50%;margin:0 auto 5px;border:2px solid #fff;box-shadow:0 0 0 2px #790008"></div><div style="font-size:10px;font-weight:700">'+dFix+'</div><div style="font-size:9px;color:#64748B">Fixing Date</div><div style="font-size:9px">&nbsp;</div></div>'
-    +'<div style="flex:1;text-align:center;position:relative;z-index:1"><div style="width:14px;height:14px;background:#790008;border-radius:50%;margin:0 auto 5px;border:2px solid #fff;box-shadow:0 0 0 2px #790008"></div><div style="font-size:10px;font-weight:700">'+dMat+'</div><div style="font-size:9px;color:#64748B">Maturity Date</div><div style="font-size:9px">&nbsp;</div></div>'
-    +'</div>'
-    +'<div style="background:#DBEAFE;border:1.5px solid #93C5FD;border-radius:6px;padding:5px;text-align:center;font-size:10.5px;font-weight:700;color:#1D4ED8;margin:8px 8% 0">Deposit Period: '+dep+' days &nbsp;&middot;&nbsp; Value Date &rarr; Maturity Date</div>'
-    +'</div>';
+  // ── INFO ──
+  +'<table class="info" style="width:100%;border-collapse:collapse;margin-bottom:12px">'
+  +'<tr><td class="lb">Nominal Base Currency</td><td class="vl">IDR '+N+'</td></tr>'
+  +'<tr><td class="lb">If Converted &mdash; '+ccy+'</td><td class="vl">'+ccy+' '+convVal+'</td></tr>'
+  +'<tr><td class="lb">Spot Rate ('+ccy+'/IDR)</td><td class="vl">'+S+'</td></tr>'
+  +'<tr><td class="lb">Strike Price</td><td class="vl">'+K+' <span style="font-size:10px;color:#666">('+pts+')</span></td></tr>'
+  +'</table>'
 
-  var yldHTML='<div style="margin-top:14px">'
-    +'<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#64748B;margin-bottom:8px">Customer Return</div>'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
-    +'<div style="border:2px solid #790008;border-radius:8px;padding:12px;text-align:center;background:#FFF5F5">'
-    +'<div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#64748B;margin-bottom:4px">Gross Yield p.a.</div>'
-    +'<div style="font-size:24px;font-weight:800;color:#790008;font-family:Courier New,monospace">'+custPct+'</div>'
-    +'<div style="font-size:10.5px;font-family:Courier New,monospace;font-weight:600;margin-top:4px;color:#475569">'+custIDR+'</div>'
-    +'<div style="font-size:9px;color:#94A3B8;margin-top:3px">Before PPh 20%</div>'
-    +'</div>'
-    +'<div style="border:2px solid #059669;border-radius:8px;padding:12px;text-align:center;background:#F0FDF4">'
-    +'<div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#64748B;margin-bottom:4px">Net Yield p.a.</div>'
-    +'<div style="font-size:24px;font-weight:800;color:#059669;font-family:Courier New,monospace">'+custNetPct+'</div>'
-    +'<div style="font-size:10.5px;font-family:Courier New,monospace;font-weight:600;margin-top:4px;color:#475569">'+custNetIDR+'</div>'
-    +'<div style="font-size:9px;color:#94A3B8;margin-top:3px">After PPh 20%</div>'
-    +'</div></div></div>';
+  // ── TIMELINE ──
+  +'<div class="section">Timeline</div>'
+  +'<table class="tl-table"><tr>'
+  +'<td><div class="dot dot-r"></div><div class="tl-date">'+dTx+'</div><div class="tl-name">Transaction Date</div><div class="tl-badge" style="color:#8B0000">Start Option</div></td>'
+  +'<td><div style="border-top:2px solid #ccc;margin-top:7px"></div></td>'
+  +'<td><div class="dot dot-b"></div><div class="tl-date">'+dVal+'</div><div class="tl-name">Value Date</div><div class="tl-badge" style="color:#1a56db">Start Deposit</div></td>'
+  +'<td><div style="border-top:2px solid #ccc;margin-top:7px"></div></td>'
+  +'<td><div class="dot dot-r"></div><div class="tl-date">'+dFix+'</div><div class="tl-name">Fixing Date</div></td>'
+  +'<td><div style="border-top:2px solid #ccc;margin-top:7px"></div></td>'
+  +'<td><div class="dot dot-r"></div><div class="tl-date">'+dMat+'</div><div class="tl-name">Maturity Date</div></td>'
+  +'</tr></table>'
+  +'<div class="dep-bar">Deposit Period: '+dep+' hari &nbsp;&middot;&nbsp; Value Date &rarr; Maturity Date</div>'
 
-  var discHTML='<div style="font-size:9px;color:#94A3B8;text-align:center;margin-top:14px;padding-top:10px;border-top:1px solid #E2E8F0;line-height:1.6">'
-    +'Bersifat indikatif &middot; Bukan komitmen transaksi &middot; Tarif dapat berubah sewaktu-waktu<br>'
-    +'CIMB Niaga Treasury &amp; Financial Institutions &mdash; '+modeStr+' &middot; '+ccy+'/IDR'
-    +'</div>';
+  // ── CUSTOMER RETURN ──
+  +'<div class="section" style="margin-top:14px">Customer Return</div>'
+  +'<table class="yield-table"><tr>'
+  +'<td class="gross"><div class="y-label">Gross Yield p.a.</div><div class="y-pct r">'+custPct+'</div><div class="y-nom">'+custIDR+'</div><div class="y-sub">Sebelum PPh 20%</div></td>'
+  +'<td class="net"><div class="y-label">Net Yield p.a.</div><div class="y-pct g">'+custNetPct+'</div><div class="y-nom">'+custNetIDR+'</div><div class="y-sub">Setelah PPh 20%</div></td>'
+  +'</tr></table>'
+  +'<div class="disc">Bersifat indikatif &middot; Bukan komitmen transaksi &middot; Tarif dapat berubah sewaktu-waktu &middot; '+ccy+'/IDR</div>'
 
-  var page1='<div style="'+fontSt+';color:#0F172A;font-size:11.5px;padding:24px;page-break-after:always">'
-    +hdrHTML
-    +'<div style="font-size:14px;font-weight:700;text-align:center;text-transform:uppercase;letter-spacing:.05em;color:#790008;margin-bottom:14px;padding-bottom:10px;border-bottom:1.5px solid #E2E8F0">Strike Currency &mdash; Indicative Rate</div>'
-    +infoTbl+tlHTML+yldHTML+discHTML
-    +'</div>';
+  // ── PAGE 2 ──
+  +'<div class="page-break r2">'
+  +'<div class="hdr"><table><tr>'
+  +'<td class="left">CIMB Niaga<div class="sub">Treasury &amp; Financial Institutions</div></td>'
+  +'<td class="right"><b>Treasury EBB Sales</b></td>'
+  +'</tr></table></div>'
+  +'<div class="title">Ringkasan Informasi Produk (RIPLAY) &mdash; Strike Currency</div>'
+  +'<table class="info" style="width:100%;border-collapse:collapse;margin-bottom:10px">'
+  +'<tr><td class="lb">Nama Penerbit</td><td>PT Bank CIMB Niaga, Tbk.</td></tr>'
+  +'<tr><td class="lb">Nama Produk</td><td><b>Strike Currency</b></td></tr>'
+  +'<tr><td class="lb">Mata Uang</td><td>IDR dan Non-IDR</td></tr>'
+  +'</table>'
+  +'<div class="r2-h">Deskripsi Produk</div>'
+  +'<p>Strike Currency adalah kombinasi kewajiban lainnya mata uang tertentu dan penjualan opsi FX oleh Nasabah kepada Bank, menggunakan Strike Price yang disepakati pada tanggal transaksi. Nasabah mendapatkan imbal hasil lebih tinggi dari deposito biasa melalui bunga dan premi opsi.</p><br>'
+  +'<p>Cocok untuk Nasabah yang menginginkan: potensi imbal hasil lebih tinggi, alternatif penempatan dana, minimum USD 20,000 atau ekuivalen, tenor 7 hari &ndash; 12 bulan.</p>'
+  +'<div class="r2-h">Fitur Utama &mdash; Indikatif Imbal Hasil</div>'
+  +'<table><tr><th>Penempatan</th><th>Alternatif</th><th>SPOT p.a.</th><th>SPOT &plusmn;100 p.a.</th></tr>'
+  +'<tr><td>IDR</td><td>USD</td><td>1% &ndash; 8%</td><td>1% &ndash; 6%</td></tr>'
+  +'<tr><td>IDR</td><td>AUD</td><td>1% &ndash; 16%</td><td>1% &ndash; 8%</td></tr>'
+  +'<tr><td>IDR</td><td>EUR</td><td>1% &ndash; 10%</td><td>1% &ndash; 5%</td></tr>'
+  +'<tr><td>IDR</td><td>GBP</td><td>1% &ndash; 13%</td><td>1% &ndash; 8%</td></tr>'
+  +'<tr><td>IDR</td><td>NZD / SGD</td><td>1% &ndash; 16%</td><td>1% &ndash; 8%</td></tr>'
+  +'</table>'
+  +'<div class="r2-h">Biaya</div>'
+  +'<ul><li>Penempatan: <b>TIDAK ADA</b> biaya.</li>'
+  +'<li>Penarikan Awal: <b>TIDAK</b> diperkenankan sebelum Jatuh Tempo.</li>'
+  +'<li>Pajak Penghasilan (PPh): <b>20%</b> dari pengembalian Strike Currency.</li></ul>'
+  +'<div class="r2-h">Manfaat &amp; Risiko</div>'
+  +'<p><b>Manfaat:</b> Potensi imbal hasil lebih tinggi dari deposito konvensional, tetap dibayarkan dalam mata uang penempatan walaupun pokok terkonversi.</p><br>'
+  +'<ul><li><b>Risiko:</b> Tidak dapat Penarikan Awal selama tenor.</li>'
+  +'<li>Tidak dijamin oleh LPS.</li>'
+  +'<li>Jika terkonversi, pokok dikembalikan dalam mata uang alternatif.</li></ul>'
+  +'<div class="r2-h">Informasi Tambahan</div>'
+  +'<ul><li>Konfirmasi Transaksi diserahkan maks. 7 hari kerja setelah Tanggal Terbit.</li>'
+  +'<li>Nasabah baru: pendaftaran maks. H-3 hari kerja dari Tanggal Transaksi.</li>'
+  +'<li>Keluhan/informasi: Call Center CIMB Niaga <b>14041</b>.</li></ul>'
+  +'<div class="disc" style="margin-top:14px">PT Bank CIMB Niaga Tbk. &nbsp;&middot;&nbsp; Berizin &amp; Diawasi oleh Otoritas Jasa Keuangan dan Bank Indonesia</div>'
+  +'</div>'
+  +'</body></html>';
 
-  var page2='<div style="'+fontSt+';color:#0F172A;font-size:11px;padding:24px">'
-    +hdrHTML
-    +'<div style="font-size:13px;font-weight:700;text-align:center;text-transform:uppercase;letter-spacing:.04em;color:#790008;margin-bottom:12px;padding-bottom:10px;border-bottom:1.5px solid #E2E8F0">Ringkasan Informasi Produk (RIPLAY) &mdash; Strike Currency</div>'
-    +'<table style="width:100%;border-collapse:collapse;margin-bottom:10px"><tr><td style="padding:6px 10px;background:#F8FAFC;color:#475569;font-size:10.5px;border:1px solid #E2E8F0;width:38%">Nama Penerbit</td><td style="padding:6px 10px;border:1px solid #E2E8F0">PT Bank CIMB Niaga, Tbk.</td></tr>'
-    +'<tr><td style="padding:6px 10px;background:#F8FAFC;color:#475569;font-size:10.5px;border:1px solid #E2E8F0">Nama Produk</td><td style="padding:6px 10px;border:1px solid #E2E8F0"><b>Strike Currency</b></td></tr>'
-    +'<tr><td style="padding:6px 10px;background:#F8FAFC;color:#475569;font-size:10.5px;border:1px solid #E2E8F0">Mata Uang</td><td style="padding:6px 10px;border:1px solid #E2E8F0">IDR dan Non-IDR</td></tr></table>'
-    +'<div style="font-size:10.5px;font-weight:700;color:#790008;text-transform:uppercase;letter-spacing:.05em;margin:10px 0 5px;padding-left:8px;border-left:3px solid #790008">Deskripsi Produk</div>'
-    +'<p style="font-size:10.5px;line-height:1.65;margin-bottom:6px">Strike Currency adalah kombinasi kewajiban lainnya mata uang tertentu dan penjualan opsi FX oleh Nasabah kepada Bank, menggunakan Strike Price yang disepakati. Nasabah mendapatkan imbal hasil lebih tinggi dari deposito biasa melalui bunga kewajiban lainnya dan premi opsi.</p>'
-    +'<p style="font-size:10.5px;line-height:1.65;margin-bottom:6px">Cocok untuk Nasabah yang menginginkan: potensi imbal hasil lebih tinggi, alternatif penempatan, minimum USD 20,000 atau ekuivalen, tenor 7 hari s/d 12 bulan.</p>'
-    +'<div style="font-size:10.5px;font-weight:700;color:#790008;text-transform:uppercase;letter-spacing:.05em;margin:10px 0 5px;padding-left:8px;border-left:3px solid #790008">Fitur Utama &mdash; Indikatif Imbal Hasil</div>'
-    +'<table style="width:100%;border-collapse:collapse;font-size:10px;margin:6px 0">'
-    +'<tr><th style="background:#790008;color:#fff;padding:5px 8px;text-align:center">Penempatan</th><th style="background:#790008;color:#fff;padding:5px 8px;text-align:center">Alternatif</th><th style="background:#790008;color:#fff;padding:5px 8px;text-align:center">SPOT p.a.</th><th style="background:#790008;color:#fff;padding:5px 8px;text-align:center">SPOT &plusmn;100 p.a.</th></tr>'
-    +'<tr><td style="padding:4px 8px;border:1px solid #E2E8F0;text-align:center">IDR</td><td style="padding:4px 8px;border:1px solid #E2E8F0;text-align:center">USD</td><td style="padding:4px 8px;border:1px solid #E2E8F0;text-align:center">1.00% &ndash; 8.00%</td><td style="padding:4px 8px;border:1px solid #E2E8F0;text-align:center">1.00% &ndash; 6.00%</td></tr>'
-    +'<tr style="background:#F8FAFC"><td style="padding:4px 8px;border:1px solid #E2E8F0;text-align:center">IDR</td><td style="padding:4px 8px;border:1px solid #E2E8F0;text-align:center">AUD</td><td style="padding:4px 8px;border:1px solid #E2E8F0;text-align:center">1.00% &ndash; 16.00%</td><td style="padding:4px 8px;border:1px solid #E2E8F0;text-align:center">1.00% &ndash; 8.00%</td></tr>'
-    +'<tr><td style="padding:4px 8px;border:1px solid #E2E8F0;text-align:center">IDR</td><td style="padding:4px 8px;border:1px solid #E2E8F0;text-align:center">EUR</td><td style="padding:4px 8px;border:1px solid #E2E8F0;text-align:center">1.00% &ndash; 10.00%</td><td style="padding:4px 8px;border:1px solid #E2E8F0;text-align:center">1.00% &ndash; 5.00%</td></tr>'
-    +'<tr style="background:#F8FAFC"><td style="padding:4px 8px;border:1px solid #E2E8F0;text-align:center">IDR</td><td style="padding:4px 8px;border:1px solid #E2E8F0;text-align:center">GBP</td><td style="padding:4px 8px;border:1px solid #E2E8F0;text-align:center">1.00% &ndash; 13.00%</td><td style="padding:4px 8px;border:1px solid #E2E8F0;text-align:center">1.00% &ndash; 8.00%</td></tr>'
-    +'<tr><td style="padding:4px 8px;border:1px solid #E2E8F0;text-align:center">IDR</td><td style="padding:4px 8px;border:1px solid #E2E8F0;text-align:center">NZD / SGD</td><td style="padding:4px 8px;border:1px solid #E2E8F0;text-align:center">1.00% &ndash; 16.00%</td><td style="padding:4px 8px;border:1px solid #E2E8F0;text-align:center">1.00% &ndash; 8.00%</td></tr>'
-    +'</table>'
-    +'<div style="font-size:10.5px;font-weight:700;color:#790008;text-transform:uppercase;letter-spacing:.05em;margin:10px 0 5px;padding-left:8px;border-left:3px solid #790008">Biaya &amp; Risiko</div>'
-    +'<ul style="padding-left:14px;margin-bottom:6px"><li style="font-size:10.5px;line-height:1.65">Penempatan: <b>TIDAK ADA</b> biaya.</li>'
-    +'<li style="font-size:10.5px;line-height:1.65">Penarikan Awal: <b>TIDAK</b> diperkenankan sebelum Jatuh Tempo.</li>'
-    +'<li style="font-size:10.5px;line-height:1.65">Pajak Penghasilan: <b>20%</b> dari pengembalian Strike Currency.</li>'
-    +'<li style="font-size:10.5px;line-height:1.65">Tidak dijamin LPS. Jika terkonversi, pokok dikembalikan dalam mata uang alternatif.</li></ul>'
-    +'<div style="font-size:10.5px;font-weight:700;color:#790008;text-transform:uppercase;letter-spacing:.05em;margin:10px 0 5px;padding-left:8px;border-left:3px solid #790008">Informasi Tambahan</div>'
-    +'<ul style="padding-left:14px"><li style="font-size:10.5px;line-height:1.65">Konfirmasi Transaksi diserahkan maks. 7 hari kerja setelah Tanggal Terbit.</li>'
-    +'<li style="font-size:10.5px;line-height:1.65">Nasabah baru: pendaftaran maks. H-3 hari kerja dari Tanggal Transaksi.</li>'
-    +'<li style="font-size:10.5px;line-height:1.65">Keluhan/informasi: Call Center CIMB Niaga <b>14041</b>.</li></ul>'
-    +'<div style="font-size:9px;color:#64748B;text-align:center;margin-top:10px;padding-top:8px;border-top:1px solid #E2E8F0;line-height:1.5">PT Bank CIMB Niaga Tbk. Berizin &amp; Diawasi oleh Otoritas Jasa Keuangan dan Bank Indonesia</div>'
-    +'</div>';
-
-  var sheet=document.getElementById('printSheet');
-  sheet.innerHTML=page1+page2;
-
-  // Cleanup after print - both onafterprint and setTimeout for iOS
-  function cleanup(){
-    sheet.style.display='none';
-    sheet.innerHTML='';
-    pdfStyles.textContent='#printSheet{display:none}';
-  }
-  window.onafterprint=cleanup;
-  setTimeout(cleanup, 3000); // iOS fallback
-
-  sheet.style.display='block';
-  window.print();
+  // Use hidden iframe - NEVER touches main page DOM/CSS
+  var iframe=document.createElement('iframe');
+  iframe.style.cssText='position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;border:none;opacity:0';
+  document.body.appendChild(iframe);
+  var doc=iframe.contentDocument||iframe.contentWindow.document;
+  doc.open();doc.write(html);doc.close();
+  iframe.onload=function(){
+    iframe.contentWindow.focus();
+    iframe.contentWindow.print();
+    setTimeout(function(){document.body.removeChild(iframe);},3000);
+  };
 }
 </script>
 </body>
