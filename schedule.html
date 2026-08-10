@@ -141,6 +141,7 @@
   .week-slot-empty{font-size:12px;color:var(--text-2);opacity:.55;}
   .week-names{display:flex;flex-direction:column;gap:5px;min-width:0;width:100%;}
   .week-name-pill{display:flex;align-items:center;gap:6px;font-size:12px;padding:5px 9px;border-radius:8px;background:rgba(255,255,255,.05);min-width:0;width:100%;box-sizing:border-box;}
+  .week-name-pill.week-name-all{background:linear-gradient(120deg, rgba(138,0,9,.28), rgba(138,0,9,.14));border:1px solid rgba(138,0,9,.4);font-weight:600;}
   .week-name-pill .pill-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1;}
   .week-name-pill .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
   .week-name-pill .extra{color:var(--text-2);font-weight:400;}
@@ -277,6 +278,17 @@
   .modal-actions button{flex:1;padding:12px;border-radius:10px;border:none;font-family:var(--sans);font-size:13.5px;font-weight:600;cursor:pointer;}
   .btn-save{background:linear-gradient(120deg, var(--maroon-1), var(--maroon-btn));color:#fff;}
   .btn-cancel{background:none;border:1px solid var(--line) !important;color:var(--text-1);}
+  .inline-link{display:inline-block;font-family:var(--sans);font-size:11.5px;color:var(--text-2);cursor:pointer;margin-top:7px;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:2px;}
+  .inline-link:hover{color:var(--maroon-1);}
+  .chip-picker{display:flex;flex-wrap:wrap;gap:7px;}
+  .user-chip{
+    display:flex;align-items:center;gap:6px;background:var(--ink-2);border:1px solid var(--line);border-radius:20px;
+    padding:6px 12px 6px 6px;font-family:var(--sans);font-size:12.5px;font-weight:500;color:var(--text-1);cursor:pointer;
+    transition:all .15s ease;user-select:none;
+  }
+  .user-chip .chip-avatar{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;color:#fff;flex-shrink:0;}
+  .user-chip:hover{border-color:rgba(255,255,255,.25);}
+  .user-chip.active{background:linear-gradient(120deg, var(--maroon-1), var(--maroon-btn));border-color:transparent;color:#fff;}
   .modal-close{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.06);border:none;color:var(--text-1);font-size:20px;width:38px;height:38px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:background .15s ease;}
   .modal-close:hover{background:rgba(255,255,255,.14);color:#fff;}
   .modal-close:active{background:rgba(255,255,255,.2);}
@@ -423,6 +435,12 @@
       <div class="field" id="userField">
         <label for="entryUser">Untuk</label>
         <div class="select-wrap"><select id="entryUser"></select></div>
+        <div class="inline-link" id="inviteMoreLink">+ Ajak orang lain ikut</div>
+      </div>
+      <div class="field" id="multiUserField" style="display:none;">
+        <label>Untuk <span class="req-star">*</span></label>
+        <div class="chip-picker" id="multiUserGrid"></div>
+        <div class="inline-link" id="collapseMultiLink" style="margin-top:8px;">✕ Sembunyikan, balik ke 1 orang</div>
       </div>
       <div class="field">
         <label style="display:flex;align-items:center;gap:8px;text-transform:none;font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer;">
@@ -435,10 +453,11 @@
         <label>Jenis</label>
         <div class="type-grid" id="categoryGrid" style="grid-template-columns:repeat(4,1fr);">
           <button type="button" data-cat="visit" class="active">Visit</button>
-          <button type="button" data-cat="cabang">Cabang</button>
+          <button type="button" data-cat="cabang">Internal</button>
           <button type="button" data-cat="izin">Izin</button>
           <button type="button" data-cat="cuti">Cuti</button>
         </div>
+        <div id="categoryHint" style="display:none;font-family:var(--sans);font-size:11px;color:var(--text-2);margin-top:6px;">Bedah Account / Rakor / Client Event / Market Update / dll.</div>
       </div>
 
       <div class="field" id="subSlotField">
@@ -640,11 +659,16 @@
   const entryForm = document.getElementById('entryForm');
   const entryUserSel = document.getElementById('entryUser');
   const userField = document.getElementById('userField');
+  const multiUserField = document.getElementById('multiUserField');
+  const multiUserGrid = document.getElementById('multiUserGrid');
+  const inviteMoreLink = document.getElementById('inviteMoreLink');
+  const collapseMultiLink = document.getElementById('collapseMultiLink');
   const existingList = document.getElementById('existingList');
   const modalTitle = document.getElementById('modalTitle');
   const modalSub = document.getElementById('modalSub');
   const categoryField = document.getElementById('categoryField');
   const categoryGrid = document.getElementById('categoryGrid');
+  const categoryHint = document.getElementById('categoryHint');
   const subSlotGrid = document.getElementById('subSlotGrid');
   const subSlotField = document.getElementById('subSlotField');
   const subSlotHint = document.getElementById('subSlotHint');
@@ -699,6 +723,7 @@
       `).join('');
       entryUserSel.innerHTML = allUsers.map(u => `<option value="${u.username}">${u.display_name}</option>`).join('');
       entryUserSel.value = currentUser.username;
+      renderMultiUserGrid();
       const resetUserSel = document.getElementById('resetUser');
       if (resetUserSel) {
         resetUserSel.innerHTML = allUsers.map(u => `<option value="${u.username}">${u.display_name}</option>`).join('');
@@ -732,7 +757,7 @@
 
   function stripCategoryPrefix(type){
     if (!type) return '';
-    const m = type.match(/^(?:Visit|Cabang|Izin):\s*(.*)$/);
+    const m = type.match(/^(?:Visit|Cabang|Internal|Izin):\s*(.*)$/);
     return m ? m[1] : type;
   }
 
@@ -741,6 +766,22 @@
     const remarks = stripCategoryPrefix(e.type);
     const label = remarks ? `${u.display_name} - ${remarks}` : u.display_name;
     return `<div class="week-name-pill"><span class="dot" style="background:${u.color}"></span><span class="pill-text">${label}</span></div>`;
+  }
+
+  // If every team member has an identical entry for this slot (created via "Block untuk semua tim"),
+  // collapse the list into a single [ALL] chip instead of listing each name.
+  function renderSlotNames(entries){
+    if (entries.length && allUsers.length && entries.length === allUsers.length) {
+      const usernames = new Set(entries.map(e => e.username));
+      const allPresent = allUsers.every(u => usernames.has(u.username));
+      const types = new Set(entries.map(e => e.type || ''));
+      if (allPresent && types.size === 1) {
+        const remarks = stripCategoryPrefix(entries[0].type);
+        const label = remarks ? `[ALL] Treasury EBB Sales - ${remarks}` : `[ALL] Treasury EBB Sales`;
+        return `<div class="week-names"><div class="week-name-pill week-name-all"><span class="dot" style="background:var(--maroon-1)"></span><span class="pill-text">${label}</span></div></div>`;
+      }
+    }
+    return `<div class="week-names">${entries.map(nameChip).join('')}</div>`;
   }
 
   // ============================================================
@@ -768,10 +809,10 @@
       const extraEntries = dayEntries.filter(e => e.slot === 'cuti' || e.slot === 'izin');
 
       const pagiHtml = pagiEntries.length
-        ? `<div class="week-names">${pagiEntries.map(nameChip).join('')}</div>`
+        ? renderSlotNames(pagiEntries)
         : `<div class="week-slot-empty">—</div>`;
       const siangHtml = siangEntries.length
-        ? `<div class="week-names">${siangEntries.map(nameChip).join('')}</div>`
+        ? renderSlotNames(siangEntries)
         : `<div class="week-slot-empty">—</div>`;
 
       const extraHtml = extraEntries.length
@@ -877,13 +918,13 @@
       grid.appendChild(div);
     });
 
-    // Monthly summary: total Visit + total Cabang count for this month only
+    // Monthly summary: total Visit + total Internal (formerly Cabang) count for this month only
     let visitCount = 0;
-    let cabangCount = 0;
+    let internalCount = 0;
     Object.values(entriesByDate).forEach(dayEntries => {
       dayEntries.forEach(e => {
         if (e.type && e.type.startsWith('Visit:')) visitCount++;
-        if (e.type && e.type.startsWith('Cabang:')) cabangCount++;
+        if (e.type && (e.type.startsWith('Internal:') || e.type.startsWith('Cabang:'))) internalCount++;
       });
     });
     const summaryEl = document.getElementById('monthSummary');
@@ -894,8 +935,8 @@
           <span class="summary-lbl">Client Visit — ${MONTH_NAMES[viewMonth]}</span>
         </div>
         <div class="summary-item">
-          <span class="summary-num">${cabangCount}</span>
-          <span class="summary-lbl">Ke Cabang — ${MONTH_NAMES[viewMonth]}</span>
+          <span class="summary-num">${internalCount}</span>
+          <span class="summary-lbl">Internal — ${MONTH_NAMES[viewMonth]}</span>
         </div>
       `;
     }
@@ -943,9 +984,37 @@
   });
 
   // ============================================================
-  // Category picker (Visit / Cabang / Izin / Cuti) + sub Pagi/Siang
+  // Category picker (Visit / Internal / Izin / Cuti) + sub Pagi/Siang
   // ============================================================
   let currentCategory = 'visit';
+  // Multi-person picker (Visit / Internal): who's invited/booked for this entry.
+  let selectedUsers = new Set();
+  let multiPickerExpanded = false;
+  function isMultiPersonCategory(){
+    return (currentCategory === 'visit' || currentCategory === 'cabang');
+  }
+  function renderMultiUserGrid(){
+    multiUserGrid.innerHTML = allUsers.map(u => `
+      <div class="user-chip${selectedUsers.has(u.username) ? ' active' : ''}" data-username="${u.username}">
+        <span class="chip-avatar" style="background:${u.color}">${u.initial || u.display_name.charAt(0)}</span>
+        ${u.display_name}
+      </div>
+    `).join('');
+    multiUserGrid.querySelectorAll('.user-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const uname = chip.dataset.username;
+        if (selectedUsers.has(uname)) {
+          if (selectedUsers.size > 1) selectedUsers.delete(uname); // keep at least one selected
+        } else {
+          selectedUsers.add(uname);
+        }
+        renderMultiUserGrid();
+      });
+    });
+  }
+  function getSelectedUsers(){
+    return selectedUsers.size ? Array.from(selectedUsers) : [currentUser.username];
+  }
   // Cabang & Izin allow multi-select (Pagi + Siang together); Visit stays single-select.
   // Block-all-team mode also allows multi-select since no single category applies.
   function isMultiSubCategory(){
@@ -1056,6 +1125,7 @@
   function updateCategoryUI(){
     const blockAll = document.getElementById('blockAllToggle').checked;
     categoryField.style.display = blockAll ? 'none' : 'block';
+    categoryHint.style.display = (currentCategory === 'cabang' && !blockAll) ? 'block' : 'none';
     if (currentCategory === 'cuti') {
       subSlotField.style.display = 'none';
       singleDateField.style.display = 'none';
@@ -1072,7 +1142,29 @@
       entryTypeInput.required = !blockAll; // optional when blocking the whole team
     }
     subSlotHint.style.display = (isMultiSubCategory() && !editingEntryId) ? 'block' : 'none';
+
+    // Multi-person picker only for Visit / Internal, not while blocking whole team or editing a single entry.
+    // Tucked away by default — most entries are for one person, so keep this an opt-in link, not a visible extra step.
+    const canMulti = isMultiPersonCategory() && !blockAll && !editingEntryId;
+    inviteMoreLink.style.display = (canMulti && !multiPickerExpanded) ? 'inline-block' : 'none';
+    userField.style.display = (blockAll || (canMulti && multiPickerExpanded)) ? 'none' : '';
+    multiUserField.style.display = (canMulti && multiPickerExpanded) ? 'block' : 'none';
   }
+
+  inviteMoreLink.addEventListener('click', () => {
+    // Seed the multi-picker with whoever is currently chosen in the single dropdown.
+    selectedUsers = new Set([entryUserSel.value]);
+    multiPickerExpanded = true;
+    renderMultiUserGrid();
+    updateCategoryUI();
+  });
+  collapseMultiLink.addEventListener('click', () => {
+    const first = getSelectedUsers()[0];
+    entryUserSel.value = first;
+    selectedUsers = new Set([first]);
+    multiPickerExpanded = false;
+    updateCategoryUI();
+  });
 
   categoryGrid.addEventListener('click', (e) => {
     const btn = e.target.closest('button[data-cat]');
@@ -1084,6 +1176,8 @@
       // Switching category resets sub-slot back to a clean single "Pagi" selection.
       subSlotGrid.querySelectorAll('button').forEach(b => b.classList.remove('active'));
       subSlotGrid.querySelector('button[data-sub="pagi"]').classList.add('active');
+      // Keep single-select "Untuk" dropdown in sync with the multi-picker's first pick.
+      if (selectedUsers.size) entryUserSel.value = Array.from(selectedUsers)[0];
     }
     updateCategoryUI();
   });
@@ -1108,6 +1202,9 @@
     const sub = (presetSub === 'siang') ? 'siang' : 'pagi';
     subSlotGrid.querySelectorAll('button').forEach(b => b.classList.remove('active'));
     subSlotGrid.querySelector(`button[data-sub="${sub}"]`).classList.add('active');
+    selectedUsers = new Set([currentUser.username]);
+    multiPickerExpanded = false;
+    renderMultiUserGrid();
     updateCategoryUI();
   }
 
@@ -1238,9 +1335,10 @@
       cat = 'cuti';
     } else {
       sub = (entry.slot === 'siang') ? 'siang' : 'pagi';
-      const m = remarks.match(/^(Visit|Cabang|Izin):\s*(.*)$/);
+      const m = remarks.match(/^(Visit|Cabang|Internal|Izin):\s*(.*)$/);
       if (m) {
-        cat = m[1].toLowerCase();
+        const catRaw = m[1].toLowerCase();
+        cat = (catRaw === 'internal') ? 'cabang' : catRaw;
         remarks = m[2];
       } else if (entry.slot === 'izin') {
         cat = 'izin';
@@ -1339,7 +1437,7 @@
     const remarks = capitalizeAfterSpaces(document.getElementById('entryType').value.trim());
 
     // Build type + selected sub-slots based on category
-    const CAT_LABEL_MAP = { visit:'Visit', cabang:'Cabang', izin:'Izin' };
+    const CAT_LABEL_MAP = { visit:'Visit', cabang:'Internal', izin:'Izin' };
     const catLabel = CAT_LABEL_MAP[currentCategory] || 'Visit';
     const type = (currentCategory === 'cuti') ? null : (remarks ? `${catLabel}: ${remarks}` : (blockAll ? `${catLabel}: Meeting tim` : `${catLabel}: `));
     const selectedSubs = (currentCategory === 'cuti') ? ['cuti'] : getSelectedSubs(); // e.g. ['pagi'] or ['pagi','siang']
@@ -1388,8 +1486,11 @@
 
     } else {
       const date = document.getElementById('entryDate').value;
-      const username = entryUserSel.value;
-      const rows = selectedSubs.map(slot => ({ username, date, slot, type, description: null }));
+      const usernames = (isMultiPersonCategory() && multiPickerExpanded) ? getSelectedUsers() : [entryUserSel.value];
+      const rows = [];
+      usernames.forEach(username => {
+        selectedSubs.forEach(slot => rows.push({ username, date, slot, type, description: null }));
+      });
       const { error } = await sbClient.from('schedules').insert(rows);
       if (error) { alert('Gagal menyimpan: ' + error.message); return; }
       await render();
