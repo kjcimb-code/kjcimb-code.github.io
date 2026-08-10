@@ -247,18 +247,24 @@
   }
   .modal input[type="date"]::-webkit-calendar-picker-indicator:hover{opacity:1;}
   .date-combo{
+    position:relative;
     width:100%;box-sizing:border-box;
-    background:var(--ink-2);border:1px solid var(--line);border-radius:11px;
-    overflow:hidden;
   }
   .date-combo input[type="date"]{
-    border:none !important;border-radius:0 !important;
-    border-bottom:1px solid var(--line) !important;
+    position:absolute;inset:0;
+    width:100%;height:100%;
+    opacity:0;
+    cursor:pointer;
+    z-index:2;
+    padding:0;border:none;background:transparent;
   }
-  .date-helper-text{
-    font-family:var(--sans);font-size:13px;font-weight:600;color:var(--text-0);
-    letter-spacing:.01em;padding:10px 14px;
-    text-align:center;
+  .date-display{
+    width:100%;box-sizing:border-box;
+    background:var(--ink-2);border:1px solid var(--line);border-radius:11px;
+    padding:13px 14px;
+    font-family:var(--sans);font-size:12px;font-weight:600;color:var(--text-0);
+    letter-spacing:.01em;text-align:center;
+    pointer-events:none;
   }
 
   .type-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
@@ -398,18 +404,21 @@
         <label for="entryDate">Tanggal <span class="req-star">*</span></label>
         <div class="date-combo">
           <input type="date" id="entryDate" required>
-          <div class="date-helper-text" id="entryDateHelper"></div>
+          <div class="date-display" id="entryDateHelper">Pilih tanggal</div>
         </div>
       </div>
 
       <div class="field" id="rangeDateField" style="display:none;">
         <label>Tanggal Cuti <span class="req-star">*</span></label>
-        <div class="date-combo">
-          <div style="display:flex;">
-            <input type="date" id="entryDateFrom" placeholder="Dari" style="flex:1;min-width:0;border-right:1px solid var(--line) !important;">
-            <input type="date" id="entryDateUntil" placeholder="Sampai" style="flex:1;min-width:0;">
+        <div style="display:flex;gap:8px;">
+          <div class="date-combo" style="flex:1;">
+            <input type="date" id="entryDateFrom" placeholder="Dari">
+            <div class="date-display" id="entryDateFromHelper">Dari</div>
           </div>
-          <div class="date-helper-text" id="entryDateRangeHelper"></div>
+          <div class="date-combo" style="flex:1;">
+            <input type="date" id="entryDateUntil" placeholder="Sampai">
+            <div class="date-display" id="entryDateUntilHelper">Sampai</div>
+          </div>
         </div>
       </div>
 
@@ -862,13 +871,13 @@
   const entryDateHelper = document.getElementById('entryDateHelper');
   const entryDateFromInput = document.getElementById('entryDateFrom');
   const entryDateUntilInput = document.getElementById('entryDateUntil');
-  const entryDateRangeHelper = document.getElementById('entryDateRangeHelper');
+  const entryDateFromHelper = document.getElementById('entryDateFromHelper');
+  const entryDateUntilHelper = document.getElementById('entryDateUntilHelper');
 
   function updateDateHelpers(){
-    entryDateHelper.textContent = fmtDateHelper(entryDateInput.value);
-    const fromTxt = fmtDateHelper(entryDateFromInput.value);
-    const untilTxt = fmtDateHelper(entryDateUntilInput.value);
-    entryDateRangeHelper.textContent = (fromTxt && untilTxt) ? `${fromTxt} — ${untilTxt}` : (fromTxt || untilTxt || '');
+    entryDateHelper.textContent = fmtDateHelper(entryDateInput.value) || 'Pilih tanggal';
+    entryDateFromHelper.textContent = fmtDateHelper(entryDateFromInput.value) || 'Dari';
+    entryDateUntilHelper.textContent = fmtDateHelper(entryDateUntilInput.value) || 'Sampai';
   }
   entryDateInput.addEventListener('change', updateDateHelpers);
   entryDateFromInput.addEventListener('change', updateDateHelpers);
