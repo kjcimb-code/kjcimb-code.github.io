@@ -151,6 +151,13 @@
 
   /* ================= MONTHLY VIEW ================= */
   .calendar{margin:0 20px;background:var(--ink-2);border:1px solid var(--line);border-radius:16px;overflow:hidden;}
+  .month-summary{margin:14px 20px 0;display:flex;gap:8px;}
+  .summary-item{
+    flex:1;background:var(--ink-2);border:1px solid var(--line);border-radius:12px;
+    padding:12px 8px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px;
+  }
+  .summary-num{font-family:var(--display);font-size:22px;font-weight:600;color:var(--text-0);}
+  .summary-lbl{font-family:var(--mono);font-size:9px;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em;}
   .weekdays{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--line);}
   .weekdays div{padding:9px 2px;font-family:var(--mono);font-size:9.5px;color:var(--text-2);text-transform:uppercase;letter-spacing:.04em;text-align:center;font-weight:500;}
   .grid{display:grid;grid-template-columns:repeat(7,1fr);}
@@ -231,6 +238,7 @@
     opacity:.75;
   }
   .modal input[type="date"]::-webkit-calendar-picker-indicator:hover{opacity:1;}
+  .date-helper-text{font-family:var(--mono);font-size:9.5px;color:var(--text-2);letter-spacing:.03em;margin-top:6px;}
 
   .type-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
   .type-grid button{background:var(--ink-2);border:1px solid var(--line);color:var(--text-1);padding:11px 4px;border-radius:11px;font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s ease;}
@@ -314,6 +322,8 @@
     <div class="grid" id="grid"></div>
   </div>
 
+  <div class="month-summary" id="monthSummary" style="display:none;"></div>
+
   <div class="bottom-actions">
     <button class="icon-btn" id="resetPwBtn" style="display:none;" title="Reset Password">🔑 Reset Password</button>
     <div class="bottom-row">
@@ -365,15 +375,17 @@
 
       <div class="field" id="singleDateField">
         <label for="entryDate">Tanggal <span class="req-star">*</span></label>
-        <input type="date" id="entryDate" required>
+        <input type="date" id="entryDate" required style="width:100%;box-sizing:border-box;">
+        <div class="date-helper-text" id="entryDateHelper"></div>
       </div>
 
       <div class="field" id="rangeDateField" style="display:none;">
         <label>Tanggal Cuti <span class="req-star">*</span></label>
         <div style="display:flex;gap:8px;">
-          <input type="date" id="entryDateFrom" placeholder="Dari" style="flex:1;min-width:0;">
-          <input type="date" id="entryDateUntil" placeholder="Sampai" style="flex:1;min-width:0;">
+          <input type="date" id="entryDateFrom" placeholder="Dari" style="flex:1;min-width:0;box-sizing:border-box;">
+          <input type="date" id="entryDateUntil" placeholder="Sampai" style="flex:1;min-width:0;box-sizing:border-box;">
         </div>
+        <div class="date-helper-text" id="entryDateRangeHelper"></div>
       </div>
 
       <div class="field" id="remarksField">
@@ -747,17 +759,40 @@
       if (!cell.other) div.addEventListener('click', () => openModal(dateStr));
       grid.appendChild(div);
     });
+
+    // Monthly summary: count total Visit entries this month
+    let visitCount = 0;
+    let izinCount = 0;
+    let cutiCount = 0;
+    Object.values(entriesByDate).forEach(dayEntries => {
+      dayEntries.forEach(e => {
+        if (e.slot === 'cuti') cutiCount++;
+        else if (e.type && e.type.startsWith('Visit:')) visitCount++;
+        else if (e.type && e.type.startsWith('Izin:')) izinCount++;
+      });
+    });
+    const summaryEl = document.getElementById('monthSummary');
+    if (summaryEl) {
+      summaryEl.innerHTML = `
+        <div class="summary-item"><span class="summary-num">${visitCount}</span><span class="summary-lbl">Visit</span></div>
+        <div class="summary-item"><span class="summary-num">${izinCount}</span><span class="summary-lbl">Izin</span></div>
+        <div class="summary-item"><span class="summary-num">${cutiCount}</span><span class="summary-lbl">Cuti (hari)</span></div>
+      `;
+    }
   }
 
   async function render(){
+    const monthSummaryEl = document.getElementById('monthSummary');
     if (viewMode === 'weekly') {
       weekList.style.display = 'flex';
       monthCalendar.style.display = 'none';
+      monthSummaryEl.style.display = 'none';
       viewTitle.textContent = 'Weekly Schedule';
       await renderWeekly();
     } else {
       weekList.style.display = 'none';
       monthCalendar.style.display = 'block';
+      monthSummaryEl.style.display = 'flex';
       viewTitle.textContent = 'Monthly Schedule';
       await renderMonthly();
     }
@@ -792,6 +827,30 @@
   // ============================================================
   let currentCategory = 'visit';
   let currentSub = 'pagi';
+
+  const DOW_SHORT_ID = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  function fmtDateHelper(dateStr){
+    if (!dateStr) return '';
+    const d = new Date(dateStr + 'T00:00:00');
+    if (isNaN(d)) return '';
+    return `${DOW_SHORT_ID[d.getDay()]}, ${d.getDate()} ${MONTH_NAMES[d.getMonth()].slice(0,3)} ${d.getFullYear()}`;
+  }
+
+  const entryDateInput = document.getElementById('entryDate');
+  const entryDateHelper = document.getElementById('entryDateHelper');
+  const entryDateFromInput = document.getElementById('entryDateFrom');
+  const entryDateUntilInput = document.getElementById('entryDateUntil');
+  const entryDateRangeHelper = document.getElementById('entryDateRangeHelper');
+
+  function updateDateHelpers(){
+    entryDateHelper.textContent = fmtDateHelper(entryDateInput.value);
+    const fromTxt = fmtDateHelper(entryDateFromInput.value);
+    const untilTxt = fmtDateHelper(entryDateUntilInput.value);
+    entryDateRangeHelper.textContent = (fromTxt && untilTxt) ? `${fromTxt} — ${untilTxt}` : (fromTxt || untilTxt || '');
+  }
+  entryDateInput.addEventListener('change', updateDateHelpers);
+  entryDateFromInput.addEventListener('change', updateDateHelpers);
+  entryDateUntilInput.addEventListener('change', updateDateHelpers);
 
   function updateCategoryUI(){
     if (currentCategory === 'cuti') {
@@ -870,13 +929,14 @@
   function openModal(dateStr){
     selectedDate = dateStr;
     const d = new Date(dateStr + 'T00:00:00');
-    modalTitle.textContent = `${DOW_FULL[d.getDay()]}, ${d.getDate()} ${MONTH_NAMES[d.getMonth()]}`;
+    modalTitle.textContent = `${DOW_FULL[d.getDay()]}, ${d.getDate()} ${MONTH_NAMES[d.getMonth()]} ${d.getFullYear()}`;
     modalSub.textContent = 'Ajukan cuti, visit, atau izin untuk tanggal ini.';
 
     entryForm.reset();
     document.getElementById('entryDate').value = dateStr;
     document.getElementById('entryDateFrom').value = dateStr;
     document.getElementById('entryDateUntil').value = dateStr;
+    updateDateHelpers();
     resetCategoryPicker();
     entryUserSel.value = currentUser.username;
     stopEdit();
@@ -981,6 +1041,7 @@
     document.getElementById('entryDate').value = entry.date;
     document.getElementById('entryDateFrom').value = entry.date;
     document.getElementById('entryDateUntil').value = entry.date;
+    updateDateHelpers();
 
     entryForm.querySelector('.btn-save').textContent = 'Update';
     modalSub.textContent = 'Mengedit jadwal yang sudah ada.';
@@ -1002,6 +1063,15 @@
 
   entryForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    const saveBtn = entryForm.querySelector('.btn-save');
+    if (saveBtn.disabled) return; // guard against double-submit
+    const originalBtnText = saveBtn.textContent;
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Menyimpan...';
+    saveBtn.style.opacity = '0.6';
+    saveBtn.style.cursor = 'not-allowed';
+
     const blockAll = document.getElementById('blockAllToggle').checked;
     const remarks = document.getElementById('entryType').value.trim();
 
@@ -1016,6 +1086,7 @@
       type = `${catLabel}: ${remarks}`;
     }
 
+    try {
     if (editingEntryId) {
       const username = entryUserSel.value;
       const date = document.getElementById('entryDate').value;
@@ -1070,6 +1141,12 @@
     resetCategoryPicker();
     updateBlockAllUI();
     closeModal();
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = originalBtnText;
+      saveBtn.style.opacity = '';
+      saveBtn.style.cursor = '';
+    }
   });
 
   // ============================================================
