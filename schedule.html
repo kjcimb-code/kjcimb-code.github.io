@@ -133,13 +133,13 @@
   .week-day-header .dow{font-family:var(--sans);font-size:15px;font-weight:600;color:var(--text-0);}
   .week-day-header .datestr{font-family:var(--mono);font-size:11px;color:var(--text-2);margin-top:2px;}
 
-  .week-slots{display:grid;grid-template-columns:1fr 1fr;}
-  .week-slot{padding:12px 14px;min-height:58px;}
+  .week-slots{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
+  .week-slot{padding:12px 14px;min-height:58px;min-width:0;overflow:hidden;}
   .week-slot + .week-slot{border-left:1px solid var(--line);}
   .week-slot-label{font-family:var(--mono);font-size:9.5px;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;font-weight:500;margin-bottom:8px;}
   .week-slot-empty{font-size:12px;color:var(--text-2);opacity:.55;}
-  .week-names{display:flex;flex-direction:column;gap:5px;}
-  .week-name-pill{display:flex;align-items:center;gap:6px;font-size:12px;padding:5px 9px;border-radius:8px;background:rgba(255,255,255,.05);min-width:0;}
+  .week-names{display:flex;flex-direction:column;gap:5px;min-width:0;width:100%;}
+  .week-name-pill{display:flex;align-items:center;gap:6px;font-size:12px;padding:5px 9px;border-radius:8px;background:rgba(255,255,255,.05);min-width:0;width:100%;box-sizing:border-box;}
   .week-name-pill .pill-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1;}
   .week-name-pill .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
   .week-name-pill .extra{color:var(--text-2);font-weight:400;}
@@ -281,9 +281,12 @@
   .existing-section-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;margin:12px 0 6px;}
   .existing-section-label:first-child{margin-top:0;}
   .existing-item{display:flex;align-items:center;gap:8px;background:var(--ink-2);border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-size:12.5px;margin-bottom:6px;}
-  .existing-item .who{flex:1;}
-  .existing-item button{background:none;border:none;color:var(--text-2);cursor:pointer;font-size:12px;font-family:inherit;}
-  .existing-item button:hover{color:#FCA5A5;}
+  .existing-item .who{flex:1;min-width:0;overflow-wrap:anywhere;}
+  .existing-item .item-actions{display:flex;align-items:center;gap:4px;flex-shrink:0;}
+  .existing-item button{background:none;border:1px solid transparent;color:var(--text-2);cursor:pointer;font-size:13px;font-family:inherit;padding:7px 9px;border-radius:8px;line-height:1;}
+  .existing-item button:active{background:rgba(255,255,255,.08);}
+  .existing-item .editEntry:hover{color:#93C5FD;border-color:rgba(147,197,253,.3);}
+  .existing-item .delEntry:hover{color:#FCA5A5;border-color:rgba(252,165,165,.3);}
   .error{display:none;margin-top:12px;padding:10px 12px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35);color:#FCA5A5;font-size:13px;border-radius:8px;}
   .success{display:none;margin-top:12px;padding:10px 12px;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.35);color:#86EFAC;font-size:13px;border-radius:8px;}
 </style>
@@ -665,7 +668,7 @@
 
   function stripCategoryPrefix(type){
     if (!type) return '';
-    const m = type.match(/^(?:Visit|Izin):\s*(.*)$/);
+    const m = type.match(/^(?:Visit|Cabang|Izin):\s*(.*)$/);
     return m ? m[1] : type;
   }
 
@@ -1030,8 +1033,10 @@
           <div class="existing-item">
             ${avatarHtml}
             <span class="who">${u.display_name} — ${label}</span>
-            <button data-id="${e.id}" class="editEntry" title="Edit">✏️</button>
-            <button data-id="${e.id}" class="delEntry" title="Hapus">🗑️</button>
+            <div class="item-actions">
+              <button data-id="${e.id}" class="editEntry" title="Edit">✏️</button>
+              <button data-id="${e.id}" class="delEntry" title="Hapus">🗑️</button>
+            </div>
           </div>`;
       }
 
