@@ -134,7 +134,8 @@
   .week-day-header .datestr{font-family:var(--mono);font-size:11px;color:var(--text-2);margin-top:2px;}
 
   .week-slots{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
-  .week-slot{padding:12px 14px;min-height:58px;min-width:0;overflow:hidden;}
+  .week-slot{padding:12px 14px;min-height:58px;min-width:0;overflow:hidden;cursor:pointer;transition:background .15s ease;}
+  .week-slot:hover{background:rgba(255,255,255,.03);}
   .week-slot + .week-slot{border-left:1px solid var(--line);}
   .week-slot-label{font-family:var(--mono);font-size:9.5px;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;font-weight:500;margin-bottom:8px;}
   .week-slot-empty{font-size:12px;color:var(--text-2);opacity:.55;}
@@ -735,18 +736,28 @@
           </div>
         </div>
         <div class="week-slots">
-          <div class="week-slot">
+          <div class="week-slot" data-slot="pagi">
             <div class="week-slot-label">Pagi</div>
             ${pagiHtml}
           </div>
-          <div class="week-slot">
+          <div class="week-slot" data-slot="siang">
             <div class="week-slot-label">Siang</div>
             ${siangHtml}
           </div>
         </div>
         ${extraHtml}
       `;
-      div.addEventListener('click', () => openModal(dateStr));
+      div.querySelector('.week-day-header').addEventListener('click', () => openModal(dateStr));
+      div.querySelectorAll('.week-slot').forEach(slotEl => {
+        slotEl.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openModal(dateStr, slotEl.dataset.slot);
+        });
+      });
+      if (extraHtml) {
+        const extraRow = div.querySelector('.week-extra-row');
+        if (extraRow) extraRow.addEventListener('click', (e) => { e.stopPropagation(); openModal(dateStr); });
+      }
       weekList.appendChild(div);
     }
   }
@@ -962,12 +973,13 @@
     }
   });
 
-  function resetCategoryPicker(){
+  function resetCategoryPicker(presetSub){
     currentCategory = 'visit';
     categoryGrid.querySelectorAll('button').forEach(b => b.classList.remove('active'));
     categoryGrid.querySelector('button[data-cat="visit"]').classList.add('active');
+    const sub = (presetSub === 'siang') ? 'siang' : 'pagi';
     subSlotGrid.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-    subSlotGrid.querySelector('button[data-sub="pagi"]').classList.add('active');
+    subSlotGrid.querySelector(`button[data-sub="${sub}"]`).classList.add('active');
     updateCategoryUI();
   }
 
@@ -996,7 +1008,7 @@
   // ============================================================
   // Modal: add / view / edit entries
   // ============================================================
-  function openModal(dateStr){
+  function openModal(dateStr, presetSub){
     selectedDate = dateStr;
     const d = new Date(dateStr + 'T00:00:00');
     modalTitle.textContent = `${DOW_FULL[d.getDay()]}, ${d.getDate()} ${MONTH_NAMES[d.getMonth()]} ${d.getFullYear()}`;
@@ -1007,7 +1019,7 @@
     document.getElementById('entryDateFrom').value = dateStr;
     document.getElementById('entryDateUntil').value = dateStr;
     updateDateHelpers();
-    resetCategoryPicker();
+    resetCategoryPicker(presetSub);
     entryUserSel.value = currentUser.username;
     stopEdit();
 
@@ -1055,6 +1067,11 @@
       existingList.querySelectorAll('.delEntry').forEach(btn => {
         btn.addEventListener('click', async () => {
           const id = btn.getAttribute('data-id');
+          const entry = existing.find(x => String(x.id) === String(id));
+          const who = entry ? userMeta(entry.username).display_name : '';
+          const label = entry ? (entry.type || 'Cuti') : '';
+          const ok = confirm(`Hapus jadwal ini?\n\n${who} — ${label}\n\nTindakan ini tidak bisa dibatalkan.`);
+          if (!ok) return;
           await sbClient.from('schedules').delete().eq('id', id);
           await render();
           openModal(dateStr);
@@ -1144,7 +1161,10 @@
     saveBtn.style.cursor = 'not-allowed';
 
     const blockAll = document.getElementById('blockAllToggle').checked;
-    const remarks = document.getElementById('entryType').value.trim();
+    function capitalizeAfterSpaces(str){
+      return str.replace(/(^|\s)([a-z])/g, (m, sep, ch) => sep + ch.toUpperCase());
+    }
+    const remarks = capitalizeAfterSpaces(document.getElementById('entryType').value.trim());
 
     // Build type + selected sub-slots based on category
     const CAT_LABEL_MAP = { visit:'Visit', cabang:'Cabang', izin:'Izin' };
