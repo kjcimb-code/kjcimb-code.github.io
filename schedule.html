@@ -38,15 +38,17 @@
   /* ---------- Top header ---------- */
   .topbar{
     background:linear-gradient(120deg, var(--maroon-1), var(--maroon-2));
-    padding:16px 20px;
+    padding:clamp(12px, 4vw, 18px) clamp(18px, 5vw, 26px);
     display:flex;align-items:center;justify-content:space-between;gap:10px;
     border-bottom:1px solid rgba(255,255,255,.14);
     box-shadow:0 6px 20px rgba(0,0,0,.35);
+    max-width:460px;
+    margin:0 auto;
   }
-  .topbar .logo{height:26px;width:auto;flex-shrink:0;max-width:42%;}
+  .topbar .logo{height:clamp(34px, 9vw, 44px);width:auto;flex-shrink:0;max-width:44%;}
   .hdr-right{display:flex;align-items:center;gap:9px;flex-shrink:0;}
-  .hdr-div{font-family:var(--sans);font-size:13px;font-weight:600;color:rgba(255,255,255,.92);white-space:nowrap;letter-spacing:.01em;}
-  .octo{width:26px;height:26px;border-radius:7px;overflow:hidden;flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,.35);}
+  .hdr-div{font-family:var(--sans);font-size:clamp(13px, 3.2vw, 16px);font-weight:600;color:rgba(255,255,255,.92);white-space:nowrap;letter-spacing:.01em;}
+  .octo{width:clamp(30px, 7.5vw, 38px);height:clamp(30px, 7.5vw, 38px);border-radius:8px;overflow:hidden;flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,.35);}
   .octo img{width:100%;height:100%;object-fit:cover;display:block;}
 
   /* ---------- Welcome ---------- */
@@ -134,7 +136,8 @@
   .week-slot-label{font-family:var(--mono);font-size:9.5px;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;font-weight:500;margin-bottom:8px;}
   .week-slot-empty{font-size:12px;color:var(--text-2);opacity:.55;}
   .week-names{display:flex;flex-direction:column;gap:5px;}
-  .week-name-pill{display:flex;align-items:center;gap:6px;font-size:12px;padding:5px 9px;border-radius:8px;background:rgba(255,255,255,.05);}
+  .week-name-pill{display:flex;align-items:center;gap:6px;font-size:12px;padding:5px 9px;border-radius:8px;background:rgba(255,255,255,.05);min-width:0;}
+  .week-name-pill .pill-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1;}
   .week-name-pill .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
   .week-name-pill .extra{color:var(--text-2);font-weight:400;}
 
@@ -233,8 +236,10 @@
   .btn-save{background:linear-gradient(120deg, var(--maroon-1), var(--maroon-btn));color:#fff;}
   .btn-cancel{background:none;border:1px solid var(--line) !important;color:var(--text-1);}
   .modal-close{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--text-2);font-size:18px;cursor:pointer;}
-  .existing-list{margin-top:2px;display:flex;flex-direction:column;gap:6px;}
-  .existing-item{display:flex;align-items:center;gap:8px;background:var(--ink-2);border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-size:12.5px;}
+  .existing-list{margin-top:2px;display:flex;flex-direction:column;}
+  .existing-section-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;margin:12px 0 6px;}
+  .existing-section-label:first-child{margin-top:0;}
+  .existing-item{display:flex;align-items:center;gap:8px;background:var(--ink-2);border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-size:12.5px;margin-bottom:6px;}
   .existing-item .who{flex:1;}
   .existing-item button{background:none;border:none;color:var(--text-2);cursor:pointer;font-size:12px;font-family:inherit;}
   .existing-item button:hover{color:#FCA5A5;}
@@ -576,10 +581,17 @@
     }
   }
 
+  function stripCategoryPrefix(type){
+    if (!type) return '';
+    const m = type.match(/^(?:Visit|Izin):\s*(.*)$/);
+    return m ? m[1] : type;
+  }
+
   function nameChip(e){
     const u = userMeta(e.username);
-    const extra = e.type ? `<span class="extra">· ${e.type}</span>` : '';
-    return `<div class="week-name-pill"><span class="dot" style="background:${u.color}"></span>${u.display_name}${extra}</div>`;
+    const remarks = stripCategoryPrefix(e.type);
+    const label = remarks ? `${u.display_name} - ${remarks}` : u.display_name;
+    return `<div class="week-name-pill"><span class="dot" style="background:${u.color}"></span><span class="pill-text">${label}</span></div>`;
   }
 
   // ============================================================
@@ -835,10 +847,12 @@
     if (existing.length === 0) {
       existingList.innerHTML = `<div style="font-size:12.5px;color:var(--text-2);">Belum ada jadwal di tanggal ini.</div>`;
     } else {
-      existingList.innerHTML = existing.map(e => {
+      const bySlot = { pagi: [], siang: [], cuti: [] };
+      existing.forEach(e => { (bySlot[e.slot] || bySlot.cuti).push(e); });
+
+      function entryRow(e){
         const u = userMeta(e.username);
-        const canEdit = true;
-        const label = e.type ? `${SLOT_LABEL[e.slot]} · ${e.type}` : SLOT_LABEL[e.slot];
+        const label = e.type || 'Cuti';
         const photo = TEAM_PHOTOS[e.username];
         const avatarHtml = photo
           ? `<span class="avatar" style="width:22px;height:22px;overflow:hidden;padding:0;"><img src="${photo.photo}" alt="${photo.name}" style="width:100%;height:100%;object-fit:cover;object-position:center 15%;"></span>`
@@ -847,12 +861,23 @@
           <div class="existing-item">
             ${avatarHtml}
             <span class="who">${u.display_name} — ${label}</span>
-            ${canEdit ? `
-              <button data-id="${e.id}" class="editEntry" title="Edit">✏️</button>
-              <button data-id="${e.id}" class="delEntry" title="Hapus">🗑️</button>
-            ` : ''}
+            <button data-id="${e.id}" class="editEntry" title="Edit">✏️</button>
+            <button data-id="${e.id}" class="delEntry" title="Hapus">🗑️</button>
           </div>`;
-      }).join('');
+      }
+
+      let sectionsHtml = '';
+      if (bySlot.pagi.length) {
+        sectionsHtml += `<div class="existing-section-label">Pagi</div>${bySlot.pagi.map(entryRow).join('')}`;
+      }
+      if (bySlot.siang.length) {
+        sectionsHtml += `<div class="existing-section-label">Siang</div>${bySlot.siang.map(entryRow).join('')}`;
+      }
+      if (bySlot.cuti.length) {
+        sectionsHtml += `<div class="existing-section-label">Cuti</div>${bySlot.cuti.map(entryRow).join('')}`;
+      }
+      existingList.innerHTML = sectionsHtml;
+
       existingList.querySelectorAll('.delEntry').forEach(btn => {
         btn.addEventListener('click', async () => {
           const id = btn.getAttribute('data-id');
@@ -1140,24 +1165,69 @@
     const reportHtml = `<!DOCTYPE html>
 <html lang="id"><head><meta charset="UTF-8"><title>Laporan Jadwal Treasury EBB Sales</title>
 <style>
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#1a1a1a;margin:0;padding:32px;background:#fff;}
-  .rp-header{border-bottom:3px solid #790008;padding-bottom:16px;margin-bottom:24px;}
-  .rp-header h1{font-size:20px;margin:0 0 4px;color:#790008;}
-  .rp-header .rp-sub{font-size:13px;color:#555;}
-  .rp-day{margin-bottom:20px;page-break-inside:avoid;}
-  .rp-day-title{font-size:14px;font-weight:600;background:#f4e9e9;color:#790008;padding:8px 12px;border-radius:6px 6px 0 0;}
-  .rp-table{width:100%;border-collapse:collapse;font-size:13px;}
-  .rp-table th{text-align:left;background:#fafafa;padding:8px 12px;border-bottom:1px solid #ddd;font-size:11px;text-transform:uppercase;color:#777;}
+  *{box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#1a1a1a;margin:0;padding:0;background:#fff;}
+  .rp-page{padding:0 0 28px;}
+  .rp-banner{
+    background:linear-gradient(120deg,#8A0009,#5C0006);
+    padding:16px 32px;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+  }
+  .rp-banner .rp-logo-box{
+    background:#fff;border-radius:6px;padding:6px 10px;display:flex;align-items:center;
+  }
+  .rp-banner .rp-logo-box svg{height:22px;width:auto;display:block;}
+  .rp-banner .rp-org{font-size:12px;font-weight:600;color:rgba(255,255,255,.92);text-align:right;}
+  .rp-body{padding:26px 32px 0;}
+  .rp-title-row{border-bottom:2px solid #790008;padding-bottom:14px;margin-bottom:22px;}
+  .rp-title-row h1{font-size:19px;margin:0 0 4px;color:#790008;}
+  .rp-title-row .rp-sub{font-size:12.5px;color:#666;}
+  .rp-day{margin-bottom:18px;page-break-inside:avoid;}
+  .rp-day-title{font-size:13.5px;font-weight:600;background:#f4e9e9;color:#790008;padding:8px 12px;border-radius:6px 6px 0 0;}
+  .rp-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  .rp-table th{text-align:left;background:#fafafa;padding:8px 12px;border-bottom:1px solid #ddd;font-size:10.5px;text-transform:uppercase;color:#777;}
   .rp-table td{padding:8px 12px;border-bottom:1px solid #eee;}
   .rp-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;}
   .rp-empty{color:#999;font-style:italic;}
-  .rp-footer{margin-top:24px;font-size:11px;color:#999;text-align:center;}
-  @media print{ body{padding:12px;} }
+  .rp-footer-banner{
+    background:linear-gradient(120deg,#8A0009,#5C0006);
+    padding:14px 32px;
+    margin-top:26px;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+  }
+  .rp-footer-banner .rp-fleft{font-size:11px;color:rgba(255,255,255,.85);font-weight:600;}
+  .rp-footer-banner .rp-fright{font-size:10px;color:rgba(255,255,255,.6);}
+  @media print{
+    .rp-banner, .rp-footer-banner{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .rp-body{padding:22px 24px 0;}
+    .rp-banner, .rp-footer-banner{padding-left:24px;padding-right:24px;}
+  }
 </style></head>
 <body>
-  <div class="rp-header"><h1>Laporan Jadwal — Treasury EBB Sales</h1><div class="rp-sub">Periode: ${startLbl} – ${endLbl}</div></div>
-  ${daysHtml}
-  <div class="rp-footer">Dibuat otomatis dari kevinjonathan.site — ${new Date().toLocaleString('id-ID')}</div>
+  <div class="rp-page">
+    <div class="rp-banner">
+      <div class="rp-logo-box"><svg viewBox="0 0 1084 166" xmlns="http://www.w3.org/2000/svg">
+  <rect width="165.25" height="165.25" fill="#fff"/>
+  <path fill="#790008" d="M22.01 31.02C34.87 48.24 47.92 65.31 60.84 82.48 48.03 99.72 34.9 116.72 22.07 133.95c29.33.12 58.65 0 87.98.06 13.2-17.08 25.92-34.53 39.21-51.55l-.25.01C136.06 65.3 123.05 48.17 110.12 31 80.75 31.02 51.38 30.97 22.01 31.02z"/>
+  <path fill="#fff" d="M22.01 31.02c29.37-.05 58.74 0 88.11-.02C123.05 48.17 136.06 65.3 149.01 82.47 119.62 82.53 90.23 82.5 60.84 82.48 47.92 65.31 34.87 48.24 22.01 31.02z"/>
+  <path fill="#ed3024" d="M60.84 82.48c29.39.02 58.78.05 88.17-.01l.25-.01C135.97 99.48 123.25 116.93 110.05 134.01 80.72 133.95 51.4 134.07 22.07 133.95 34.9 116.72 48.03 99.72 60.84 82.48z"/>
+  <path fill="#fff" d="M221.25 48.29C231.09 36.02 246.22 28.14 261.94 27.25c14.89-1.15 30.04 4.08 41.23 13.93-5.05 5.09-10.11 10.15-15.2 15.2-8.61-6.98-20.57-9.73-31.29-6.67-11.96 3.14-21.56 13.36-24.23 25.4-3.26 13.07 1.45 27.92 12.2 36.2 12.28 10.05 31.33 9.54 43.4-.61 5.06 5.07 10.23 10.05 15.16 15.26-9.99 8.68-22.98 13.9-36.24 14.06-16.71.46-33.45-6.89-44.36-19.56-7.63-8.69-12.49-19.79-13.58-31.31-1.53-14.52 2.94-29.57 12.22-40.86zM323.25 30.25c7.25 0 14.49.01 21.74-.01.02 35.59 0 71.17.01 106.76-7.25 0-14.5.01-21.75-.01.01-35.58 0-71.16 0-106.74zM371 30c7.05-.02 14.1.04 21.16-.03 12.57 22.61 24.82 45.42 37.55 67.95C442.05 75.24 454.57 52.67 466.91 30c7.11.02 14.22 0 21.34.01-.04 35.6.07 71.19-.06 106.79-7.24-.11-14.47.02-21.71-.07.05-21.07 0-42.13.03-63.19C454.04 94.82 442.16 116.47 429.47 137.62 417.35 116.19 404.9 94.95 392.73 73.55c.04 21.07.01 42.13.02 63.2-7.25 0-14.49-.01-21.74.01-.03-35.59 0-71.17-.01-106.76zM513.01 30.24c14.68.02 29.35 0 44.03.01 6.79.13 13.76 1.56 19.56 5.25 14.01 8.56 17.23 30.79 5.53 42.57-1.5 1.6-3.28 2.92-5.05 4.2 6.67 3.51 11.79 10.02 13.03 17.52 1.81 10.12-.5 21.74-8.35 28.88-6.26 5.99-15.16 8.15-23.6 8.26-15.05.16-30.11.03-45.16.07.01-35.59-.02-71.17.01-106.76zm21.74 19.51c-.01 7.75 0 15.5 0 23.25 6.4-.02 12.81.03 19.22-.01 3.73-.07 7.76-.85 10.49-3.6 3.88-4.12 3.98-11.07.53-15.49-2.65-3.19-7.03-4.18-11-4.16-6.42.01-12.83.01-19.24.01zm0 42.76c0 8.24-.01 16.49 0 24.74 7.07.01 14.14-.01 21.21.02 3.31.1 6.79-.83 9.27-3.12 4.94-4.76 5.03-13.63-.01-18.35-2.72-2.58-6.62-3.25-10.23-3.3-6.75-.01-13.5 0-20.24.01z"/>
+  <path fill="#fff" d="M635.24 30.01c3.63.04 7.26-.13 10.89.05 1.66 1.29 2.59 3.31 3.92 4.93C669.97 62.2 689.73 89.53 709.76 116.66c-.02-28.89 0-57.77-.01-86.66 3.75 0 7.5 0 11.25.01 0 65.5 0 71 0 106.49l-11.36.02C688.6 107.58 667.57 78.63 646.5 49.71c0 28.93 0 57.86 0 86.78-3.78-.01-7.56.08-11.32-.08.17-35.46.03-70.93.06-106.4zM749 30c3.75 0 7.49 0 11.25.01 0 35.5-.01 70.99 0 106.48-3.75.03-7.5.01-10.99.02-.03-35.5 0-71 0-106.51zM777.57 137.22c12.97-35.51 25.95-71.02 39.01-106.49 5.2.05 10.39.01 15.59.02 12.37 35.25 24.72 70.52 37.13 105.75-4.42-.01-8.84.01-13.25-.01-3.29-9.43-6.63-18.85-10.02-28.25-14.69.01-29.37.01-44.05.01-3.28 9.65-6.43 19.36-9.72 28.97-4.9-.04-9.8.02-14.69-.01zm28.91-41.74c11.69.05 23.39.01 35.08.02-5.86-17.08-11.64-34.19-17.4-51.3-5.87 17.1-11.86 34.16-17.68 51.28zM894.27 48.18c8.88-9.14 20.76-15.71 33.57-16.89 15.79-1.59 31.51 4.27 44.28 13.26-2.49 3.23-5.11 6.35-7.58 9.59-4.25-6.05-11.78-8.31-18.57-10.14-11.81-3.25-25.21-1.49-35.18 5.84-8.99 6.8-15.03 17.13-17.42 28.08-1.35 11.32-.23 23.68 6.49 33.26 2.31 3.62 6.01 5.95 9.14 8.76 6.68 5.45 15.44 7.92 23.98 7.84 10.51.1 20.91-2.59 30.52-6.72.01-10.94.04-21.88-.03-32.82-8.33.01-16.66.01-24.99 0 0-3.32 0-6.64-.01-9.96 11.83-.07 23.66 0 35.5-.04.02 16.92 0 33.83.01 50.75-11.29 6.3-24.23 8.94-36.97 10.21-13.49.28-27.58-3.18-38.08-12-10.26-8.43-16.25-21.26-18.01-34.26-1.35-15.82 2.67-32.67 13.33-44.77zM992.04 137.11c13.03-35.43 26-70.88 38.93-106.35 5.2-.03 10.4.03 15.61-.05 11.95 33.65 23.63 67.4 35.54 101.07.56 1.51.87 3.09 1 4.71-4.17.02-8.34 0-12.51.02-3.39-9.4-6.69-18.84-10.03-28.25-14.74-.02-29.48-.01-44.21.03-3.16 9.67-6.44 19.3-9.62 28.96-4.9-.03-9.8.16-14.69-.14zm46.54-92.84c-5.8 17.11-11.85 34.13-17.6 51.26 11.65-.06 23.31-.02 34.96-.02-5.67-17.12-11.55-34.17-17.36-51.24z"/>
+</svg></div>
+      <div class="rp-org">Treasury EBB Sales<br><span style="font-weight:400;opacity:.8;font-size:10.5px;">Treasury &amp; Financial Institutions</span></div>
+    </div>
+    <div class="rp-body">
+      <div class="rp-title-row">
+        <h1>Laporan Jadwal Tim</h1>
+        <div class="rp-sub">Periode: ${startLbl} – ${endLbl}</div>
+      </div>
+      ${daysHtml}
+    </div>
+    <div class="rp-footer-banner">
+      <div class="rp-fleft">CIMB NIAGA · Treasury EBB Sales</div>
+      <div class="rp-fright">Dibuat otomatis dari kevinjonathan.site — ${new Date().toLocaleString('id-ID')}</div>
+    </div>
+  </div>
   <script>window.onload = () => setTimeout(() => window.print(), 300);<\/script>
 </body></html>`;
 
