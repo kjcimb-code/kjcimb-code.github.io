@@ -208,7 +208,7 @@ tr.new-ccy td:first-child{color:var(--amber)}
 
     <div class="card">
       <div class="card-title">Rate saat ini</div>
-      <div class="card-sub">Rate yang sedang aktif dipakai fitur kalkulator di Octo Smart.</div>
+      <div class="card-sub">Rate yang sedang aktif dipakai fitur kalkulator.</div>
       <div class="updated-box" id="ratesMeta">Last updated: —</div>
 
       <div class="preview-subtitle">Currency (Y) — Deposit Rate</div>
@@ -316,14 +316,11 @@ USD1
 
     <div class="card">
       <div class="card-title">Paste kalender hari libur</div>
-      <div class="card-sub">Copy kolom CCY / Date / Holiday dari spreadsheet (format tanggal bebas, mis. "Thursday, January 1, 2026"), lalu paste di bawah. Kolom CCY diabaikan — semua baris tetap diproses.</div>
-      <textarea id="holPasteBox" placeholder="CCY
-DATE
+      <div class="card-sub">Paste dua kolom (Date / Holiday) atau tiga kolom (CCY / Date / Holiday) langsung dari spreadsheet — format tanggal bebas, mis. "Thursday, January 1, 2026". Kolom CCY (kalau ada) diabaikan.</div>
+      <textarea id="holPasteBox" placeholder="DATE
 HOLIDAY
-IDR
 Thursday, January 1, 2026
 New Year's Day
-IDR
 Friday, January 16, 2026
 Isra Mihraj Nabi Muhammad
 ..."></textarea>
@@ -507,7 +504,7 @@ async function saveRates(){
     dismissPreview();
     document.getElementById('pasteBox').value = '';
     document.getElementById('parseNotice').innerHTML =
-      '<div class="notice ok"><span class="ic">✓</span><div><b>Tersimpan.</b> Rate baru langsung berlaku untuk fitur kalkulator di Octo Smart.</div></div>';
+      '<div class="notice ok"><span class="ic">✓</span><div><b>Tersimpan.</b> Rate baru langsung berlaku untuk kalkulator.</div></div>';
     setMeta('ratesMeta', nowStr());
   } catch(err) {
     document.getElementById('parseNotice').innerHTML =
@@ -685,17 +682,21 @@ function parseHolPaste(){
     else tokens.push(line);
   });
 
+  // Auto-detect the paste shape: 3 columns (CCY / Date / Holiday) or 2 columns (Date / Holiday).
   let i = 0;
-  if(tokens.length>=3 && tokens[0].toUpperCase()==='CCY' && tokens[1].toUpperCase()==='DATE' && tokens[2].toUpperCase()==='HOLIDAY'){
-    i = 3; // skip header row
+  let groupSize = 2; // default: Date, Holiday
+  if (tokens.length>=3 && tokens[0].toUpperCase()==='CCY' && tokens[1].toUpperCase()==='DATE' && tokens[2].toUpperCase()==='HOLIDAY') {
+    groupSize = 3; i = 3; // skip CCY/Date/Holiday header
+  } else if (tokens.length>=2 && tokens[0].toUpperCase()==='DATE' && tokens[1].toUpperCase()==='HOLIDAY') {
+    groupSize = 2; i = 2; // skip Date/Holiday header
   }
 
   parsedHolidays = [];
   let skipped = 0;
-  while(i+2 < tokens.length){
-    const dateStr = tokens[i+1]; // tokens[i] = CCY, ignored on purpose
-    const desc = tokens[i+2];
-    i += 3;
+  while(i + (groupSize-1) < tokens.length){
+    const dateStr = (groupSize===3) ? tokens[i+1] : tokens[i];   // skip CCY token when present
+    const desc    = (groupSize===3) ? tokens[i+2] : tokens[i+1];
+    i += groupSize;
     const d = new Date(dateStr);
     if(isNaN(d.getTime())){ skipped++; continue; }
     const iso = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
@@ -704,7 +705,7 @@ function parseHolPaste(){
   parsedHolidays.sort((a,b)=>a.date.localeCompare(b.date));
 
   const years = [...new Set(parsedHolidays.map(h=>h.date.slice(0,4)))];
-  let notice = `<div class="notice ok"><span class="ic">✓</span><div><b>Parsed ${parsedHolidays.length} hari libur</b> (tahun ${years.join(', ')}). Kolom CCY diabaikan.</div></div>`;
+  let notice = `<div class="notice ok"><span class="ic">✓</span><div><b>Parsed ${parsedHolidays.length} hari libur</b> (tahun ${years.join(', ')}).</div></div>`;
   if(skipped) notice += `<div class="notice warn"><span class="ic">⚠</span><div>${skipped} baris tidak terbaca (format tanggal tidak dikenali) dan dilewati.</div></div>`;
   notice += `<div class="notice warn"><span class="ic">ℹ</span><div>Semua entri baru ditandai <b>Libur Nasional</b> secara default — tandai ulang manual sebagai Cuti Bersama bila perlu, setelah disimpan.</div></div>`;
   document.getElementById('holParseNotice').innerHTML = notice;
