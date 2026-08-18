@@ -95,6 +95,17 @@ th:first-child,td:first-child{text-align:left}
 td{padding:7px 6px;border-bottom:1px solid var(--line);font-family:var(--mono);color:var(--text-0);text-align:right;white-space:nowrap}
 td:first-child{font-family:var(--sans);font-weight:600;color:var(--text-0)}
 tr:last-child td{border-bottom:none}
+td.rate-changed{background:rgba(251,191,36,.22);color:#FFFFFF;font-weight:700;border-radius:4px;}
+td.rate-changed .delta{font-family:var(--mono);font-size:9.5px;font-weight:700;display:block;margin-top:1px;}
+td.rate-changed.up .delta{color:#34D399}
+td.rate-changed.down .delta{color:#FCA5A5}
+.summary-list{list-style:none;padding:0;margin:0;font-family:var(--sans);font-size:12.5px;line-height:1.9;}
+.summary-list li{padding:4px 0;border-bottom:1px solid var(--line);}
+.summary-list li:last-child{border-bottom:none}
+.summary-list b{color:var(--text-0)}
+.summary-up{color:#34D399;font-weight:700}
+.summary-down{color:#FCA5A5;font-weight:700}
+.summary-mixed{color:var(--amber);font-weight:700}
 tr.new-ccy td:first-child{color:var(--amber)}
 .preview-subtitle{font-family:var(--sans);font-size:12.5px;font-weight:700;color:var(--text-0)}
 .table-scroll{overflow-x:auto}
@@ -278,6 +289,8 @@ USD1
         </table>
       </div>
 
+      <div id="changeSummary" style="margin-top:16px"></div>
+
       <div class="btn-row">
         <button class="btn btn-ghost" onclick="dismissPreview()">Batal</button>
         <button class="btn btn-primary" onclick="saveRates()">Save all changes</button>
@@ -389,7 +402,6 @@ JPY1\t0.98%\t0.98%\t0.98%\t0.98%\t1.06%\t1.11%\t1.15%\t1.19%\t1.24%\t1.44%
 NZD1\t2.53%\t2.50%\t2.50%\t2.63%\t2.68%\t2.73%\t2.78%\t2.83%\t2.87%\t3.13%
 SGD1\t1.28%\t1.28%\t1.28%\t1.27%\t1.28%\t1.29%\t1.30%\t1.31%\t1.32%\t1.42%`;
 
-const KNOWN_CCY = ['IDR','USD','AUD','EUR','GBP','NZD','SGD'];
 const TENOR_COUNT = 10;
 let parsedDeposit = null, parsedOption = null;
 
@@ -399,15 +411,48 @@ function clearPaste(){
 }
 
 const TENORS = ['1','7','14','30','60','90','120','150','180','360'];
-function renderRateTable(codes, data, headEl, bodyEl, newCodes){
-  newCodes = newCodes || [];
+// Compare each parsed cell against the currently-saved rate for that currency/tenor.
+// Cells that changed get a yellow highlight plus an up/down arrow and delta.
+function renderRateTable(codes, data, oldData, headEl, bodyEl){
   headEl.innerHTML = '<th>Currency</th>' + TENORS.map(t=>`<th>${t}d</th>`).join('');
   bodyEl.innerHTML = codes.sort().map(c=>{
     const v = data[c];
-    const cls = newCodes.includes(c) ? ' class="new-ccy"' : '';
-    const tag = newCodes.includes(c) ? ' <span style="color:#FBBF24;font-weight:400;font-size:10px">(baru)</span>' : '';
-    return `<tr${cls}><td>${c}${tag}</td>` + v.map(x=>`<td>${x.toFixed(2)}%</td>`).join('') + `</tr>`;
+    const old = oldData ? oldData[c] : null;
+    return `<tr><td>${c}</td>` + v.map((x,idx)=>{
+      const prev = (old && old[idx] !== undefined) ? Number(old[idx]) : null;
+      if (prev === null) return `<td>${x.toFixed(2)}%</td>`;
+      const delta = x - prev;
+      if (Math.abs(delta) < 0.005) return `<td>${x.toFixed(2)}%</td>`;
+      const dir = delta > 0 ? 'up' : 'down';
+      const arrow = delta > 0 ? '▲' : '▼';
+      return `<td class="rate-changed ${dir}">${x.toFixed(2)}%<span class="delta">${arrow} ${Math.abs(delta).toFixed(2)}</span></td>`;
+    }).join('') + `</tr>`;
   }).join('');
+}
+
+// Builds the "Kesimpulan" summary — per currency, whether it moved up, down, or mixed.
+function buildChangeSummary(codes, data, oldData, label){
+  const lines = [];
+  codes.sort().forEach(c=>{
+    const v = data[c];
+    const old = oldData ? oldData[c] : null;
+    if (!old){ lines.push(`<li><b>${c}</b> (${label}): <span class="summary-mixed">currency baru</span> — belum ada data sebelumnya untuk dibandingkan.</li>`); return; }
+    let upCount=0, downCount=0, sumUp=0, sumDown=0;
+    v.forEach((x,idx)=>{
+      const prev = old[idx] !== undefined ? Number(old[idx]) : null;
+      if (prev === null) return;
+      const delta = x - prev;
+      if (delta > 0.005){ upCount++; sumUp += delta; }
+      else if (delta < -0.005){ downCount++; sumDown += delta; }
+    });
+    if (!upCount && !downCount) return; // unchanged, skip
+    let desc;
+    if (upCount && !downCount) desc = `<span class="summary-up">naik</span> di ${upCount} tenor (rata-rata +${(sumUp/upCount).toFixed(2)} pts)`;
+    else if (downCount && !upCount) desc = `<span class="summary-down">turun</span> di ${downCount} tenor (rata-rata ${(sumDown/downCount).toFixed(2)} pts)`;
+    else desc = `<span class="summary-mixed">campuran</span> — naik di ${upCount} tenor, turun di ${downCount} tenor`;
+    lines.push(`<li><b>${c}</b> (${label}): ${desc}</li>`);
+  });
+  return lines;
 }
 
 function parsePaste(){
@@ -446,18 +491,20 @@ function parsePaste(){
 
   const depCodes = Object.keys(parsedDeposit);
   const optCodes = Object.keys(parsedOption);
-  const newCodes = [...new Set([...depCodes,...optCodes])].filter(c=>!KNOWN_CCY.includes(c));
-  lastNewCodes = newCodes;
 
-  let notice = `<div class="notice ok"><span class="ic">✓</span><div><b>Parsed ${depCodes.length} currency untuk deposit rate, ${optCodes.length} untuk depo rate option.</b><br>`+
-    `${KNOWN_CCY.filter(c=>depCodes.includes(c)).join(', ')} cocok dengan currency yang sudah dipakai fitur.</div></div>`;
-  if(newCodes.length){
-    notice += `<div class="notice warn"><span class="ic">⚠</span><div><b>${newCodes.join(', ')} currency baru</b> — belum dipakai di fitur kalkulator manapun. Tetap disimpan, tapi tidak akan mempengaruhi pricing sampai ditambahkan secara terpisah ke fitur.</div></div>`;
-  }
-  document.getElementById('parseNotice').innerHTML = notice;
+  document.getElementById('parseNotice').innerHTML =
+    `<div class="notice ok"><span class="ic">✓</span><div><b>Parsed ${depCodes.length} currency untuk deposit rate, ${optCodes.length} untuk depo rate option.</b> Sel yang disorot kuning di bawah adalah rate yang berubah dari data tersimpan.</div></div>`;
 
-  renderRateTable(depCodes, parsedDeposit, document.getElementById('previewHeadDep'), document.getElementById('previewRowsDep'), newCodes);
-  renderRateTable(optCodes, parsedOption, document.getElementById('previewHeadOpt'), document.getElementById('previewRowsOpt'), newCodes);
+  renderRateTable(depCodes, parsedDeposit, savedDeposit, document.getElementById('previewHeadDep'), document.getElementById('previewRowsDep'));
+  renderRateTable(optCodes, parsedOption, savedOption, document.getElementById('previewHeadOpt'), document.getElementById('previewRowsOpt'));
+
+  const summaryLines = [
+    ...buildChangeSummary(depCodes, parsedDeposit, savedDeposit, 'Deposit'),
+    ...buildChangeSummary(optCodes, parsedOption, savedOption, 'Option'),
+  ];
+  document.getElementById('changeSummary').innerHTML = summaryLines.length
+    ? `<div class="preview-subtitle">Kesimpulan perubahan</div><ul class="summary-list">${summaryLines.join('')}</ul>`
+    : `<div class="preview-subtitle">Kesimpulan perubahan</div><div style="font-family:var(--sans);font-size:12.5px;color:var(--text-1)">Tidak ada perubahan dibanding rate yang tersimpan.</div>`;
 
   document.getElementById('previewCard').style.display = 'block';
   document.getElementById('previewCard').scrollIntoView({behavior:'smooth',block:'nearest'});
@@ -466,6 +513,7 @@ function parsePaste(){
 function dismissPreview(){
   document.getElementById('previewCard').style.display='none';
   document.getElementById('parseNotice').innerHTML='';
+  document.getElementById('changeSummary').innerHTML='';
 }
 
 function renderCurrentRates(){
