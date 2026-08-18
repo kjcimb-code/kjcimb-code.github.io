@@ -152,7 +152,7 @@ tr.new-ccy td:first-child{color:var(--amber)}
 .year-btn.active{background:var(--maroon-1);color:#fff;border-color:transparent}
 .hol-count{font-family:var(--sans);font-size:12px;color:var(--text-1)}
 
-.hol-add{display:grid;grid-template-columns:150px 1fr 150px auto;gap:8px;margin-bottom:14px}
+.hol-add{display:grid;grid-template-columns:150px 1fr auto;gap:8px;margin-bottom:14px}
 .hol-add input,.hol-add select{
   border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:12.5px;font-family:var(--sans);
   background:var(--ink-3);color:var(--text-0);
@@ -304,10 +304,6 @@ USD1
       <div class="hol-add">
         <input type="date" id="newHolDate" value="2026-01-01">
         <input type="text" id="newHolDesc" placeholder="Nama hari libur, mis. Isra Mikraj">
-        <select id="newHolType">
-          <option value="libur">Libur Nasional</option>
-          <option value="cuti">Cuti Bersama</option>
-        </select>
         <button class="btn btn-primary" onclick="addHoliday()">+ Tambah</button>
       </div>
 
@@ -375,23 +371,23 @@ document.querySelectorAll('.tab').forEach(t=>{
 
 /* ---------- TAB 1: PASTE & PARSE RATES ---------- */
 const SAMPLE_PASTE = `Currency (Y)\t1\t7\t14\t30\t60\t90\t120\t150\t180\t360
-AUD\t0.21%\t0.21%\t1.04%\t3.20%\t3.20%\t3.20%\t3.22%\t3.23%\t3.25%\t3.21%
-EUR\t0.21%\t0.21%\t0.58%\t1.70%\t1.70%\t1.70%\t1.72%\t1.73%\t1.75%\t1.75%
-GBP\t0.21%\t0.21%\t1.11%\t3.45%\t3.45%\t3.45%\t3.47%\t3.48%\t3.50%\t3.50%
-IDR\t5.53%\t5.76%\t5.76%\t5.81%\t5.86%\t5.91%\t5.95%\t5.99%\t6.03%\t6.07%
-JPY\t0.21%\t0.21%\t0.21%\t0.21%\t0.21%\t0.21%\t0.22%\t0.23%\t0.25%\t0.25%
-NZD\t0.21%\t0.21%\t0.73%\t2.20%\t2.20%\t2.20%\t2.22%\t2.23%\t2.25%\t2.29%
-SGD\t0.21%\t0.21%\t0.47%\t1.35%\t1.40%\t1.45%\t1.48%\t1.51%\t1.55%\t1.54%
-USD\t3.48%\t3.50%\t3.52%\t4.06%\t4.18%\t4.24%\t4.31%\t4.37%\t4.42%\t4.43%
+AUD\t0.31%\t0.31%\t1.25%\t3.41%\t3.41%\t3.41%\t3.43%\t3.44%\t3.46%\t3.42%
+EUR\t0.31%\t0.31%\t0.79%\t1.91%\t1.91%\t1.91%\t1.93%\t1.94%\t1.96%\t1.96%
+GBP\t0.31%\t0.31%\t1.33%\t3.66%\t3.66%\t3.66%\t3.68%\t3.69%\t3.71%\t3.71%
+IDR\t5.78%\t6.10%\t6.11%\t6.47%\t6.74%\t6.76%\t6.79%\t6.81%\t6.83%\t6.85%
+JPY\t0.31%\t0.31%\t0.34%\t0.41%\t0.41%\t0.41%\t0.43%\t0.44%\t0.46%\t0.46%
+NZD\t0.31%\t0.31%\t0.95%\t2.41%\t2.41%\t2.41%\t2.43%\t2.44%\t2.46%\t2.50%
+SGD\t0.31%\t0.31%\t0.69%\t1.56%\t1.61%\t1.66%\t1.70%\t1.73%\t1.76%\t1.75%
+USD\t3.48%\t3.50%\t3.52%\t4.06%\t4.18%\t4.23%\t4.31%\t4.36%\t4.41%\t4.43%
 DEPO RATE OPTION\t1\t7\t14\t30\t60\t90\t120\t150\t180\t360
-USD1\t3.66%\t3.64%\t3.64%\t3.64%\t3.71%\t3.75%\t3.79%\t3.84%\t3.87%\t4.02%
-IDR1\t6.25%\t6.20%\t6.22%\t6.32%\t6.32%\t6.31%\t6.33%\t6.35%\t6.38%\t6.55%
-AUD1\t4.35%\t4.35%\t4.36%\t4.36%\t4.37%\t4.39%\t4.42%\t4.44%\t4.46%\t4.54%
-EUR1\t2.25%\t2.19%\t2.19%\t2.19%\t2.26%\t2.32%\t2.35%\t2.38%\t2.42%\t2.55%
-GBP1\t3.73%\t3.73%\t3.73%\t3.74%\t3.76%\t3.77%\t3.81%\t3.85%\t3.88%\t4.04%
-JPY1\t0.98%\t0.98%\t0.98%\t0.98%\t1.03%\t1.07%\t1.11%\t1.14%\t1.18%\t1.35%
-NZD1\t2.43%\t2.50%\t2.50%\t2.55%\t2.64%\t2.69%\t2.74%\t2.80%\t2.84%\t3.12%
-SGD1\t0.86%\t0.93%\t1.01%\t1.19%\t1.20%\t1.22%\t1.23%\t1.25%\t1.26%\t1.37%`;
+USD1\t3.62%\t3.64%\t3.64%\t3.66%\t3.70%\t3.74%\t3.77%\t3.81%\t3.84%\t3.98%
+IDR1\t6.12%\t5.85%\t5.90%\t6.05%\t6.05%\t6.05%\t6.10%\t6.15%\t6.20%\t6.55%
+AUD1\t4.35%\t4.35%\t4.35%\t4.36%\t4.38%\t4.41%\t4.44%\t4.47%\t4.49%\t4.59%
+EUR1\t2.24%\t2.19%\t2.19%\t2.23%\t2.32%\t2.37%\t2.40%\t2.44%\t2.47%\t2.62%
+GBP1\t3.73%\t3.73%\t3.73%\t3.74%\t3.77%\t3.80%\t3.84%\t3.89%\t3.93%\t4.15%
+JPY1\t0.98%\t0.98%\t0.98%\t0.98%\t1.06%\t1.11%\t1.15%\t1.19%\t1.24%\t1.44%
+NZD1\t2.53%\t2.50%\t2.50%\t2.63%\t2.68%\t2.73%\t2.78%\t2.83%\t2.87%\t3.13%
+SGD1\t1.28%\t1.28%\t1.28%\t1.27%\t1.28%\t1.29%\t1.30%\t1.31%\t1.32%\t1.42%`;
 
 const KNOWN_CCY = ['IDR','USD','AUD','EUR','GBP','NZD','SGD'];
 const TENOR_COUNT = 10;
@@ -601,8 +597,7 @@ function nowStr(){
 
 function renderHolidays(){
   const inYear = holidays.filter(h=>h.date.startsWith(String(activeYear))).sort((a,b)=>a.date.localeCompare(b.date));
-  const liburCount = inYear.filter(h=>h.type==='libur').length;
-  document.getElementById('holCount').textContent = `${liburCount} hari libur nasional · ${inYear.length-liburCount} cuti bersama`;
+  document.getElementById('holCount').textContent = `${inYear.length} hari libur`;
 
   document.getElementById('holList').innerHTML = inYear.map((h,i)=>{
     const d = new Date(h.date+'T00:00:00');
@@ -612,7 +607,6 @@ function renderHolidays(){
       <div class="hol-date">${dm}</div>
       <div class="hol-day">${DAYS_ID[d.getDay()]}</div>
       <div class="hol-desc">${h.desc}</div>
-      <div class="hol-tag ${h.type}">${h.type==='libur'?'Libur Nasional':'Cuti Bersama'}</div>
       <button class="hol-del" onclick="deleteHoliday(${idx})" title="Hapus">✕</button>
     </div>`;
   }).join('') || '<div class="hol-row" style="color:rgba(247,243,240,.38)">Belum ada hari libur untuk tahun ini.</div>';
@@ -636,9 +630,8 @@ async function touchHolMeta(){
 function addHoliday(){
   const date = document.getElementById('newHolDate').value;
   const desc = document.getElementById('newHolDesc').value.trim();
-  const type = document.getElementById('newHolType').value;
   if(!date || !desc){ return; }
-  holidays.push({date,desc,type});
+  holidays.push({date,desc});
   document.getElementById('newHolDesc').value = '';
   renderHolidays();
   touchHolMeta();
@@ -700,20 +693,19 @@ function parseHolPaste(){
     const d = new Date(dateStr);
     if(isNaN(d.getTime())){ skipped++; continue; }
     const iso = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-    parsedHolidays.push({date: iso, desc: desc, type: 'libur'});
+    parsedHolidays.push({date: iso, desc: desc});
   }
   parsedHolidays.sort((a,b)=>a.date.localeCompare(b.date));
 
   const years = [...new Set(parsedHolidays.map(h=>h.date.slice(0,4)))];
   let notice = `<div class="notice ok"><span class="ic">✓</span><div><b>Parsed ${parsedHolidays.length} hari libur</b> (tahun ${years.join(', ')}).</div></div>`;
   if(skipped) notice += `<div class="notice warn"><span class="ic">⚠</span><div>${skipped} baris tidak terbaca (format tanggal tidak dikenali) dan dilewati.</div></div>`;
-  notice += `<div class="notice warn"><span class="ic">ℹ</span><div>Semua entri baru ditandai <b>Libur Nasional</b> secara default — tandai ulang manual sebagai Cuti Bersama bila perlu, setelah disimpan.</div></div>`;
   document.getElementById('holParseNotice').innerHTML = notice;
 
   document.getElementById('holPreviewList').innerHTML = parsedHolidays.map(h=>{
     const d = new Date(h.date+'T00:00:00');
     const dm = d.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
-    return `<div class="hol-row"><div class="hol-date">${dm}</div><div class="hol-day">${DAYS_ID[d.getDay()]}</div><div class="hol-desc">${h.desc}</div><div class="hol-tag libur">Libur Nasional</div></div>`;
+    return `<div class="hol-row"><div class="hol-date">${dm}</div><div class="hol-day">${DAYS_ID[d.getDay()]}</div><div class="hol-desc">${h.desc}</div></div>`;
   }).join('') || '<div class="hol-row" style="color:rgba(247,243,240,.38)">Tidak ada baris valid yang terbaca.</div>';
 
   document.getElementById('holPreviewCard').style.display = 'block';
