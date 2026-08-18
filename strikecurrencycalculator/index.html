@@ -225,7 +225,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
   </div>
   <div class="hdr-bottom">
     <div class="hdr-title">Strike Currency Calculator</div>
-    <div class="hdr-sub">Implied return is indicative &nbsp;·&nbsp; <span id="ratesUpdatedNote">Deposit rates ref: loading...</span> &nbsp;·&nbsp; Please use the official calculator for more accurate results.</div>
+    <div class="hdr-sub">Rates are indicative &nbsp;·&nbsp; <span id="ratesUpdatedNote">Rates last updated: loading...</span> &nbsp;·&nbsp; Please use the official calculator for more accurate results.</div>
   </div>
 </div>
 
@@ -1020,10 +1020,10 @@ calc();
     if(noteEl){
       if(data.updated_at){
         const d = new Date(data.updated_at);
-        const fmt = d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) + ' ' + d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-        noteEl.textContent = 'Deposit rates last updated: ' + fmt + ' WIB (via Rates Dashboard)';
+        const fmt = d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+        noteEl.textContent = 'Rates last updated: ' + fmt + ' (via Dashboard)';
       } else {
-        noteEl.textContent = 'Deposit rates: live';
+        noteEl.textContent = 'Rates last updated: —';
       }
     }
 
@@ -1032,7 +1032,7 @@ calc();
     // Silent fallback — calculator keeps working with the hardcoded defaults above.
     console.warn('Live rates unavailable, using fallback defaults:', err);
     const noteEl = document.getElementById('ratesUpdatedNote');
-    if(noteEl) noteEl.textContent = 'Deposit rates: showing fallback values (live rates unreachable)';
+    if(noteEl) noteEl.textContent = 'Rates last updated: showing fallback values';
   }
 })();
 
