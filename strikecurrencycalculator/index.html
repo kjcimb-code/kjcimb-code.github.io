@@ -197,6 +197,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
   .split-grid,.conv-grid{grid-template-columns:1fr}
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div id="printSheet" style="display:none"></div>
@@ -224,7 +225,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
   </div>
   <div class="hdr-bottom">
     <div class="hdr-title">Strike Currency Calculator</div>
-    <div class="hdr-sub">Implied return is indicative &nbsp;·&nbsp; Deposit rates ref: 10-Aug-2026 &nbsp;·&nbsp; Please use the official calculator for more accurate results.</div>
+    <div class="hdr-sub">Implied return is indicative &nbsp;·&nbsp; <span id="ratesUpdatedNote">Deposit rates ref: loading...</span> &nbsp;·&nbsp; Please use the official calculator for more accurate results.</div>
   </div>
 </div>
 
@@ -511,30 +512,36 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
 
 
 
-const HOLIDAYS=new Set(['2026-01-01','2026-01-16','2026-02-16','2026-02-17','2026-03-18','2026-03-19','2026-03-20','2026-03-21','2026-03-23','2026-03-24','2026-04-03','2026-05-01','2026-05-14','2026-05-15','2026-05-27','2026-05-28','2026-05-31','2026-06-01','2026-06-16','2026-08-17','2026-08-25','2026-12-24','2026-12-25']);
+// ------------------------------------------------------------
+// These are FALLBACK defaults only — used instantly on page load so the
+// calculator never shows blank, then silently replaced by whatever is live
+// in Supabase (see loadLiveRates() near the bottom). Edit rates via the
+// Rates Dashboard, not here — this copy will go stale otherwise.
+// ------------------------------------------------------------
+let HOLIDAYS=new Set(['2026-01-01','2026-01-16','2026-02-16','2026-02-17','2026-03-18','2026-03-19','2026-03-20','2026-03-21','2026-03-23','2026-03-24','2026-04-03','2026-05-01','2026-05-14','2026-05-15','2026-05-27','2026-05-28','2026-05-31','2026-06-01','2026-06-16','2026-08-17','2026-08-25','2026-12-24','2026-12-25']);
 // Currency (Y) IDR — deposit interest (PUT mode)
-const IDR_DEP=[{d:1,r:5.53},{d:7,r:5.76},{d:14,r:5.76},{d:30,r:5.81},{d:60,r:5.86},{d:90,r:5.91},{d:120,r:5.95},{d:150,r:5.99},{d:180,r:6.03},{d:360,r:6.07}];
+let IDR_DEP=[{d:1,r:5.53},{d:7,r:5.76},{d:14,r:5.76},{d:30,r:5.81},{d:60,r:5.86},{d:90,r:5.91},{d:120,r:5.95},{d:150,r:5.99},{d:180,r:6.03},{d:360,r:6.07}];
 // Currency (Y) USD — deposit interest (CALL mode)
-const USD_DEP=[{d:1,r:3.48},{d:7,r:3.5},{d:14,r:3.52},{d:30,r:4.06},{d:60,r:4.18},{d:90,r:4.24},{d:120,r:4.31},{d:150,r:4.37},{d:180,r:4.42},{d:360,r:4.43}];
+let USD_DEP=[{d:1,r:3.48},{d:7,r:3.5},{d:14,r:3.52},{d:30,r:4.06},{d:60,r:4.18},{d:90,r:4.24},{d:120,r:4.31},{d:150,r:4.37},{d:180,r:4.42},{d:360,r:4.43}];
 // DEPO RATE OPTION IDR1 — GK model rd
-const IDR_OPT=[{d:1,r:5.93},{d:7,r:6.2},{d:14,r:6.22},{d:30,r:6.33},{d:60,r:6.33},{d:90,r:6.33},{d:120,r:6.34},{d:150,r:6.36},{d:180,r:6.38},{d:360,r:6.55}];
+let IDR_OPT=[{d:1,r:5.93},{d:7,r:6.2},{d:14,r:6.22},{d:30,r:6.33},{d:60,r:6.33},{d:90,r:6.33},{d:120,r:6.34},{d:150,r:6.36},{d:180,r:6.38},{d:360,r:6.55}];
 // DEPO RATE OPTION USD1 — GK model rf
-const USD_OPT=[{d:1,r:3.65},{d:7,r:3.63},{d:14,r:3.63},{d:30,r:3.64},{d:60,r:3.7},{d:90,r:3.74},{d:120,r:3.78},{d:150,r:3.82},{d:180,r:3.86},{d:360,r:4.02}];
-const AUD_OPT=[{d:1,r:4.35},{d:7,r:4.35},{d:14,r:4.36},{d:30,r:4.36},{d:60,r:4.38},{d:90,r:4.4},{d:120,r:4.43},{d:150,r:4.46},{d:180,r:4.48},{d:360,r:4.58}];
-const EUR_OPT=[{d:1,r:2.23},{d:7,r:2.19},{d:14,r:2.19},{d:30,r:2.19},{d:60,r:2.28},{d:90,r:2.33},{d:120,r:2.36},{d:150,r:2.39},{d:180,r:2.42},{d:360,r:2.56}];
-const GBP_OPT=[{d:1,r:3.73},{d:7,r:3.73},{d:14,r:3.73},{d:30,r:3.74},{d:60,r:3.76},{d:90,r:3.78},{d:120,r:3.81},{d:150,r:3.85},{d:180,r:3.89},{d:360,r:4.07}];
-const NZD_OPT=[{d:1,r:2.44},{d:7,r:2.5},{d:14,r:2.5},{d:30,r:2.58},{d:60,r:2.65},{d:90,r:2.7},{d:120,r:2.75},{d:150,r:2.81},{d:180,r:2.85},{d:360,r:3.13}];
-const SGD_OPT=[{d:1,r:1.05},{d:7,r:1.08},{d:14,r:1.12},{d:30,r:1.22},{d:60,r:1.23},{d:90,r:1.25},{d:120,r:1.26},{d:150,r:1.27},{d:180,r:1.28},{d:360,r:1.39}];
+let USD_OPT=[{d:1,r:3.65},{d:7,r:3.63},{d:14,r:3.63},{d:30,r:3.64},{d:60,r:3.7},{d:90,r:3.74},{d:120,r:3.78},{d:150,r:3.82},{d:180,r:3.86},{d:360,r:4.02}];
+let AUD_OPT=[{d:1,r:4.35},{d:7,r:4.35},{d:14,r:4.36},{d:30,r:4.36},{d:60,r:4.38},{d:90,r:4.4},{d:120,r:4.43},{d:150,r:4.46},{d:180,r:4.48},{d:360,r:4.58}];
+let EUR_OPT=[{d:1,r:2.23},{d:7,r:2.19},{d:14,r:2.19},{d:30,r:2.19},{d:60,r:2.28},{d:90,r:2.33},{d:120,r:2.36},{d:150,r:2.39},{d:180,r:2.42},{d:360,r:2.56}];
+let GBP_OPT=[{d:1,r:3.73},{d:7,r:3.73},{d:14,r:3.73},{d:30,r:3.74},{d:60,r:3.76},{d:90,r:3.78},{d:120,r:3.81},{d:150,r:3.85},{d:180,r:3.89},{d:360,r:4.07}];
+let NZD_OPT=[{d:1,r:2.44},{d:7,r:2.5},{d:14,r:2.5},{d:30,r:2.58},{d:60,r:2.65},{d:90,r:2.7},{d:120,r:2.75},{d:150,r:2.81},{d:180,r:2.85},{d:360,r:3.13}];
+let SGD_OPT=[{d:1,r:1.05},{d:7,r:1.08},{d:14,r:1.12},{d:30,r:1.22},{d:60,r:1.23},{d:90,r:1.25},{d:120,r:1.26},{d:150,r:1.27},{d:180,r:1.28},{d:360,r:1.39}];
 
 
-const AUD_DEP=[{d:1,r:0.32},{d:7,r:0.32},{d:14,r:1.25},{d:30,r:3.42},{d:60,r:3.41},{d:90,r:3.42},{d:120,r:3.43},{d:150,r:3.45},{d:180,r:3.47},{d:360,r:3.42}];
-const EUR_DEP=[{d:1,r:0.32},{d:7,r:0.32},{d:14,r:0.8},{d:30,r:1.92},{d:60,r:1.91},{d:90,r:1.92},{d:120,r:1.93},{d:150,r:1.95},{d:180,r:1.97},{d:360,r:1.96}];
-const GBP_DEP=[{d:1,r:0.32},{d:7,r:0.32},{d:14,r:1.33},{d:30,r:3.67},{d:60,r:3.66},{d:90,r:3.67},{d:120,r:3.68},{d:150,r:3.7},{d:180,r:3.72},{d:360,r:3.71}];
-const NZD_DEP=[{d:1,r:0.32},{d:7,r:0.32},{d:14,r:0.95},{d:30,r:2.42},{d:60,r:2.41},{d:90,r:2.42},{d:120,r:2.43},{d:150,r:2.45},{d:180,r:2.47},{d:360,r:2.51}];
-const SGD_DEP=[{d:1,r:0.32},{d:7,r:0.32},{d:14,r:0.69},{d:30,r:1.57},{d:60,r:1.61},{d:90,r:1.67},{d:120,r:1.7},{d:150,r:1.73},{d:180,r:1.77},{d:360,r:1.76}];
+let AUD_DEP=[{d:1,r:0.32},{d:7,r:0.32},{d:14,r:1.25},{d:30,r:3.42},{d:60,r:3.41},{d:90,r:3.42},{d:120,r:3.43},{d:150,r:3.45},{d:180,r:3.47},{d:360,r:3.42}];
+let EUR_DEP=[{d:1,r:0.32},{d:7,r:0.32},{d:14,r:0.8},{d:30,r:1.92},{d:60,r:1.91},{d:90,r:1.92},{d:120,r:1.93},{d:150,r:1.95},{d:180,r:1.97},{d:360,r:1.96}];
+let GBP_DEP=[{d:1,r:0.32},{d:7,r:0.32},{d:14,r:1.33},{d:30,r:3.67},{d:60,r:3.66},{d:90,r:3.67},{d:120,r:3.68},{d:150,r:3.7},{d:180,r:3.72},{d:360,r:3.71}];
+let NZD_DEP=[{d:1,r:0.32},{d:7,r:0.32},{d:14,r:0.95},{d:30,r:2.42},{d:60,r:2.41},{d:90,r:2.42},{d:120,r:2.43},{d:150,r:2.45},{d:180,r:2.47},{d:360,r:2.51}];
+let SGD_DEP=[{d:1,r:0.32},{d:7,r:0.32},{d:14,r:0.69},{d:30,r:1.57},{d:60,r:1.61},{d:90,r:1.67},{d:120,r:1.7},{d:150,r:1.73},{d:180,r:1.77},{d:360,r:1.76}];
 
-const CCY_DEP={'USD':USD_DEP,'AUD':AUD_DEP,'EUR':EUR_DEP,'GBP':GBP_DEP,'NZD':NZD_DEP,'SGD':SGD_DEP};
-const CCY_OPT={'USD':USD_OPT,'AUD':AUD_OPT,'EUR':EUR_OPT,'GBP':GBP_OPT,'NZD':NZD_OPT,'SGD':SGD_OPT};
+let CCY_DEP={'USD':USD_DEP,'AUD':AUD_DEP,'EUR':EUR_DEP,'GBP':GBP_DEP,'NZD':NZD_DEP,'SGD':SGD_DEP};
+let CCY_OPT={'USD':USD_OPT,'AUD':AUD_OPT,'EUR':EUR_OPT,'GBP':GBP_OPT,'NZD':NZD_OPT,'SGD':SGD_OPT};
 const CCY_SPOT={'USD':18000,'AUD':12600,'EUR':20700,'GBP':24300,'NZD':10600,'SGD':14050};
 
 let curCCY='USD';
@@ -963,6 +970,71 @@ function updateSplit(){
 }
 calc();
 
+// ------------------------------------------------------------
+// Fetch live rates from Supabase (Rates Dashboard writes to this same table).
+// Runs after the first calc() above, so the page never shows blank — it renders
+// instantly with the fallback defaults, then quietly re-renders with live data.
+// If the fetch fails (offline, RLS issue, etc.) the fallback defaults just stay.
+// ------------------------------------------------------------
+(async function loadLiveRates(){
+  try{
+    const SUPABASE_URL = 'https://xavhlnwodzhqxdhryowm.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhhdmhsbndvZHpocXhkaHJ5b3dtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxNTk5MzMsImV4cCI6MjEwMTczNTkzM30.fYJ0ZDRyImv9KT07-cW1qn9135jHFSnzybOJvnK1z70';
+    if(!window.supabase) return;
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const { data, error } = await sb.from('strike_calc_rates').select('*').eq('id', 1).single();
+    if(error || !data) return;
+
+    const TENORS_LIVE = [1,7,14,30,60,90,120,150,180,360];
+    const toTable = arr => (Array.isArray(arr) && arr.length===TENORS_LIVE.length)
+      ? TENORS_LIVE.map((d,i)=>({d, r: Number(arr[i])||0}))
+      : null;
+
+    const dep = data.deposit_rates || {};
+    const opt = data.option_rates || {};
+    // Only overwrite a currency if the fetched data actually has it — otherwise
+    // keep whatever fallback default was already rendered for that currency.
+    if(toTable(dep.IDR)) IDR_DEP = toTable(dep.IDR);
+    if(toTable(dep.USD)) USD_DEP = toTable(dep.USD);
+    if(toTable(dep.AUD)) AUD_DEP = toTable(dep.AUD);
+    if(toTable(dep.EUR)) EUR_DEP = toTable(dep.EUR);
+    if(toTable(dep.GBP)) GBP_DEP = toTable(dep.GBP);
+    if(toTable(dep.NZD)) NZD_DEP = toTable(dep.NZD);
+    if(toTable(dep.SGD)) SGD_DEP = toTable(dep.SGD);
+    if(toTable(opt.IDR)) IDR_OPT = toTable(opt.IDR);
+    if(toTable(opt.USD)) USD_OPT = toTable(opt.USD);
+    if(toTable(opt.AUD)) AUD_OPT = toTable(opt.AUD);
+    if(toTable(opt.EUR)) EUR_OPT = toTable(opt.EUR);
+    if(toTable(opt.GBP)) GBP_OPT = toTable(opt.GBP);
+    if(toTable(opt.NZD)) NZD_OPT = toTable(opt.NZD);
+    if(toTable(opt.SGD)) SGD_OPT = toTable(opt.SGD);
+    CCY_DEP = {'USD':USD_DEP,'AUD':AUD_DEP,'EUR':EUR_DEP,'GBP':GBP_DEP,'NZD':NZD_DEP,'SGD':SGD_DEP};
+    CCY_OPT = {'USD':USD_OPT,'AUD':AUD_OPT,'EUR':EUR_OPT,'GBP':GBP_OPT,'NZD':NZD_OPT,'SGD':SGD_OPT};
+
+    if(Array.isArray(data.holidays) && data.holidays.length){
+      HOLIDAYS = new Set(data.holidays.map(h=>h.date));
+    }
+
+    // Show when the rates were last updated via the Rates Dashboard.
+    const noteEl = document.getElementById('ratesUpdatedNote');
+    if(noteEl){
+      if(data.updated_at){
+        const d = new Date(data.updated_at);
+        const fmt = d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) + ' ' + d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+        noteEl.textContent = 'Deposit rates last updated: ' + fmt + ' WIB (via Rates Dashboard)';
+      } else {
+        noteEl.textContent = 'Deposit rates: live';
+      }
+    }
+
+    calc(); // re-render with live data
+  }catch(err){
+    // Silent fallback — calculator keeps working with the hardcoded defaults above.
+    console.warn('Live rates unavailable, using fallback defaults:', err);
+    const noteEl = document.getElementById('ratesUpdatedNote');
+    if(noteEl) noteEl.textContent = 'Deposit rates: showing fallback values (live rates unreachable)';
+  }
+})();
 
 
 
@@ -1110,17 +1182,21 @@ function generatePDF(){
   +'</div>'
   +'</body></html>';
 
-  // Use hidden iframe - NEVER touches main page DOM/CSS
-  var iframe=document.createElement('iframe');
-  iframe.style.cssText='position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;border:none;opacity:0';
-  document.body.appendChild(iframe);
-  var doc=iframe.contentDocument||iframe.contentWindow.document;
-  doc.open();doc.write(html);doc.close();
-  iframe.onload=function(){
-    iframe.contentWindow.focus();
-    iframe.contentWindow.print();
-    setTimeout(function(){document.body.removeChild(iframe);},3000);
-  };
+  // Open a real tab (synchronously, in direct response to the click) and print
+  // from there. The old hidden-iframe + delayed print() approach gets silently
+  // blocked on iOS Safari because it isn't seen as a direct user gesture.
+  var w = window.open('', '_blank');
+  if (!w) {
+    alert('Popup diblokir browser. Izinkan popup untuk situs ini (biasanya lewat ikon "aA" atau pengaturan Safari), lalu coba lagi.');
+    return;
+  }
+  w.document.open();
+  w.document.write(html);
+  w.document.close();
+  w.focus();
+  setTimeout(function(){
+    try { w.print(); } catch(e) { /* user can still print manually from the tab */ }
+  }, 300);
 }
 </script>
 </body>
