@@ -200,7 +200,6 @@ tr.new-ccy td:first-child{color:var(--amber)}
 
   <div class="tabs">
     <div class="tab active" data-tab="rates">Deposit &amp; Option Rate</div>
-    <div class="tab" data-tab="vol">Volatility</div>
     <div class="tab" data-tab="hol">Hari Libur</div>
   </div>
 
@@ -286,63 +285,7 @@ USD1
     </div>
   </div>
 
-  <!-- ============ TAB 2: VOLATILITY ============ -->
-  <div class="panel" id="panel-vol">
-
-    <div class="card">
-      <div class="card-title">Markup otomatis volatility</div>
-      <div class="card-sub">Tambahan volatility otomatis berdasarkan tenor atau notional transaksi. Hanya berlaku untuk pair yang dipilih di bawah — pair yang tidak dipilih tidak kena markup ini.</div>
-      <div class="updated-box" id="markupMeta">Last updated: —</div>
-
-      <div class="markup-row">
-        <label class="switch"><input type="checkbox" id="mkToggleTenor" checked><span class="slider"></span></label>
-        <div class="markup-text">
-          <div class="markup-label">Tenor di atas 30 hari</div>
-          <div class="markup-desc">Tambahan otomatis kalau tenor transaksi &gt; 30 hari</div>
-        </div>
-        <div class="markup-input"><input type="number" id="mkValTenor" step="0.01" value="0.50"><span>vol pts</span></div>
-      </div>
-
-      <div class="markup-row">
-        <label class="switch"><input type="checkbox" id="mkToggleNotional" checked><span class="slider"></span></label>
-        <div class="markup-text">
-          <div class="markup-label">Notional di atas USD 250,000 (equivalent)</div>
-          <div class="markup-desc">Tambahan otomatis kalau notional transaksi &gt; USD 250,000 equivalent</div>
-        </div>
-        <div class="markup-input"><input type="number" id="mkValNotional" step="0.01" value="0.25"><span>vol pts</span></div>
-      </div>
-
-      <div class="markup-exclude">
-        <div class="markup-label">Berlaku untuk pair (klik yang kena markup)</div>
-        <div class="pair-chip-grid" id="excludeChips"></div>
-      </div>
-
-      <div class="btn-row">
-        <button class="btn btn-primary" onclick="saveMarkup()">Save markup rules</button>
-      </div>
-      <div id="markupNotice"></div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Volatility per currency pair</div>
-      <div class="card-sub">Dipakai sebagai input σ pada model Garman-Kohlhagen.</div>
-      <div class="updated-box" id="volMeta">Last updated: —</div>
-
-      <div class="vol-section-title">Terhadap IDR</div>
-      <div class="vol-grid" id="volGridIdr"></div>
-
-      <div class="vol-section-title" style="margin-top:18px">Cross Rate</div>
-      <div class="vol-grid" id="volGridCross"></div>
-
-      <div class="btn-row">
-        <button class="btn btn-primary" onclick="saveVol()">Save volatility</button>
-      </div>
-      <div id="volNotice"></div>
-    </div>
-  </div>
-
-
-  <!-- ============ TAB 3: HOLIDAYS ============ -->
+  <!-- ============ TAB 2: HOLIDAYS ============ -->
   <div class="panel" id="panel-hol">
 
     <div class="card">
@@ -622,84 +565,6 @@ async function loadCurrentRates(){
 }
 loadCurrentRates();
 
-/* ---------- TAB 2: VOLATILITY ---------- */
-// Pairs against IDR — one per currency the calculators support
-const VOL_IDR = [
-  {pair:'USDIDR',val:3.50},
-  {pair:'AUDIDR',val:6.50},
-  {pair:'EURIDR',val:5.80},
-  {pair:'SGDIDR',val:3.90},
-  {pair:'JPYIDR',val:5.20},
-  {pair:'GBPIDR',val:6.20},
-  {pair:'NZDIDR',val:7.10},
-];
-// Cross rate — every pair among the G7 majors + JPY, base-currency order follows
-// FX quoting convention: EUR > GBP > AUD > NZD > USD > JPY
-const CROSS_ORDER = ['EUR','GBP','AUD','NZD','USD','JPY'];
-const CROSS_VOL_SEED = { // illustrative placeholder values
-  EURGBP:4.10, EURAUD:7.60, EURNZD:8.30, EURUSD:6.80, EURJPY:8.90,
-  GBPAUD:8.10, GBPNZD:8.70, GBPUSD:7.40, GBPJPY:9.40,
-  AUDNZD:5.20, AUDUSD:9.20, AUDJPY:10.10,
-  NZDUSD:9.80, NZDJPY:10.60,
-  USDJPY:8.50,
-};
-const VOL_CROSS = [];
-for(let a=0;a<CROSS_ORDER.length;a++){
-  for(let b=a+1;b<CROSS_ORDER.length;b++){
-    const pair = CROSS_ORDER[a]+CROSS_ORDER[b];
-    VOL_CROSS.push({pair, val: CROSS_VOL_SEED[pair] ?? 7.00});
-  }
-}
-
-function volItem(v){
-  return `<div class="vol-item">
-      <div class="vol-ccy">${v.pair}</div>
-      <div class="vol-input-wrap"><input class="vol-input" type="number" step="0.01" value="${v.val.toFixed(2)}" data-pair="${v.pair}"><span class="vol-pct">%</span></div>
-    </div>`;
-}
-function renderVol(){
-  document.getElementById('volGridIdr').innerHTML = VOL_IDR.map(volItem).join('');
-  document.getElementById('volGridCross').innerHTML = VOL_CROSS.map(volItem).join('');
-}
-function saveVol(){
-  document.getElementById('volNotice').innerHTML =
-    '<div class="notice ok"><span class="ic">✓</span><div><b>Volatility tersimpan.</b> Langsung dipakai fitur kalkulator sebagai input model Garman-Kohlhagen.</div></div>';
-  setMeta('volMeta', nowStr());
-}
-
-/* ---------- MARKUP RULES ---------- */
-let appliedPairs = new Set(); // pairs the markup applies to — nothing selected by default,
-                               // Treasury only clicks the pairs that DO need the markup
-function renderExcludeChips(){
-  const allPairs = [...VOL_IDR, ...VOL_CROSS].map(v=>v.pair);
-  document.getElementById('excludeChips').innerHTML = allPairs.map(p=>
-    `<div class="pair-chip${appliedPairs.has(p)?' applied':''}" data-pair="${p}" onclick="toggleApplied('${p}')">${p}</div>`
-  ).join('');
-}
-function toggleApplied(pair){
-  if(appliedPairs.has(pair)) appliedPairs.delete(pair); else appliedPairs.add(pair);
-  renderExcludeChips();
-}
-function saveMarkup(){
-  const tenorOn = document.getElementById('mkToggleTenor').checked;
-  const notionalOn = document.getElementById('mkToggleNotional').checked;
-  const tenorVal = document.getElementById('mkValTenor').value;
-  const notionalVal = document.getElementById('mkValNotional').value;
-  const n = appliedPairs.size;
-  let msg = '<div class="notice ok"><span class="ic">✓</span><div><b>Markup rules tersimpan.</b><br>';
-  msg += tenorOn ? `Tenor &gt; 30 hari: +${tenorVal} vol pts. ` : 'Tenor &gt; 30 hari: nonaktif. ';
-  msg += notionalOn ? `Notional &gt; USD 250,000: +${notionalVal} vol pts. ` : 'Notional &gt; USD 250,000: nonaktif. ';
-  msg += n ? `Berlaku untuk ${n} pair (${[...appliedPairs].join(', ')}).` : 'Belum ada pair dipilih — markup belum berlaku ke pair manapun.';
-  msg += '</div></div>';
-  document.getElementById('markupNotice').innerHTML = msg;
-  setMeta('markupMeta', nowStr());
-}
-renderExcludeChips();
-renderVol();
-setMeta('volMeta', 'Kamis, 06 Agustus 2026 09:12:45 WIB');
-setMeta('markupMeta', 'Kamis, 06 Agustus 2026 09:12:45 WIB');
-
-/* ---------- TAB 3: HOLIDAYS ---------- */
 let holidays = [
   {date:'2026-01-01',desc:'Tahun Baru 2026 Masehi',type:'libur'},
   {date:'2026-01-16',desc:'Isra Mikraj Nabi Muhammad SAW',type:'libur'},
