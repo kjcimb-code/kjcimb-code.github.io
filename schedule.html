@@ -180,15 +180,16 @@
   .bottom-actions{display:flex;flex-direction:column;gap:8px;padding:26px 20px 6px;}
   .icon-btn{
     background:var(--ink-2);border:1px solid var(--line);color:var(--text-1);
-    height:40px;padding:0 14px;border-radius:11px;cursor:pointer;
-    font-family:var(--sans);font-size:12.5px;font-weight:600;
-    display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;width:100%;
+    height:40px;padding:0 10px;border-radius:11px;cursor:pointer;
+    font-family:var(--sans);font-size:12px;font-weight:600;
+    display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap;width:100%;
+    overflow:hidden;text-overflow:ellipsis;min-width:0;
     transition:border-color .15s ease, color .15s ease;
   }
   .icon-btn:hover{border-color:var(--maroon-1);color:var(--text-0);}
   .logout-btn:hover{border-color:#EF4444;color:#FCA5A5;}
   .bottom-row{display:flex;gap:8px;}
-  .bottom-row .icon-btn{flex:1;}
+  .bottom-row .icon-btn{flex:1;min-width:0;}
 
   .footer{margin-top:20px;text-align:center;font-size:10px;font-family:var(--mono);color:rgba(255,255,255,.2);}
 
@@ -412,6 +413,7 @@
     <div class="bottom-row">
       <button class="icon-btn" id="resetPwBtn" style="display:none;" title="Reset Password">🔑 Reset Password</button>
       <button class="icon-btn" id="calcBtn" title="Kalkulator" onclick="window.location.href='/'">🧮 Kalkulator</button>
+      <button class="icon-btn" id="ratesDashBtn" title="SC Rates Dashboard" onclick="window.location.href='rates-dashboard.html'">📊 SC Rates</button>
     </div>
     <div class="bottom-row">
       <button class="icon-btn" id="exportBtn" title="Export">📤 Export</button>
