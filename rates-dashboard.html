@@ -41,8 +41,8 @@ body{
   padding:16px 20px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
   box-shadow:0 10px 30px rgba(0,0,0,.4);}
 .hdr-brand{display:flex;flex-direction:column;gap:5px}
-.hdr-logos{display:flex;align-items:center;gap:16px}
-.hdr-logo-cimb{height:20px;width:auto;display:block;filter:brightness(0) invert(1);opacity:.95}
+.hdr-logos{display:flex;align-items:center;gap:16px;background:#fff;padding:8px 14px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.25);}
+.hdr-logo-cimb{height:20px;width:auto;display:block;}
 .hdr-sub{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.65);letter-spacing:.02em}
 .hdr-right{text-align:right}
 .hdr-title{font-family:var(--display);font-size:19px;font-weight:600;letter-spacing:-.01em;color:#fff}
@@ -517,8 +517,8 @@ function dismissPreview(){
 }
 
 function renderCurrentRates(){
-  renderRateTable(Object.keys(savedDeposit), savedDeposit, document.getElementById('currentHeadDep'), document.getElementById('currentRowsDep'));
-  renderRateTable(Object.keys(savedOption), savedOption, document.getElementById('currentHeadOpt'), document.getElementById('currentRowsOpt'));
+  renderRateTable(Object.keys(savedDeposit), savedDeposit, null, document.getElementById('currentHeadDep'), document.getElementById('currentRowsDep'));
+  renderRateTable(Object.keys(savedOption), savedOption, null, document.getElementById('currentHeadOpt'), document.getElementById('currentRowsOpt'));
 }
 
 // Convert {CODE:[10 values]} -> {CODE:[10 numbers]} keyed exactly the way the
