@@ -531,19 +531,15 @@ footer{margin:0 14px 14px;border:1px solid rgba(255,255,255,.8);border-radius:20
 #panelBen .bp .bpcov{margin-top:3px;font-size:8px}
 #panelBen .bp.active,#panelBen .bp.active2{transform:translateY(-2px);box-shadow:0 10px 24px rgba(62,36,92,.18)!important}
 #panelBen .ben-main{padding:20px 18px 36px;max-width:1280px}
-.ben-hero-summary{display:grid;grid-template-columns:minmax(180px,1.1fr) repeat(4,minmax(120px,1fr));gap:10px;margin-bottom:18px}
-.ben-plan-hero,.ben-kpi{
-  position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.9);border-radius:20px;
-  background:linear-gradient(145deg,rgba(255,255,255,.86),rgba(255,255,255,.58));
-  box-shadow:var(--glass-shadow);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
-}
-.ben-plan-hero{padding:17px 18px;color:#fff;background:linear-gradient(135deg,var(--plan-color),color-mix(in srgb,var(--plan-color),#30145C 28%))!important;display:flex;flex-direction:column;justify-content:center}
-.ben-plan-hero::after{content:"✨";position:absolute;right:12px;top:7px;font-size:40px;opacity:.22}
-.ben-plan-eyebrow{font-size:9px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;color:rgba(255,255,255,.72)}
-.ben-plan-name{font-size:23px;font-weight:800;margin-top:3px;letter-spacing:-.5px}.ben-plan-sub{font-size:10px;color:rgba(255,255,255,.82);margin-top:4px}
-.ben-kpi{padding:14px 14px 13px;display:flex;align-items:center;gap:10px}
-.ben-kpi-icon{width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px;background:var(--kpi-bg);flex-shrink:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
-.ben-kpi-label{font-size:8px;font-weight:800;letter-spacing:.75px;text-transform:uppercase;color:#9A8FA9;margin-bottom:4px}.ben-kpi-value{font-size:12px;font-weight:800;color:#352B43;line-height:1.35}
+.ben-hero-summary{margin-bottom:14px}
+.ben-highlight-box{position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.92);border-radius:22px;background:linear-gradient(145deg,rgba(255,255,255,.9),rgba(255,255,255,.66));box-shadow:var(--glass-shadow);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);padding:12px 14px;display:grid;grid-template-columns:minmax(180px,1.15fr) repeat(4,minmax(108px,.8fr));align-items:center;gap:8px}
+.ben-plan-hero{position:relative;overflow:hidden;border-radius:17px;padding:12px 14px;color:#fff;background:linear-gradient(135deg,var(--plan-color),color-mix(in srgb,var(--plan-color),#30145C 28%))!important;display:flex;flex-direction:column;justify-content:center;min-height:66px}
+.ben-plan-hero::after{content:"✨";position:absolute;right:10px;top:5px;font-size:30px;opacity:.20}
+.ben-plan-eyebrow{font-size:8px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.72)}
+.ben-plan-name{font-size:18px;font-weight:800;margin-top:2px;letter-spacing:-.35px}.ben-plan-sub{font-size:9px;color:rgba(255,255,255,.84);margin-top:2px}
+.ben-kpi{padding:8px 9px;display:flex;align-items:center;gap:8px;min-width:0}
+.ben-kpi-icon{width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;background:var(--kpi-bg);flex-shrink:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
+.ben-kpi-label{font-size:7px;font-weight:800;letter-spacing:.65px;text-transform:uppercase;color:#9A8FA9;margin-bottom:2px}.ben-kpi-value{font-size:11px;font-weight:800;color:#352B43;line-height:1.25;white-space:normal}
 .ben-section{transition:transform .18s,box-shadow .18s;margin-bottom:14px!important}.ben-section:hover{transform:translateY(-2px);box-shadow:0 22px 50px rgba(39,31,56,.13)!important}
 #panelBen .bsec-hdr{padding:13px 18px!important;font-size:11px;border-bottom:none!important;color:#fff!important;position:relative;overflow:hidden}
 #panelBen .bsec-hdr::after{content:"";position:absolute;right:-20px;top:-30px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.13)}
@@ -577,8 +573,8 @@ footer{margin:0 14px 14px;border:1px solid rgba(255,255,255,.8);border-radius:20
 /* Legacy compare modal receives the same visual language */
 .cben-overlay{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);background:rgba(35,18,58,.42)!important}.cben-modal{border-radius:24px!important;border:1px solid rgba(255,255,255,.75)!important;box-shadow:0 30px 80px rgba(35,18,58,.28)!important}.cben-hdr{background:linear-gradient(115deg,#5A2BAC,#7E49D5 55%,#E05294)!important}.cben-chip{border-radius:12px!important}.cben-table .ct-sec td{color:#fff!important;background:linear-gradient(90deg,#6C3FC5,#9D68E4)!important}.cben-row-emoji{margin-right:7px;font-size:13px}.cben-table tbody td{border-bottom:1px solid #DDE3EA!important}.cben-table tbody td+td{border-left:1px solid #E2E7ED}
 
-@media(max-width:900px){.ben-hero-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.ben-plan-hero{grid-column:1/-1}}
-@media(max-width:640px){#panelBen .ben-search-wrap{align-items:stretch;flex-wrap:wrap}.cmp-toggle-wrap{width:100%}#panelBen .ben-search{max-width:none}.ben-hero-summary{grid-template-columns:1fr}.ben-plan-hero{grid-column:auto}#panelBen .bp{min-width:112px}.benefit-value-pill{max-width:150px;text-align:right}}
+@media(max-width:900px){.ben-highlight-box{grid-template-columns:repeat(2,minmax(0,1fr))}.ben-plan-hero{grid-column:1/-1}}
+@media(max-width:640px){#panelBen .ben-search-wrap{align-items:stretch;flex-wrap:wrap}.cmp-toggle-wrap{width:100%}#panelBen .ben-search{max-width:none}.ben-highlight-box{grid-template-columns:1fr 1fr;padding:10px;gap:5px}.ben-plan-hero{grid-column:1/-1;min-height:58px}.ben-kpi{padding:7px 6px}.ben-kpi-icon{width:28px;height:28px;font-size:14px}.ben-kpi-value{font-size:10px}#panelBen .bp{min-width:112px}.benefit-value-pill{max-width:150px;text-align:right}}
 
 /* Selected plan color is plan-specific in both CON and SHA */
 .plan-card.is-selected{
@@ -590,6 +586,66 @@ footer{margin:0 14px 14px;border:1px solid rgba(255,255,255,.8);border-radius:20
 .plan-card.is-selected .sbadge{background:var(--plan-accent)!important;box-shadow:0 3px 9px color-mix(in srgb,var(--plan-accent),transparent 70%)}
 .plan-card.is-selected .pprice{color:var(--plan-accent)!important}
 .plan-card.is-selected .chip-lt-red,.plan-card.is-selected .chip-lt-teal{background:color-mix(in srgb,var(--plan-accent),#fff 88%)!important;color:var(--plan-accent)!important;border-color:color-mix(in srgb,var(--plan-accent),#fff 58%)!important}
+
+
+/* === Aug 2026 UX fixes: projection spacing, payment mode, benefit search/compare === */
+/* Compact projection columns: Usia | Rp nominal unit | YoY. Keep alignment, remove dead space. */
+.prow{
+  grid-template-columns:48px 72px 42px!important;
+  column-gap:1px!important;
+  justify-content:start!important;
+  width:max-content!important;
+  max-width:100%!important;
+}
+.prow .pv{
+  grid-template-columns:15px 42px 13px!important;
+  column-gap:1px!important;
+  justify-content:start!important;
+  width:72px!important;
+}
+.prow .pa{white-space:nowrap!important;}
+.prow .pv-rp{margin-right:0!important;white-space:nowrap!important;}
+.prow .pv-num{min-width:0!important;white-space:nowrap!important;text-align:right!important;}
+.prow .pv-unit{min-width:0!important;margin-left:0!important;white-space:nowrap!important;text-align:left!important;}
+.prow .pd{min-width:0!important;width:42px!important;white-space:nowrap!important;text-align:right!important;}
+#panelBen .brow.row-hidden{display:none!important;}
+.ben-compare-card{overflow:hidden!important;}
+.ben-compare-table{min-width:0!important;width:100%!important;table-layout:fixed!important;}
+.ben-compare-label-h{width:38%!important;padding:10px 10px!important;}
+.ben-compare-plan-h{width:31%!important;padding:10px 5px!important;}
+.ben-compare-row-label{padding:8px 8px!important;font-size:9.5px!important;overflow-wrap:anywhere;}
+.ben-compare-value{padding:8px 5px!important;font-size:10px!important;overflow-wrap:anywhere;}
+.ben-compare-desc{margin-left:0!important;font-size:8px!important;}
+.ben-compare-bed{padding:2px 5px!important;font-size:8px!important;}
+.cben-drawer{width:min(100vw,980px)!important;}
+.cben-table{width:100%!important;table-layout:fixed!important;}
+.cben-table thead th{min-width:0!important;padding:9px 5px!important;}
+.cben-table thead th.ct-rl{min-width:0!important;width:34%!important;padding-left:9px!important;}
+.cben-table tbody td{padding:8px 5px!important;font-size:10px!important;overflow-wrap:anywhere;}
+.cben-table tbody td.ct-rl{padding-left:9px!important;font-size:9.5px!important;}
+@media(max-width:640px){
+  .ctrl-row2{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px!important;overflow:visible!important;}
+  .ctrl-row2 .cg{min-width:0!important;}
+  .ctrl-row2 .toggle-group{width:100%;}
+  .ctrl-row2 .toggle-group button{flex:1;padding:6px 5px!important;}
+  .prow{grid-template-columns:47px 70px 40px!important;column-gap:1px!important;justify-content:start!important;width:max-content!important;}
+  .prow .pv{grid-template-columns:15px 41px 12px!important;column-gap:1px!important;width:70px!important;}
+  .prow .pd{width:40px!important;}
+  .ben-compare-plan-name{font-size:11px!important;}
+  .ben-compare-plan-sub{font-size:7px!important;}
+  .ben-compare-row-label{font-size:8.5px!important;}
+  .ben-compare-value{font-size:9px!important;padding:7px 3px!important;}
+  .cben-picker{padding:10px!important;}
+  .cben-chip{padding:5px 8px!important;font-size:9px!important;}
+}
+
+/* tighter, more proportional premium summary spacing */
+.hero-body{gap:16px!important;padding:18px 22px!important;flex-wrap:nowrap!important;}
+.hero-sep{margin:0 2px!important;}
+.hero-meta{gap:14px!important;flex:1!important;justify-content:flex-start!important;}
+.hero-meta>div{min-width:108px!important;}
+.hero-meta>div:nth-child(3){min-width:150px!important;}
+@media(max-width:900px){.hero-body{flex-wrap:wrap!important}.hero-meta{gap:12px!important}.hero-meta>div{min-width:96px!important}}
 
 </style>
 </head>
@@ -644,6 +700,11 @@ footer{margin:0 14px 14px;border:1px solid rgba(255,255,255,.8);border-radius:20
           <button id="cProj5"  onclick="setProj('con',5)">5 thn</button>
           <button id="cProj10" class="tog-red" onclick="setProj('con',10)">10 thn</button>
         </div></div>
+      <div class="cg"><label>Bayar</label>
+        <div class="toggle-group">
+          <button id="cPayMonth" class="tog-red" onclick="setPayMode('con','month')">Bulan</button>
+          <button id="cPayYear" onclick="setPayMode('con','year')">Tahun</button>
+        </div></div>
 
 
     </div>
@@ -654,7 +715,7 @@ footer{margin:0 14px 14px;border:1px solid rgba(255,255,255,.8);border-radius:20
       <div class="hero-body">
         <div>
           <div class="hlabel">Estimasi Premi Bulanan</div>
-          <div class="hprice"><span class="hcur">Rp</span><span class="hnum red" id="cHN">—</span><span class="hunit">/ bln</span></div>
+          <div class="hprice"><span class="hcur" id="cHCur">Rp</span><span class="hnum red" id="cHN">—</span><span class="hunit" id="cHUnit">/ bln</span></div>
           <div class="hannual" id="cHA"></div>
         </div>
         <div class="hero-sep"></div>
@@ -753,6 +814,11 @@ footer{margin:0 14px 14px;border:1px solid rgba(255,255,255,.8);border-radius:20
           <button id="sProj5"  onclick="setProj('sha',5)">5 thn</button>
           <button id="sProj10" class="tog-teal" onclick="setProj('sha',10)">10 thn</button>
         </div></div>
+      <div class="cg"><label>Bayar</label>
+        <div class="toggle-group">
+          <button id="sPayMonth" class="tog-teal" onclick="setPayMode('sha','month')">Bulan</button>
+          <button id="sPayYear" onclick="setPayMode('sha','year')">Tahun</button>
+        </div></div>
 
 
     </div>
@@ -763,7 +829,7 @@ footer{margin:0 14px 14px;border:1px solid rgba(255,255,255,.8);border-radius:20
       <div class="hero-body">
         <div>
           <div class="hlabel">Estimasi Premi Bulanan</div>
-          <div class="hprice"><span class="hcur">Rp</span><span class="hnum teal" id="sHN">—</span><span class="hunit">/ bln</span></div>
+          <div class="hprice"><span class="hcur" id="sHCur">Rp</span><span class="hnum teal" id="sHN">—</span><span class="hunit" id="sHUnit">/ bln</span></div>
           <div class="hannual" id="sHA"></div>
         </div>
         <div class="hero-sep"></div>
@@ -1027,6 +1093,19 @@ const SYAR = {
 const OR = {con:false, sha:false};
 var CHARTS = {con:null, sha:null};
 var projYears = {con:10, sha:10};
+var payMode = {con:"month", sha:"month"};
+
+function setPayMode(mode, value) {
+  payMode[mode] = value;
+  var pre = mode === 'con' ? 'c' : 's';
+  var cls = mode === 'con' ? 'tog-red' : 'tog-teal';
+  var bm = document.getElementById(pre+'PayMonth');
+  var by = document.getElementById(pre+'PayYear');
+  [bm,by].forEach(function(b){ if(b) b.classList.remove('tog-red','tog-teal'); });
+  if (value === 'month' && bm) bm.classList.add(cls);
+  if (value === 'year' && by) by.classList.add(cls);
+  renderPanel(mode);
+}
 
 function setProj(mode, n) {
   projYears[mode] = n;
@@ -1142,14 +1221,18 @@ function renderPanel(mode) {
   }
 
   const ann=get(pk,age), mth=ann/11;
-  document.getElementById(pre+"HN").textContent = jt3(mth);
+  const pay = payMode[mode] || "month";
+  const currentPrem = pay === "year" ? ann : mth;
+  document.getElementById(pre+"HN").textContent = jt3(currentPrem);
   // Update unit label dynamically
   var unitEl = document.getElementById(pre+"HUnit");
-  if (unitEl) unitEl.textContent = "/ bln";
+  if (unitEl) unitEl.textContent = pay === "year" ? "/ thn" : "/ bln";
   // Update "Rp" prefix - hide it since jt3 now includes unit
   var curEl = document.getElementById(pre+"HCur");
   if (curEl) curEl.textContent = "Rp";
-  document.getElementById(pre+"HA").textContent = "Tahunan: Rp "+jt3(ann)+" / thn";
+  document.getElementById(pre+"HA").textContent = pay === "year" ? "" : "Tahunan: Rp "+jt3(ann)+" / thn";
+  var heroLabel = document.querySelector('#panel'+(mode==='con'?'Con':'Sha')+' .hlabel');
+  if (heroLabel) heroLabel.textContent = pay === "year" ? "Estimasi Premi Tahunan" : "Estimasi Premi Bulanan";
   document.getElementById(pre+"MA").innerHTML    = age+" tahun <span style=\"font-size:9px;font-weight:600;color:var(--text-3)\">(usia asli "+getActualAge(pre)+" th)</span>";
   document.getElementById(pre+"MP").textContent  = info.label;
   document.getElementById(pre+"MC").textContent  = info.cov;
@@ -1255,7 +1338,7 @@ function renderPanel(mode) {
   const datasets=showP.map(p=>{
     const act = p===pk;
     // ALL plans show full nYears range
-    const vals = allAges.map(a=>parseFloat((get(p,a)/11*1000/1e6).toFixed(4)));
+    const vals = allAges.map(a=>parseFloat(((pay === "year" ? get(p,a) : get(p,a)/11)*1000/1e6).toFixed(4)));
     const clr = act ? SELECTED_CHART_CLR : (OTHER_CHART_CLR[p] || "#64748B");
     // CAGR for ALL plans over same nYears
     var cagrStr = "";
@@ -1299,7 +1382,7 @@ function renderPanel(mode) {
               title:items=>"Usia "+allAges[items[0].dataIndex]+" ("+(2026+items[0].dataIndex)+")",
               label:item=>{const v=item.raw,p=item.dataIndex>0?item.dataset.data[item.dataIndex-1]:null;
                 const d=p?" (+"+((v-p)/p*100).toFixed(1)+"% YoY)":"";
-                return " "+item.dataset.label+": Rp "+v.toFixed(3)+" jt/bln"+d;}
+                return " "+item.dataset.label+": Rp "+v.toFixed(3)+(pay === "year" ? " jt/thn" : " jt/bln")+d;}
             }
           }
         },
@@ -1313,10 +1396,13 @@ function renderPanel(mode) {
     console.error("Chart render gagal:", err);
   }
 
+  var chartTitleEl = document.querySelector('#panel'+(mode==='con'?'Con':'Sha')+' .chart-title');
+  if (chartTitleEl) chartTitleEl.textContent = pay === "year" ? "Proyeksi Premi Tahunan" : "Proyeksi Premi Bulanan";
+
   const grid=document.getElementById(pre+"Grid");
   grid.innerHTML="";
   PLAN_ORDER.forEach(p=>{
-    const annN=get(p,age),mthN=annN/11;
+    const annN=get(p,age),mthN=annN/11, displayN=(pay === "year" ? annN : mthN);
     const isS=p===pk;
     const card=document.createElement("div");
     card.className="plan-card plan-"+p+(isS?" sel-"+col+" is-selected":"");
@@ -1326,9 +1412,9 @@ function renderPanel(mode) {
     for(let i=1;i<=nProj;i++){
       const a=age+i;
       if(a>75) break;
-      const annF=get(p,a),mthF=annF/11;
+      const annF=get(p,a),mthF=annF/11, displayF=(pay === "year" ? annF : mthF);
       const pct=((annF-prev)/prev*100).toFixed(1);
-      rows+=`<div class="prow"><span class="pa">Usia ${a}</span><span class="pv"><span class="pv-rp">Rp</span><span class="pv-num">${jt3n(mthF)}</span><span class="pv-unit">${jt3u(mthF)}</span></span><span class="pd">+${pct}%</span></div>`;
+      rows+=`<div class="prow"><span class="pa">Usia ${a}</span><span class="pv"><span class="pv-rp">Rp</span><span class="pv-num">${jt3n(displayF)}</span><span class="pv-unit">${jt3u(displayF)}</span></span><span class="pd">+${pct}%</span></div>`;
       prev=annF;
     }
     card.innerHTML=`
@@ -1338,8 +1424,8 @@ function renderPanel(mode) {
         <span class="chip-lt-${col}">Tahunan ${PLAN_INFO[p].lt}</span>
         <span class="${or?"chip-or-on":"chip-or-off"}">${or?"OR "+PLAN_INFO[p].or:"Tanpa OR"}</span>
       </div>
-      <div class="pprice ${col}"><sup>Rp </sup>${jt3(mthN)}</div>
-      <div class="pprice-lbl">per bulan · usia ${age}</div>
+      <div class="pprice ${col}"><sup>Rp </sup>${jt3(displayN)}</div>
+      <div class="pprice-lbl">per ${pay === "year" ? "tahun" : "bulan"} · usia ${age}</div>
       <div class="pfuture">
         <div class="prow" style="margin-bottom:2px">
           <span style="font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text-3)">Proyeksi</span>
@@ -1683,13 +1769,13 @@ function renderBen() {
     var info = PLAN_INFO[p];
 
     // Summary strip
-    html += '<div class="ben-hero-summary">' +
+    html += '<div class="ben-hero-summary"><div class="ben-highlight-box">' +
       '<div class="ben-plan-hero" style="--plan-color:'+PLAN_CLR_BEN[p].bg+'"><div class="ben-plan-eyebrow">Plan Terpilih</div><div class="ben-plan-name">'+PLAN_EMOJI[p]+' '+info.label+'</div><div class="ben-plan-sub">'+d.cov+' · '+d.bed+'</div></div>' +
       '<div class="ben-kpi" style="--kpi-bg:#EAF4FF"><div class="ben-kpi-icon">🛏️</div><div><div class="ben-kpi-label">Batas Kamar</div><div class="ben-kpi-value">'+fmtRb(d.kamar)+'/hari</div></div></div>' +
       '<div class="ben-kpi" style="--kpi-bg:#FFF2D9"><div class="ben-kpi-icon">📅</div><div><div class="ben-kpi-label">Batas Tahunan</div><div class="ben-kpi-value">'+d.lt+'</div></div></div>' +
       '<div class="ben-kpi" style="--kpi-bg:#E9F9F3"><div class="ben-kpi-icon">🚀</div><div><div class="ben-kpi-label">Limit Booster</div><div class="ben-kpi-value">'+d.lc+'</div></div></div>' +
       '<div class="ben-kpi" style="--kpi-bg:#F3EDFF"><div class="ben-kpi-icon">⚖️</div><div><div class="ben-kpi-label">Own Risk</div><div class="ben-kpi-value">'+d.or+'</div></div></div>' +
-    '</div>';
+    '</div></div>';
 
     var icons = {"Rawat Inap & Pembedahan":"🏥","Rawat Jalan & Kanker":"💊","Limit & Coverage":"📊","Manfaat Evakuasi & Transit":"🚁","Manfaat Opsional":"⭐","Biaya & Manfaat Lainnya":"🛡️"};
     var colors = {"Rawat Inap & Pembedahan":"blue","Rawat Jalan & Kanker":"green","Limit & Coverage":"orange","Manfaat Evakuasi & Transit":"teal","Manfaat Opsional":"purple","Biaya & Manfaat Lainnya":"gray"};
@@ -1736,57 +1822,73 @@ function fmtCell(val, isDiff, color) {
 
 
 function doSearch() {
-  const q = document.getElementById("benSearch").value.trim().toLowerCase();
-  // In compare mode, search through table rows
+  const input = document.getElementById("benSearch");
+  const q = (input ? input.value : "").trim().toLowerCase();
+  const countEl = document.getElementById("searchCount");
+
+  // Search is literal substring filtering.
+  // ICU => ICU, NICU, PICU; kanker => only benefits whose label/description contains "kanker".
+  function benefitMatches(text) {
+    if (!q) return true;
+    const hay = (text || "").toLowerCase().replace(/\s+/g, " ").trim();
+    return hay.includes(q);
+  }
+
+  // Compare mode: filter actual benefit rows; section headers stay only if they have a visible child row.
   if (benSelPlans.length === 2) {
-    const trs = document.querySelectorAll("#benMain .ben-compare-table tr");
-    trs.forEach(function(tr) {
-      const td = tr.querySelector("td");
-      if (!td) return;
-      const txt = td.textContent.toLowerCase();
-      const isSecHdr = tr.querySelectorAll("td").length === 1;
-      tr.style.display = (!q || isSecHdr || txt.includes(q)) ? "" : "none";
+    const table = document.querySelector("#benMain .ben-compare-table");
+    if (!table) { if(countEl) countEl.textContent=""; return; }
+    const trs = Array.from(table.querySelectorAll("tbody tr"));
+    let found = 0;
+    let currentSection = null;
+    let sectionHasMatch = false;
+
+    function flushSection(){
+      if (currentSection) currentSection.style.display = (!q || sectionHasMatch) ? "" : "none";
+    }
+
+    trs.forEach(function(tr){
+      if (tr.classList.contains("ben-compare-sec")) {
+        flushSection();
+        currentSection = tr;
+        sectionHasMatch = false;
+        tr.style.display = "";
+        return;
+      }
+      const labelCell = tr.querySelector(".ben-compare-row-label, td:first-child");
+      const txt = labelCell ? labelCell.textContent : (tr.textContent || "");
+      const match = benefitMatches(txt);
+      tr.style.display = match ? "" : "none";
+      if (match) sectionHasMatch = true;
+      if (q && match) found++;
     });
+    flushSection();
+    if(countEl) countEl.textContent = q ? (found ? found+" hasil ditemukan" : "Tidak ditemukan") : "";
     return;
   }
-  const rows = document.querySelectorAll(".brow");
-  const secs  = document.querySelectorAll(".ben-section");
+
+  // Single plan: .brow is a DIV (not a table row), so search/hide the real benefit cards.
+  const rows = Array.from(document.querySelectorAll("#benMain .brow"));
+  const secs = Array.from(document.querySelectorAll("#benMain .ben-section"));
   let found = 0;
 
-  if (!q) {
-    rows.forEach(r => { r.classList.remove("row-hidden","highlight"); r.querySelectorAll("mark").forEach(m=>{ m.outerHTML=m.textContent; }); });
-    secs.forEach(s => s.classList.remove("hidden"));
-    document.getElementById("searchCount").textContent = "";
-    return;
-  }
-
-  // un-mark first (reset innerHTML from previous search)
-  rows.forEach(r => {
-    r.classList.remove("row-hidden","highlight");
-    r.querySelectorAll("td").forEach(td => { td.innerHTML = td.textContent; });
+  rows.forEach(function(r){
+    const haystack = (r.dataset.benefit || "");
+    const match = benefitMatches(haystack);
+    r.classList.toggle("row-hidden", !match);
+    r.classList.toggle("highlight", !!q && match);
+    if (q && match) found++;
   });
 
-  rows.forEach(r => {
-    const label = r.dataset.label || "";
-    const val   = r.dataset.val   || "";
-    if (label.includes(q) || val.includes(q)) {
-      r.classList.add("highlight");
-      r.querySelectorAll("td").forEach(td => {
-        td.innerHTML = td.textContent.replace(new RegExp("("+q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","gi"),"<mark>$1</mark>");
-      });
-      found++;
-    } else {
-      r.classList.add("row-hidden");
-    }
+  // Hide a section only when none of its .brow children match.
+  secs.forEach(function(sec){
+    const visibleRows = Array.from(sec.querySelectorAll(".brow")).filter(function(r){
+      return !r.classList.contains("row-hidden");
+    });
+    sec.classList.toggle("hidden", !!q && visibleRows.length === 0);
   });
 
-  // hide sections with all rows hidden
-  secs.forEach(s => {
-    const visible = s.querySelectorAll("tr:not(.row-hidden)");
-    s.classList.toggle("hidden", visible.length===0);
-  });
-
-  document.getElementById("searchCount").textContent = found ? found+" hasil ditemukan" : "Tidak ditemukan";
+  if(countEl) countEl.textContent = q ? (found ? found+" hasil ditemukan" : "Tidak ditemukan") : "";
 }
 
 // ── CUSTOM LIQUID DROPDOWNS ──

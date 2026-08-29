@@ -424,7 +424,13 @@ function getPremium(pk, age, g) {
   return tbl[g][idx];
 }
 
-function jt3(v) { return (v / 11 * 1000 / 1e6).toFixed(3); } // premi tahunan / 11 = premi bulanan
+function formatPremiBulanan(v) {
+  var rupiah = v / 11 * 1000; // premi tahunan / 11 = premi bulanan
+  if (rupiah < 1000000) {
+    return Math.round(rupiah / 1000).toLocaleString("id-ID") + " rb";
+  }
+  return (rupiah / 1000000).toFixed(3) + " jt";
+}
 
 function pctColor(pct) {
   if (pct < 85)   return {bg:"#DCFCE7", fg:"#14532D"};
@@ -456,7 +462,7 @@ function render() {
     '<div class="info-item"><div class="info-k">Own Risk</div><div class="info-v" style="font-size:13px">' + (ownRisk ? info.or : "Tanpa") + '</div></div>' +
     '<div class="info-sep"></div>' +
     '<div class="info-item"><div class="info-k">Premi Baseline</div>' +
-    '<div class="info-v" style="color:'+accentColor+';font-size:13px">Rp ' + jt3(basePremNow) + ' jt/bln</div></div>';
+    '<div class="info-v" style="color:'+accentColor+';font-size:13px">Rp ' + formatPremiBulanan(basePremNow) + '/bln</div></div>';
 
   // BUILD TABLE
   var plans   = PLAN_ORDER;
@@ -492,18 +498,18 @@ function render() {
       var isBase  = pk === basePk;
       var prem_a  = getPremium(pk, a, g);
       var pct     = Math.round(prem_a / basePrem_a * 100);
-      var premJt  = jt3(prem_a);
+      var premJt  = formatPremiBulanan(prem_a);
 
       if (isBase) {
         tbody += '<td class="base-col" style="padding:5px 4px">' +
           '<div style="font-size:11px;font-weight:800;color:var(--accent-deep)">✓ 100%</div>' +
-          '<div style="font-size:9px;color:var(--text-3);margin-top:1px">' + premJt + ' jt</div>' +
+          '<div style="font-size:9px;color:var(--text-3);margin-top:1px">' + premJt + '</div>' +
           '</td>';
       } else {
         var c = pctColor(pct);
         tbody += '<td class="pct-cell" style="background:' + c.bg + ';color:' + c.fg + ';padding:5px 4px">' +
           '<div style="font-size:11px;font-weight:800">' + pct + '%</div>' +
-          '<div style="font-size:9px;opacity:.75;margin-top:1px">' + premJt + ' jt</div>' +
+          '<div style="font-size:9px;opacity:.75;margin-top:1px">' + premJt + '</div>' +
           '</td>';
       }
     });
