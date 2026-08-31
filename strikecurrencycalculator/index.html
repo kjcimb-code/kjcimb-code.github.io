@@ -20,6 +20,34 @@
   #printSheet{display:block!important}
   @page{margin:10mm 12mm;size:A4 portrait}
 }
+
+/* ── Custom CCY Dropdown ── */
+.ccy-dropdown{position:relative;user-select:none;width:100%}
+.ccy-dropdown-btn{display:flex;align-items:center;justify-content:space-between;gap:8px;
+  width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;
+  background:#fff;cursor:pointer;font-family:var(--mono);font-weight:700;font-size:13px;
+  color:#0F172A;transition:border-color .15s;box-sizing:border-box}
+.ccy-dropdown-btn:hover{border-color:#790008}
+.ccy-dropdown-btn.open{border-color:#790008;border-bottom-left-radius:0;border-bottom-right-radius:0}
+.ccy-dropdown-arrow{font-size:9px;color:#64748B;transition:transform .15s;flex-shrink:0}
+.ccy-dropdown-btn.open .ccy-dropdown-arrow{transform:rotate(180deg)}
+.ccy-dropdown-menu{display:none;position:absolute;top:100%;left:0;right:0;
+  background:#fff;border:1.5px solid #790008;border-top:none;
+  border-bottom-left-radius:8px;border-bottom-right-radius:8px;
+  z-index:999;box-shadow:0 6px 16px rgba(0,0,0,.12)}
+.ccy-dropdown-menu.show{display:block}
+.ccy-dropdown-item{padding:9px 12px;font-family:var(--mono);font-weight:600;font-size:13px;
+  color:#0F172A;cursor:pointer;transition:background .1s;
+  display:flex;align-items:center;gap:8px}
+.ccy-dropdown-item:hover{background:#FFF5F5;color:#790008}
+.ccy-dropdown-item.active{background:#790008;color:#fff}
+.ccy-dropdown-item[style*="display:none"]{display:none!important}
+.dd-check{font-size:10px;width:14px;flex-shrink:0;text-align:center}
+.ccy-dropdown-item:not(.active) .dd-check{color:#790008;opacity:.5}
+.ccy-dropdown-item.active .dd-check{color:rgba(255,255,255,.9)}
+.dd-flag{font-size:16px;line-height:1;flex-shrink:0}
+.dd-divider{height:1px;background:#F1F5F9;margin:0 12px}
+
 </style>
 <style id="pdfStyles">#printSheet{display:none}</style>
 <style>@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:400;src:url('data:font/woff2;base64,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') format('woff2');}
@@ -170,6 +198,35 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
 .mi-label{font-size:9px;color:var(--slate);font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
 .mi-right{text-align:right}
 .mi-insight-text{font-size:10px;color:var(--slate);margin-top:2px}
+
+/* Custom CCY dropdown */
+.ccy-dropdown{position:relative;user-select:none;width:100%}
+.ccy-dropdown-btn{display:flex;align-items:center;justify-content:space-between;
+  width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;
+  background:#fff;cursor:pointer;font-family:var(--mono);font-weight:700;font-size:13px;
+  color:#0F172A;transition:border-color .15s}
+.ccy-dropdown-btn:hover{border-color:#790008}
+.ccy-dropdown-btn.open{border-color:#790008;border-bottom-left-radius:0;border-bottom-right-radius:0}
+.ccy-dropdown-arrow{font-size:9px;color:#64748B;transition:transform .15s}
+.ccy-dropdown-btn.open .ccy-dropdown-arrow{transform:rotate(180deg)}
+.ccy-dropdown-menu{display:none;position:absolute;top:100%;left:0;right:0;
+  background:#fff;border:1.5px solid #790008;border-top:none;
+  border-bottom-left-radius:8px;border-bottom-right-radius:8px;
+  z-index:999;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.ccy-dropdown-menu.show{display:block}
+.ccy-dropdown-item{padding:9px 12px;font-family:var(--mono);font-weight:600;font-size:13px;
+  color:#0F172A;cursor:pointer;transition:background .1s;display:flex;align-items:center;gap:8px}
+
+.dd-flag{font-size:16px;line-height:1}
+.dd-check{font-size:10px;width:14px;color:rgba(255,255,255,.8);flex-shrink:0}
+.ccy-dropdown-item.active .dd-check{color:rgba(255,255,255,.9)}
+.ccy-dropdown-item:not(.active) .dd-check{color:#790008;opacity:.6}
+.dd-divider{height:1px;background:#F1F5F9;margin:0}
+.ccy-dropdown-item{display:flex;align-items:center;gap:8px}
+
+.ccy-dropdown-item:hover{background:#FFF5F5;color:#790008}
+.ccy-dropdown-item.active{background:#790008;color:#fff}
+.ccy-dropdown-item.disabled{opacity:.35;cursor:not-allowed;pointer-events:none}
 .ccy-select{
   padding:0 24px 0 11px;
   background:#EFF6FF url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23790008' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 7px center;
@@ -196,6 +253,10 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
   .yield-num{font-size:40px}
   .split-grid,.conv-grid{grid-template-columns:1fr}
 }
+
+
+
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -225,7 +286,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
   </div>
   <div class="hdr-bottom">
     <div class="hdr-title">Strike Currency Calculator</div>
-    <div class="hdr-sub">Rates are indicative &nbsp;·&nbsp; <span id="ratesUpdatedNote">Rates last updated: loading...</span> &nbsp;·&nbsp; Please use the official calculator for more accurate results.</div>
+    <div class="hdr-sub">Implied return is indicative &nbsp;·&nbsp; Deposit rates ref: 31-Aug-2026 &nbsp;·&nbsp; Please use the official calculator for more accurate results.</div>
   </div>
 </div>
 
@@ -239,40 +300,75 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
   </div>
   <div class="sec-body">
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:16px;border:1.5px solid var(--border);border-radius:8px;overflow:hidden">
-      <button id="btnCALL" onclick="setMode('CALL')" style="border:none;cursor:pointer;padding:12px 8px;background:#F8FAFC;color:#0F172A;font-family:var(--sans);transition:all .2s;font-size:15px;font-weight:600;letter-spacing:.02em">CALL</button>
-      <button id="btnPUT" onclick="setMode('PUT')" data-pos='right' style="border:none;cursor:pointer;padding:12px 8px;background:#790008;color:#fff;font-family:var(--sans);transition:all .2s;font-size:15px;font-weight:600;letter-spacing:.02em">PUT</button>
-    </div>
+    <!-- PAIR SELECTOR -->
+    <div style="background:#F8FAFC;border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:14px">
 
-    <div class="divider-label">Customer Notional</div>
-    <div class="field">
-      <label class="field-label" id="lNotional">Nominal (Base Currency)</label>
-      <div class="field-wrap">
-        <div class="field-pre" id="lNotionalPre">IDR</div>
-        <select id="iCCYcall" onchange="setCCY(this.value)" class="ccy-select" style="display:none">
-          <option value="USD">USD</option>
-          <option value="AUD">AUD</option>
-          <option value="EUR">EUR</option>
-          <option value="GBP">GBP</option>
-          <option value="NZD">NZD</option>
-          <option value="SGD">SGD</option>
-        </select>
-        <input type="text" id="iNotional" value="1,000,000,000" oninput="fmtNotional(this);calc()" style="letter-spacing:.02em">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="font-size:9px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--slate)">Pair</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span id="pairLabel" style="font-family:var(--mono);font-weight:700;font-size:15px;color:#0F172A">USD/IDR</span>
+          <span id="modeLabel" style="font-size:12px;font-weight:800;padding:4px 14px;border-radius:8px;color:#fff;background:#790008;letter-spacing:.05em;box-shadow:0 2px 6px rgba(121,0,8,.3)">PUT</span>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;align-items:flex-start">
+
+        <div style="flex:1;min-width:0">
+          <div style="font-size:9px;font-family:var(--mono);color:var(--slate);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Deposit Currency (Base)</div>
+          <div class="ccy-dropdown" id="iDepCCY_wrap">
+            <div class="ccy-dropdown-btn" id="iDepCCY_btn" tabindex="0" onclick="toggleCCYDropdown('iDepCCY')" onkeydown="if(event.key==='Enter'||event.key===' ')toggleCCYDropdown('iDepCCY')">
+              <span id="iDepCCY_val">🇮🇩 IDR</span>
+              <span class="ccy-dropdown-arrow">▼</span>
+            </div>
+            <div class="ccy-dropdown-menu" id="iDepCCY_menu">
+              <div class="ccy-dropdown-item" data-val="EUR" onclick="selectCCY('iDepCCY','EUR')"><span class="dd-check"></span><span class="dd-flag">🇪🇺</span>EUR</div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="GBP" onclick="selectCCY('iDepCCY','GBP')"><span class="dd-check"></span><span class="dd-flag">🇬🇧</span>GBP</div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="AUD" onclick="selectCCY('iDepCCY','AUD')"><span class="dd-check"></span><span class="dd-flag">🇦🇺</span>AUD</div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="NZD" onclick="selectCCY('iDepCCY','NZD')"><span class="dd-check"></span><span class="dd-flag">🇳🇿</span>NZD</div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="USD" onclick="selectCCY('iDepCCY','USD')"><span class="dd-check"></span><span class="dd-flag">🇺🇸</span>USD</div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="SGD" onclick="selectCCY('iDepCCY','SGD')"><span class="dd-check"></span><span class="dd-flag">🇸🇬</span>SGD</div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="JPY" onclick="selectCCY('iDepCCY','JPY')"><span class="dd-check"></span><span class="dd-flag">🇯🇵</span>JPY</div><div class="dd-divider"></div><div class="ccy-dropdown-item active" data-val="IDR" onclick="selectCCY('iDepCCY','IDR')"><span class="dd-check">●</span><span class="dd-flag">🇮🇩</span>IDR</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;padding-top:20px;flex-shrink:0">
+          <button onclick="swapCCY()" title="Swap currencies"
+            style="width:36px;height:38px;border:1.5px solid var(--border);border-radius:8px;
+                   background:#fff;cursor:pointer;font-size:18px;display:flex;align-items:center;
+                   justify-content:center;transition:all .15s;flex-shrink:0"
+            onmouseover="this.style.background='#FFF5F5';this.style.borderColor='#790008'"
+            onmouseout="this.style.background='#fff';this.style.borderColor='var(--border)'">
+            ⇄
+          </button>
+        </div>
+
+        <div style="flex:1;min-width:0">
+          <div style="font-size:9px;font-family:var(--mono);color:var(--slate);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Alternate Currency</div>
+          <div class="ccy-dropdown" id="iAltCCY_wrap">
+            <div class="ccy-dropdown-btn" id="iAltCCY_btn" tabindex="0" onclick="toggleCCYDropdown('iAltCCY')" onkeydown="if(event.key==='Enter'||event.key===' ')toggleCCYDropdown('iAltCCY')">
+              <span id="iAltCCY_val">🇺🇸 USD</span>
+              <span class="ccy-dropdown-arrow">▼</span>
+            </div>
+            <div class="ccy-dropdown-menu" id="iAltCCY_menu">
+              <div class="ccy-dropdown-item" data-val="EUR" onclick="selectCCY('iAltCCY','EUR')"><span class="dd-check"></span><span class="dd-flag">🇪🇺</span>EUR</div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="GBP" onclick="selectCCY('iAltCCY','GBP')"><span class="dd-check"></span><span class="dd-flag">🇬🇧</span>GBP</div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="AUD" onclick="selectCCY('iAltCCY','AUD')"><span class="dd-check"></span><span class="dd-flag">🇦🇺</span>AUD</div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="NZD" onclick="selectCCY('iAltCCY','NZD')"><span class="dd-check"></span><span class="dd-flag">🇳🇿</span>NZD</div><div class="dd-divider"></div><div class="ccy-dropdown-item active" data-val="USD" onclick="selectCCY('iAltCCY','USD')"><span class="dd-check">●</span><span class="dd-flag">🇺🇸</span>USD</div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="SGD" onclick="selectCCY('iAltCCY','SGD')"><span class="dd-check"></span><span class="dd-flag">🇸🇬</span>SGD</div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="JPY" onclick="selectCCY('iAltCCY','JPY')"><span class="dd-check"></span><span class="dd-flag">🇯🇵</span>JPY</div><div class="dd-divider"></div><div class="ccy-dropdown-item" style="display:none" data-val="IDR" onclick="selectCCY('iAltCCY','IDR')"><span class="dd-check"></span><span class="dd-flag">🇮🇩</span>IDR</div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
-    <div class="field">
-      <label class="field-label" id="lConverted">If Converted to Alternate Currency</label>
-      <div class="field-wrap">
-        <div class="field-pre" id="convCallPre" style="display:none">IDR</div>
-          <select id="iCCY" onchange="setCCY(this.value)" class="ccy-select">
-            <option value="USD">USD</option>
-            <option value="AUD">AUD</option>
-            <option value="EUR">EUR</option>
-            <option value="GBP">GBP</option>
-            <option value="NZD">NZD</option>
-            <option value="SGD">SGD</option>
-          </select>
-        <div class="converted-val" id="oConverted">— enter strike price</div>
+    <!-- /pair selector -->
+
+    <div class="divider-label">Customer Notional</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="field">
+        <label class="field-label" id="lNotional">Nominal (Base Currency)</label>
+        <div class="field-wrap">
+          <div class="field-pre" id="lNotionalPre">IDR</div>
+          <input type="text" id="iNotional" value="1,000,000,000" oninput="fmtNotional(this);calc()" style="letter-spacing:.02em">
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label" id="lConverted">If Converted</label>
+        <div class="field-wrap" style="background:#F1F5F9;border-color:#CBD5E1">
+          <div class="field-pre" style="padding:0 10px;font-family:var(--mono);font-size:11px;font-weight:700;color:#475569;background:#E2E8F0;border-right:1.5px solid #CBD5E1" id="convAltLabel">USD</div>
+          <div class="converted-val" id="oConverted" style="background:#F1F5F9;color:#475569;font-style:italic;font-size:12px">—</div>
+        </div>
       </div>
     </div>
 
@@ -281,8 +377,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
       <div class="field">
         <label class="field-label" id="spotPairLabel">Spot Rate (USD/IDR)</label>
         <div class="field-wrap">
-          <input type="text" id="iSpot" placeholder="e.g. 18,000" oninput="fmtSpot(this);onPointsChange()" style="letter-spacing:.02em">
-          <div class="field-suf" id="spotSuffix">USD/IDR</div>
+          <div class="field-pre" id="spotSuffix">USD/IDR</div>
+          <input type="text" id="iSpot" oninput="onPointsChange()" onblur="fmtSpot(this,true);onPointsChange()" style="letter-spacing:.02em">
         </div>
       </div>
 
@@ -294,11 +390,11 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
             <button id="btnPlus" onclick="setSign(1)" style="border:none;background:#F8FAFC;color:var(--slate);font-weight:700;font-size:14px;padding:0 14px;cursor:pointer;min-width:44px">+</button>
           </div>
           <div class="field-wrap" style="width:110px">
-            <input type="number" id="iPoints" value="50" min="0" oninput="onPointsChange()" style="text-align:center;font-family:var(--mono);font-weight:600;font-size:15px" placeholder="50">
+            <input type="number" id="iPoints" value="50" min="0" step="any" oninput="onPointsChange()" style="text-align:center;font-family:var(--mono);font-weight:600;font-size:15px" placeholder="50">
             <div class="field-suf" style="font-size:10px">pts</div>
           </div>
           <div class="field-wrap" style="flex:1">
-            <input type="text" id="iStrike" oninput="onStrikeChange()" style="letter-spacing:.02em;font-family:var(--mono);font-weight:600" placeholder="Strike Price">
+            <input type="text" id="iStrike" oninput="onStrikeChange()" style="letter-spacing:.02em;font-family:var(--mono);font-weight:600" placeholder="Strike Price" inputmode="decimal">
           </div>
         </div>
       </div>
@@ -387,7 +483,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
         <div class="rate-val" id="rIdrDep">—</div>
       </div>
       <div class="rate-row">
-        <div><div class="rate-lbl">IDR rd — DEPO RATE OPTION (IDR1)</div><div class="rate-note" id="rIdrNote">for GK model · interpolated</div></div>
+        <div><div class="rate-lbl"><span id="rdCCYLabel">IDR</span> rd — DEPO RATE OPTION (<span id="rdCCYOpt">IDR</span>1)</div><div class="rate-note" id="rIdrNote">for GK model · interpolated</div></div>
         <div class="rate-val" id="rIdr">—</div>
       </div>
       <div class="rate-row">
@@ -501,7 +597,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
   </button>
 </div>
 <div style="margin:16px 12px 0;background:#0F172A;border-radius:12px;padding:14px 18px;text-align:center">
-  <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,.9);letter-spacing:.01em;margin-bottom:5px">CIMB Niaga &mdash; Treasury &amp; Financial Institutions</div>
+  <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,.9);letter-spacing:.01em;margin-bottom:5px"><span id="ratesTimestamp" style="font-size:9px;opacity:.6;display:block;margin-bottom:4px"></span>CIMB Niaga &mdash; Treasury &amp; Financial Institutions</div>
   <div style="font-size:10px;font-family:var(--mono);color:rgba(255,255,255,.4)">Kevin Jonathan &nbsp;&middot;&nbsp; <a href="mailto:kevin.jonathan@cimbniaga.co.id" style="color:rgba(255,255,255,.4);text-decoration:none">kevin.jonathan@cimbniaga.co.id</a></div>
 </div>
 
@@ -512,36 +608,180 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
 
 
 
-// ------------------------------------------------------------
-// These are FALLBACK defaults only — used instantly on page load so the
-// calculator never shows blank, then silently replaced by whatever is live
-// in Supabase (see loadLiveRates() near the bottom). Edit rates via the
-// Rates Dashboard, not here — this copy will go stale otherwise.
-// ------------------------------------------------------------
-let HOLIDAYS=new Set(['2026-01-01','2026-01-16','2026-02-16','2026-02-17','2026-03-18','2026-03-19','2026-03-20','2026-03-21','2026-03-23','2026-03-24','2026-04-03','2026-05-01','2026-05-14','2026-05-15','2026-05-27','2026-05-28','2026-05-31','2026-06-01','2026-06-16','2026-08-17','2026-08-25','2026-12-24','2026-12-25']);
+const HOLIDAYS=new Set(['2026-01-01','2026-01-16','2026-02-16','2026-02-17','2026-03-18','2026-03-19','2026-03-20','2026-03-21','2026-03-23','2026-03-24','2026-04-03','2026-05-01','2026-05-14','2026-05-15','2026-05-27','2026-05-28','2026-05-31','2026-06-01','2026-06-16','2026-08-17','2026-08-25','2026-12-24','2026-12-25']);
 // Currency (Y) IDR — deposit interest (PUT mode)
-let IDR_DEP=[{d:1,r:5.53},{d:7,r:5.76},{d:14,r:5.76},{d:30,r:5.81},{d:60,r:5.86},{d:90,r:5.91},{d:120,r:5.95},{d:150,r:5.99},{d:180,r:6.03},{d:360,r:6.07}];
+let IDR_DEP=[{d:1,r:5.78},{d:7,r:6.1},{d:14,r:6.11},{d:30,r:6.47},{d:60,r:6.74},{d:90,r:6.76},{d:120,r:6.79},{d:150,r:6.81},{d:180,r:6.83},{d:360,r:6.85}];
 // Currency (Y) USD — deposit interest (CALL mode)
-let USD_DEP=[{d:1,r:3.48},{d:7,r:3.5},{d:14,r:3.52},{d:30,r:4.06},{d:60,r:4.18},{d:90,r:4.24},{d:120,r:4.31},{d:150,r:4.37},{d:180,r:4.42},{d:360,r:4.43}];
+let USD_DEP=[{d:1,r:3.48},{d:7,r:3.5},{d:14,r:3.52},{d:30,r:4.06},{d:60,r:4.18},{d:90,r:4.23},{d:120,r:4.31},{d:150,r:4.36},{d:180,r:4.41},{d:360,r:4.43}];
 // DEPO RATE OPTION IDR1 — GK model rd
-let IDR_OPT=[{d:1,r:5.93},{d:7,r:6.2},{d:14,r:6.22},{d:30,r:6.33},{d:60,r:6.33},{d:90,r:6.33},{d:120,r:6.34},{d:150,r:6.36},{d:180,r:6.38},{d:360,r:6.55}];
+let IDR_OPT=[{d:1,r:6.16},{d:7,r:6.06},{d:14,r:6.07},{d:30,r:6.11},{d:60,r:6.11},{d:90,r:6.14},{d:120,r:6.16},{d:150,r:6.18},{d:180,r:6.21},{d:360,r:6.35}];
 // DEPO RATE OPTION USD1 — GK model rf
-let USD_OPT=[{d:1,r:3.65},{d:7,r:3.63},{d:14,r:3.63},{d:30,r:3.64},{d:60,r:3.7},{d:90,r:3.74},{d:120,r:3.78},{d:150,r:3.82},{d:180,r:3.86},{d:360,r:4.02}];
-let AUD_OPT=[{d:1,r:4.35},{d:7,r:4.35},{d:14,r:4.36},{d:30,r:4.36},{d:60,r:4.38},{d:90,r:4.4},{d:120,r:4.43},{d:150,r:4.46},{d:180,r:4.48},{d:360,r:4.58}];
-let EUR_OPT=[{d:1,r:2.23},{d:7,r:2.19},{d:14,r:2.19},{d:30,r:2.19},{d:60,r:2.28},{d:90,r:2.33},{d:120,r:2.36},{d:150,r:2.39},{d:180,r:2.42},{d:360,r:2.56}];
-let GBP_OPT=[{d:1,r:3.73},{d:7,r:3.73},{d:14,r:3.73},{d:30,r:3.74},{d:60,r:3.76},{d:90,r:3.78},{d:120,r:3.81},{d:150,r:3.85},{d:180,r:3.89},{d:360,r:4.07}];
-let NZD_OPT=[{d:1,r:2.44},{d:7,r:2.5},{d:14,r:2.5},{d:30,r:2.58},{d:60,r:2.65},{d:90,r:2.7},{d:120,r:2.75},{d:150,r:2.81},{d:180,r:2.85},{d:360,r:3.13}];
-let SGD_OPT=[{d:1,r:1.05},{d:7,r:1.08},{d:14,r:1.12},{d:30,r:1.22},{d:60,r:1.23},{d:90,r:1.25},{d:120,r:1.26},{d:150,r:1.27},{d:180,r:1.28},{d:360,r:1.39}];
+let USD_OPT=[{d:1,r:3.64},{d:7,r:3.63},{d:14,r:3.63},{d:30,r:3.68},{d:60,r:3.72},{d:90,r:3.76},{d:120,r:3.81},{d:150,r:3.84},{d:180,r:3.87},{d:360,r:4.03}];
+let AUD_OPT=[{d:1,r:4.35},{d:7,r:4.35},{d:14,r:4.35},{d:30,r:4.36},{d:60,r:4.42},{d:90,r:4.49},{d:120,r:4.53},{d:150,r:4.56},{d:180,r:4.59},{d:360,r:4.71}];
+let EUR_OPT=[{d:1,r:2.23},{d:7,r:2.19},{d:14,r:2.19},{d:30,r:2.31},{d:60,r:2.37},{d:90,r:2.41},{d:120,r:2.44},{d:150,r:2.48},{d:180,r:2.51},{d:360,r:2.67}];
+let GBP_OPT=[{d:1,r:3.73},{d:7,r:3.73},{d:14,r:3.73},{d:30,r:3.75},{d:60,r:3.76},{d:90,r:3.8},{d:120,r:3.84},{d:150,r:3.88},{d:180,r:3.92},{d:360,r:4.15}];
+let NZD_OPT=[{d:1,r:2.59},{d:7,r:2.71},{d:14,r:2.71},{d:30,r:2.73},{d:60,r:2.74},{d:90,r:2.79},{d:120,r:2.86},{d:150,r:2.9},{d:180,r:2.94},{d:360,r:3.19}];
+let SGD_OPT=[{d:1,r:1.3},{d:7,r:1.3},{d:14,r:1.3},{d:30,r:1.3},{d:60,r:1.3},{d:90,r:1.32},{d:120,r:1.33},{d:150,r:1.34},{d:180,r:1.35},{d:360,r:1.46}];
 
 
-let AUD_DEP=[{d:1,r:0.32},{d:7,r:0.32},{d:14,r:1.25},{d:30,r:3.42},{d:60,r:3.41},{d:90,r:3.42},{d:120,r:3.43},{d:150,r:3.45},{d:180,r:3.47},{d:360,r:3.42}];
-let EUR_DEP=[{d:1,r:0.32},{d:7,r:0.32},{d:14,r:0.8},{d:30,r:1.92},{d:60,r:1.91},{d:90,r:1.92},{d:120,r:1.93},{d:150,r:1.95},{d:180,r:1.97},{d:360,r:1.96}];
-let GBP_DEP=[{d:1,r:0.32},{d:7,r:0.32},{d:14,r:1.33},{d:30,r:3.67},{d:60,r:3.66},{d:90,r:3.67},{d:120,r:3.68},{d:150,r:3.7},{d:180,r:3.72},{d:360,r:3.71}];
-let NZD_DEP=[{d:1,r:0.32},{d:7,r:0.32},{d:14,r:0.95},{d:30,r:2.42},{d:60,r:2.41},{d:90,r:2.42},{d:120,r:2.43},{d:150,r:2.45},{d:180,r:2.47},{d:360,r:2.51}];
-let SGD_DEP=[{d:1,r:0.32},{d:7,r:0.32},{d:14,r:0.69},{d:30,r:1.57},{d:60,r:1.61},{d:90,r:1.67},{d:120,r:1.7},{d:150,r:1.73},{d:180,r:1.77},{d:360,r:1.76}];
+let AUD_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:1.25},{d:30,r:3.41},{d:60,r:3.41},{d:90,r:3.41},{d:120,r:3.43},{d:150,r:3.44},{d:180,r:3.46},{d:360,r:3.42}];
+let EUR_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:0.79},{d:30,r:1.91},{d:60,r:1.91},{d:90,r:1.91},{d:120,r:1.93},{d:150,r:1.94},{d:180,r:1.96},{d:360,r:1.96}];
+let GBP_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:1.33},{d:30,r:3.66},{d:60,r:3.66},{d:90,r:3.66},{d:120,r:3.68},{d:150,r:3.69},{d:180,r:3.71},{d:360,r:3.71}];
+let NZD_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:0.95},{d:30,r:2.41},{d:60,r:2.41},{d:90,r:2.41},{d:120,r:2.43},{d:150,r:2.44},{d:180,r:2.46},{d:360,r:2.5}];
+let SGD_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:0.69},{d:30,r:1.56},{d:60,r:1.61},{d:90,r:1.66},{d:120,r:1.7},{d:150,r:1.73},{d:180,r:1.76},{d:360,r:1.75}];
 
-let CCY_DEP={'USD':USD_DEP,'AUD':AUD_DEP,'EUR':EUR_DEP,'GBP':GBP_DEP,'NZD':NZD_DEP,'SGD':SGD_DEP};
-let CCY_OPT={'USD':USD_OPT,'AUD':AUD_OPT,'EUR':EUR_OPT,'GBP':GBP_OPT,'NZD':NZD_OPT,'SGD':SGD_OPT};
+let JPY_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:0.34},{d:30,r:0.41},{d:60,r:0.41},{d:90,r:0.41},{d:120,r:0.43},{d:150,r:0.44},{d:180,r:0.46},{d:360,r:0.46}];
+let JPY_OPT=[{d:1,r:0.98},{d:7,r:0.98},{d:14,r:0.98},{d:30,r:1.03},{d:60,r:1.11},{d:90,r:1.16},{d:120,r:1.2},{d:150,r:1.24},{d:180,r:1.28},{d:360,r:1.48}];
+let CCY_DEP={'USD':USD_DEP,'AUD':AUD_DEP,'EUR':EUR_DEP,'GBP':GBP_DEP,'NZD':NZD_DEP,'SGD':SGD_DEP,'JPY':JPY_DEP,'IDR':IDR_DEP};
+
+let CCY_OPT={'USD':USD_OPT,'AUD':AUD_OPT,'EUR':EUR_OPT,'GBP':GBP_OPT,'NZD':NZD_OPT,'SGD':SGD_OPT,'JPY':JPY_OPT,'IDR':IDR_OPT};
+const HIERARCHY=['EUR','GBP','AUD','NZD','USD','SGD','JPY','IDR'];
+const RANK={EUR:0,GBP:1,AUD:2,NZD:3,USD:4,SGD:5,JPY:6,IDR:7};
+const ALL_CCY=['EUR','GBP','AUD','NZD','USD','SGD','JPY','IDR'];
+const PAIR_SPOTS={'EUR/GBP':0.8557,'EUR/AUD':1.6174,'EUR/NZD':1.9584,'EUR/USD':1.159,'EUR/SGD':1.4753,'EUR/JPY':185.22,'EUR/IDR':20571,'GBP/AUD':1.89,'GBP/NZD':2.2886,'GBP/USD':1.3544,'GBP/SGD':1.724,'GBP/JPY':216.45,'GBP/IDR':24039,'AUD/NZD':1.2109,'AUD/USD':0.7166,'AUD/SGD':0.9122,'AUD/JPY':114.52,'AUD/IDR':12719,'NZD/USD':0.5918,'NZD/SGD':0.7533,'NZD/JPY':94.57,'NZD/IDR':10504,'USD/SGD':1.2729,'USD/JPY':159.81,'USD/IDR':17749,'SGD/JPY':125.55,'SGD/IDR':13943,'JPY/IDR':111.06};
+const VOL_HINTS_PAIR={'AUD/USD':'e.g. 4.50','NZD/USD':'e.g. 6.00','EUR/USD':'e.g. 3.75','GBP/USD':'e.g. 3.25','USD/SGD':'e.g. 2.25','USD/JPY':'e.g. 4.75','USD/IDR':'e.g. 3.50','JPY/IDR':'e.g. 3.50','AUD/IDR':'e.g. 3.50','SGD/IDR':'e.g. 2.00'};
+let depositCCY='IDR',alternateCCY='USD';
+
+function getPairInfo(dep,alt){
+  const isDepBase=RANK[dep]<RANK[alt];
+  const base=isDepBase?dep:alt, quote=isDepBase?alt:dep;
+  const mode=dep===quote?'PUT':'CALL';
+  const name=base+'/'+quote;
+  const isJPYpair=base==='JPY'||quote==='JPY';
+  const isIDRpair=(base==='IDR'||quote==='IDR')&&!isJPYpair;
+  const dec=isIDRpair?0:isJPYpair?2:4;
+  const pip=isIDRpair?1:isJPYpair?0.01:0.0001;
+  const spot=PAIR_SPOTS[name]||(isIDRpair?10000:1);
+  return {base,quote,mode,name,dec,pip,spot};
+}
+
+
+// ── Custom CCY Dropdown ──
+function toggleCCYDropdown(id){
+  const menu=document.getElementById(id+'_menu');
+  const btn=document.getElementById(id+'_btn');
+  const isOpen=menu.classList.contains('show');
+  // Close all dropdowns first
+  document.querySelectorAll('.ccy-dropdown-menu').forEach(m=>m.classList.remove('show'));
+  document.querySelectorAll('.ccy-dropdown-btn').forEach(b=>b.classList.remove('open'));
+  if(!isOpen){menu.classList.add('show');btn.classList.add('open');}
+}
+function selectCCY(id, val){
+  const flagMap={EUR:'🇪🇺',GBP:'🇬🇧',AUD:'🇦🇺',NZD:'🇳🇿',USD:'🇺🇸',SGD:'🇸🇬',JPY:'🇯🇵',IDR:'🇮🇩'};
+  const flagEl=document.getElementById(id+'_val');
+  if(flagEl) flagEl.textContent=(flagMap[val]||'')+' '+val;
+  const flagMap2=flagMap;
+  document.getElementById(id+'_menu').classList.remove('show');
+  document.getElementById(id+'_btn').classList.remove('open');
+  // Update active state
+  document.querySelectorAll('#'+id+'_menu .ccy-dropdown-item').forEach(el=>{
+    const isActive=el.dataset.val===val;
+    el.classList.toggle('active',isActive);
+    el.querySelector('span').textContent=isActive?'●':'';
+  });
+  // Call the actual handler
+  if(id==='iDepCCY') setDepCCY(val);
+  else if(id==='iAltCCY') setAltCCY(val);
+}
+// Close dropdowns when clicking outside
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.ccy-dropdown')){
+    document.querySelectorAll('.ccy-dropdown-menu').forEach(m=>m.classList.remove('show'));
+    document.querySelectorAll('.ccy-dropdown-btn').forEach(b=>b.classList.remove('open'));
+  }
+});
+
+
+function swapCCY(){
+  const oldDep=depositCCY, oldAlt=alternateCCY;
+  depositCCY=oldAlt; alternateCCY=oldDep;
+  const _fm={EUR:'🇪🇺',GBP:'🇬🇧',AUD:'🇦🇺',NZD:'🇳🇿',USD:'🇺🇸',SGD:'🇸🇬',JPY:'🇯🇵',IDR:'🇮🇩'};
+  // Update dep button
+  const dv=document.getElementById('iDepCCY_val');
+  if(dv) dv.textContent=(_fm[depositCCY]||'')+' '+depositCCY;
+  // Update dep menu active
+  document.querySelectorAll('#iDepCCY_menu .ccy-dropdown-item').forEach(el=>{
+    const isA=el.dataset.val===depositCCY;
+    el.classList.toggle('active',isA);
+    const chk=el.querySelector('.dd-check'); if(chk) chk.textContent=isA?'●':'';
+    el.style.display='';
+  });
+  // Update alt button
+  const av=document.getElementById('iAltCCY_val');
+  if(av) av.textContent=(_fm[alternateCCY]||'')+' '+alternateCCY;
+  // Rebuild alt menu (hide new depositCCY)
+  document.querySelectorAll('#iAltCCY_menu .ccy-dropdown-item').forEach(el=>{
+    const v=el.dataset.val;
+    const isA=v===alternateCCY;
+    el.classList.toggle('active',isA);
+    const chk=el.querySelector('.dd-check'); if(chk) chk.textContent=isA?'●':'';
+    el.style.display=v===depositCCY?'none':'';
+  });
+  applyPair();
+}
+
+function rebuildAltDropdown(){
+  const menu=document.getElementById('iAltCCY_menu');
+  if(!menu) return;
+  // Show/hide items based on depositCCY
+  menu.querySelectorAll('.ccy-dropdown-item').forEach(el=>{
+    const v=el.dataset.val;
+    if(v===depositCCY){el.style.display='none';el.classList.add('disabled');}
+    else{el.style.display='';el.classList.remove('disabled');}
+  });
+  // If current alt == deposit, switch to first valid
+  if(alternateCCY===depositCCY){
+    const first=ALL_CCY.find(x=>x!==depositCCY);
+    alternateCCY=first||'USD';
+    const _fm={EUR:'🇪🇺',GBP:'🇬🇧',AUD:'🇦🇺',NZD:'🇳🇿',USD:'🇺🇸',SGD:'🇸🇬',JPY:'🇯🇵',IDR:'🇮🇩'};
+    document.getElementById('iAltCCY_val').textContent=(_fm[alternateCCY]||'')+' '+alternateCCY;
+    menu.querySelectorAll('.ccy-dropdown-item').forEach(el=>{
+      const isActive=el.dataset.val===alternateCCY;
+      el.classList.toggle('active',isActive);
+      const chk=el.querySelector('.dd-check');
+      if(chk) chk.textContent=isActive?'●':'';
+    });
+  }
+}
+
+function setDepCCY(ccy){
+  depositCCY=ccy;
+  // Don't change alternateCCY here - let rebuildAltDropdown handle
+  // the conflict check AND the UI update together
+  rebuildAltDropdown();
+  applyPair();
+}
+
+function setAltCCY(ccy){
+  alternateCCY=ccy;
+  applyPair();
+}
+
+function applyPair(){
+  const pi=getPairInfo(depositCCY,alternateCCY);
+  const el=id=>document.getElementById(id);
+  if(el('pairLabel')){el('pairLabel').textContent=pi.name;}
+  if(el('modeLabel')){el('modeLabel').textContent=pi.mode;el('modeLabel').style.background=pi.mode==='PUT'?'#790008':'#1D4ED8';}
+  if(el('lNotionalPre')){el('lNotionalPre').textContent=depositCCY;}
+  if(el('spotPairLabel')){el('spotPairLabel').textContent='Spot Rate ('+pi.name+')';}
+  if(el('spotSuffix')){el('spotSuffix').textContent=pi.name;}
+  if(el('iSpot')){el('iSpot').value='';el('iSpot').placeholder=pi.dec===0?pi.spot.toLocaleString('en-US'):pi.spot.toFixed(pi.dec);}
+  if(el('iStrike')){el('iStrike').value='';el('iStrike').placeholder='Strike Price';}
+  if(el('iPoints')){el('iPoints').value=50;}
+  if(el('iVol')){el('iVol').placeholder=VOL_HINTS_PAIR[pi.name]||'e.g. 3.5';el('iVol').value='';}
+  if(el('convAltLabel')){el('convAltLabel').textContent=alternateCCY;}
+  // Set nominal default based on deposit CCY
+  const notEl=el('iNotional');
+  if(notEl){
+    const isIDRdep=depositCCY==='IDR';
+    notEl.value=isIDRdep?'1,000,000,000':'100,000';
+  }
+  // Update MODE FIRST so setSign uses correct mode
+  MODE=pi.mode;
+  setSign(pi.mode==='PUT'?-1:1);
+  calc();
+}
+
 const CCY_SPOT={'USD':18000,'AUD':12600,'EUR':20700,'GBP':24300,'NZD':10600,'SGD':14050};
 
 let curCCY='USD';
@@ -631,14 +871,18 @@ function fmtNotional(el){
   if(isNaN(v)||v==='') return;
   el.value=parseFloat(v).toLocaleString('en-US');
 }
-function fmtSpot(el){
+function fmtSpot(el, force){
+  // Only reformat on blur (force=true) to avoid interrupting typing
   let v=el.value.replace(/,/g,'');
-  if(isNaN(v)||v===''||v==='-') return;
+  if(v===''||v==='-'||v==='.') return;
   const n=parseFloat(v);
-  if(!isNaN(n)&&n>0){
-    const parts=n.toString().split('.');
-    parts[0]=parts[0].replace(/\B(?=(\d{3})+(?!\d))/g,',');
-    el.value=parts.join('.');
+  if(isNaN(n)||n<=0) return;
+  if(!force) return; // don't reformat while typing
+  const pi=getPairInfo(depositCCY,alternateCCY);
+  if(pi.dec===0){
+    el.value=Math.round(n).toLocaleString('en-US');
+  } else {
+    el.value=n.toFixed(pi.dec);
   }
 }
 function getNum(id){
@@ -649,22 +893,9 @@ function getNum(id){
 }
 
 function setCCY(ccy){
-  curCCY = ccy;
-  const spot = CCY_SPOT[ccy]||0;
-  const el = (id)=>document.getElementById(id);
-  if(el('iSpot')){ el('iSpot').placeholder=spot.toLocaleString('en-US'); el('iSpot').value=''; }
-  if(el('iStrike')){ el('iStrike').placeholder=(spot-50).toLocaleString('en-US'); el('iStrike').value=''; }
-  if(el('spotPairLabel')) el('spotPairLabel').textContent='Spot Rate ('+ccy+'/IDR)';
-  if(el('spotSuffix')) el('spotSuffix').textContent=ccy+'/IDR';
-  if(el('rUSDLabel')) el('rUSDLabel').textContent=ccy;
-  if(el('rUsdOpt1')) el('rUsdOpt1').textContent=ccy;
-  // Sync both dropdowns
-  if(el('iCCYcall')) el('iCCYcall').value=ccy;
-  if(el('iCCY')) el('iCCY').value=ccy;
-  // Volatility placeholder per CCY
-  const volHints={'USD':'e.g. 3.5','AUD':'e.g. 4.5','SGD':'e.g. 2.75'};
-  if(el('iVol')) el('iVol').placeholder = volHints[ccy]||'';
-  calc();
+  // Legacy wrapper - redirect to new pair system
+  alternateCCY=ccy;
+  applyPair();
 }
 
 
@@ -718,10 +949,11 @@ function updateMoneyLabel(){
 
 function onPointsChange(){
   const S=getNum('iSpot');
-  const pts=parseInt(document.getElementById('iPoints').value)||0;
+  const pts=parseFloat(document.getElementById('iPoints').value)||0;
+  const pi=getPairInfo(depositCCY,alternateCCY);
   if(S>0){
-    const K=S+ptsSign*pts;
-    document.getElementById('iStrike').value=K.toLocaleString('en-US');
+    const K=S+ptsSign*pts*pi.pip;
+    document.getElementById('iStrike').value=pi.dec===0?Math.round(K).toLocaleString('en-US'):K.toFixed(pi.dec);
   }
   updateMoneyLabel();
   calc();
@@ -730,24 +962,25 @@ function onPointsChange(){
 function onStrikeChange(){
   const S=getNum('iSpot');
   const K=getNum('iStrike');
+  const pi=getPairInfo(depositCCY,alternateCCY);
   if(S>0&&K>0){
-    const diff=Math.round(K-S);
+    const diff=K-S;
     ptsSign=diff<=0?-1:1;
     setSign(ptsSign);
-    document.getElementById('iPoints').value=Math.abs(diff);
+    document.getElementById('iPoints').value=Math.abs(Math.round(diff/pi.pip));
   }
   updateMoneyLabel();
   calc();
 }
 
 function calc(){
-  const isPUT=MODE==='PUT';
+  const isPUT=getPairInfo(depositCCY,alternateCCY).mode==='PUT';
   const N=getNum('iNotional');
   const S=getNum('iSpot');
   const K=getNum('iStrike');
   const vol=parseFloat(document.getElementById('iVol').value)||0;
   const tenor=parseInt(document.getElementById('iTenor').value)||0;
-  document.getElementById('oConverted').textContent=(N>0&&K>0)?(isPUT?curCCY+' '+fN(N/K,2):'IDR '+fN(N*K,2)):'— enter strike price';
+  document.getElementById('oConverted').textContent=(N>0&&K>0)?(isPUT?alternateCCY+' '+fN(N/K,2):alternateCCY+' '+fN(N*K,2)):'—';
   let today=new Date();today.setHours(0,0,0,0);while(!isBD(today))today.setDate(today.getDate()+1);
   document.getElementById('dTx').textContent=fmtD(today);
   const valDate=addBD(today,2);
@@ -809,16 +1042,29 @@ function calc(){
     document.getElementById('dOptDays').textContent=optDays+' days';
     // Deposit rate uses actual deposit days (valDate → matDate)
     const idrDepR=interp(depDays,IDR_DEP);
-    const depRate=isPUT?idrDepR:interp(depDays,CCY_DEP[curCCY]||USD_DEP);
-    const idrOptR=interp(optDays,IDR_OPT);
-    const usdOptR=interp(optDays,CCY_OPT[curCCY]);
+    const depRate=interp(depDays,CCY_DEP[depositCCY]||IDR_DEP);
+    const pairInfo=getPairInfo(depositCCY,alternateCCY); const pi2=pairInfo;
+    const rdRate=interp(optDays,CCY_OPT[pairInfo.quote]||IDR_OPT);
+    const rfRate=interp(optDays,CCY_OPT[pairInfo.base]||USD_OPT);
+    const idrOptR=rdRate; const usdOptR=rfRate;
     document.getElementById('rIdrDep').textContent=fN(depRate,5)+'%';
-    document.getElementById('rIdrDepLabel').textContent=(isPUT?'IDR':curCCY)+' Deposit Rate — Currency (Y)';
-    document.getElementById('rIdrDepNote').textContent=(isPUT?'IDR':curCCY)+' Currency(Y) · '+depDays+'d deposit';
-    document.getElementById('rIdr').textContent=fN(idrOptR,5)+'%';
-    document.getElementById('rUsd').textContent=fN(usdOptR,5)+'%';
-    document.getElementById('rIdrNote').textContent='DEPO RATE OPTION IDR1 · '+optDays+'d tenor';
-    document.getElementById('rUsdNote').textContent='DEPO RATE OPTION '+curCCY+'1 · '+optDays+'d tenor';
+    document.getElementById('rIdrDepLabel').textContent=depositCCY+' — Deposit Rate (Currency Y)';
+    document.getElementById('rIdrDepNote').textContent=depositCCY+'1 — Currency (Y) · '+depDays+'d deposit';
+    // Display deposit CCY and alternate CCY rates (not GK rd/rf)
+    const depOptRate=interp(optDays,CCY_OPT[depositCCY]||IDR_OPT);
+    const altOptRate=interp(optDays,CCY_OPT[alternateCCY]||USD_OPT);
+    document.getElementById('rIdr').textContent=fN(depOptRate,5)+'%';
+    document.getElementById('rUsd').textContent=fN(altOptRate,5)+'%';
+    document.getElementById('rIdrNote').textContent='DEPO RATE OPTION '+depositCCY+'1 · '+optDays+'d tenor';
+      const rdEl=document.getElementById('rdCCYLabel');
+      const rdEl2=document.getElementById('rdCCYOpt');
+      if(rdEl) rdEl.textContent=depositCCY;
+      if(rdEl2) rdEl2.textContent=depositCCY;
+      const rfLbl=document.getElementById('rUSDLabel');
+      const rfOpt=document.getElementById('rUsdOpt1');
+      if(rfLbl) rfLbl.textContent=alternateCCY;
+      if(rfOpt) rfOpt.textContent=alternateCCY;
+    document.getElementById('rUsdNote').textContent='DEPO RATE OPTION '+alternateCCY+'1 · '+optDays+'d tenor';
     const ok=N>0&&S>0&&K>0&&vol>0;
     document.getElementById('resEmpty').style.display=ok?'none':'block';
     document.getElementById('resMain').style.display=ok?'block':'none';
@@ -826,7 +1072,7 @@ function calc(){
     document.getElementById('revSec').style.display=ok?'block':'none';
     if(ok){
       
-      const rd=idrOptR/100,rf=usdOptR/100,v=vol/100,T_opt=optDays/365,T_dep=depDays/365;
+      const rd=rdRate/100,rf=rfRate/100,v=vol/100,T_opt=optDays/365,T_dep=depDays/365;
       const optPrice=isPUT?gkPUT(S,K,rd,rf,v,T_opt):gkCALL(S,K,rd,rf,v,T_opt);
       const putPrice=optPrice; // alias for display
       // PUT: everything in IDR. CALL: everything in USD.
@@ -837,7 +1083,7 @@ function calc(){
       // Premium: (optPrice/Spot) × N
       // (PUT: optPrice IDR/USD × N_IDR/Spot = IDR)
       // (CALL: optPrice IDR/USD / Spot × N_USD = USD)
-      const premInc=isPUT?(optPrice*N/S):(optPrice*N/S);
+      const premInc=isPUT?(optPrice*(N/S)):(optPrice*N/S);
       const totInc=depInc+premInc;
       // Yield = (Total/N) × (365/depDays) × 100%
       const yldPA=(totInc/N)*(365/depDays)*100;
@@ -859,19 +1105,19 @@ function calc(){
         if(K<S){money='OTM';mColor='#790008';}  // K<Spot → easier to convert → riskier
       }
       document.getElementById('oYield').textContent=p(yldPA);
-      document.getElementById('oYieldSub').textContent=optDays+'d option · '+depDays+'d deposit · notional '+(isPUT?'IDR '+fI(N):curCCY+' '+fN(N,2));
+      document.getElementById('oYieldSub').textContent=optDays+'d option · '+depDays+'d deposit · notional '+(isPUT?depositCCY+' '+(depositCCY==='IDR'?fI(N):fN(N,2)):depositCCY+' '+fN(N,2));
       document.getElementById('oYieldBar').style.width=Math.min((depY0/yldPA)*100,100)+'%';
-      document.getElementById('oPutPrice').textContent='IDR '+fN(putPrice,3)+' / '+curCCY+' ('+(isPUT?'PUT':'CALL')+' price · GK Model)';
-      if(document.getElementById('rPerCCY')) document.getElementById('rPerCCY').textContent='IDR per '+curCCY;
-      document.getElementById('lUsdNotLabel').textContent=isPUT?curCCY+' Notional (Notional ÷ Spot)':curCCY+' Notional (deposited)';
-      if(document.getElementById('rUsdEquivSub')) document.getElementById('rUsdEquivSub').textContent=curCCY+' equivalent';
-      document.getElementById('oUsdNot').textContent=isPUT?curCCY+' '+fN(N/S,2):curCCY+' '+fN(N,2);
-      document.getElementById('oUsdNotLabel') && (document.getElementById('oUsdNotLabel').textContent=curCCY+' Notional (deposited)');
-      document.getElementById('oDepInc').textContent=isPUT?'IDR '+fI(depInc):curCCY+' '+fN(depInc,2);
-      document.getElementById('oDepSub').textContent=fN(depYPA)+'% p.a. · '+(isPUT?'IDR':curCCY)+' Currency(Y) '+fN(depRate,5)+'% × '+depDays+'d';
-      document.getElementById('oPremInc').textContent=isPUT?'IDR '+fI(premInc):curCCY+' '+fN(premInc,2);
+      document.getElementById('oPutPrice').textContent=(function(){const base=getPairInfo(depositCCY,alternateCCY).base; return fN(putPrice,base==='IDR'?2:5);})()+' / '+alternateCCY+alternateCCY+' '+fN(putPrice,5)+' / '+depositCCY+' ('+(isPUT?'PUT':'CALL')+' price · GK Model)';
+      if(document.getElementById('rPerCCY')) document.getElementById('rPerCCY').textContent=depositCCY+' per '+alternateCCY;
+      document.getElementById('lUsdNotLabel').textContent=alternateCCY+' Notional ('+(isPUT?'÷ Spot':'deposited')+')';
+      if(document.getElementById('rUsdEquivSub')) document.getElementById('rUsdEquivSub').textContent=alternateCCY+' equivalent';
+      document.getElementById('oUsdNot').textContent=alternateCCY+' '+(isPUT?fN(N/S,4):fN(N*S,2));
+      document.getElementById('oUsdNotLabel') && (document.getElementById('oUsdNotLabel').textContent=alternateCCY+' Notional (deposited)');
+      document.getElementById('oDepInc').textContent=isPUT?depositCCY+' '+(depositCCY==='IDR'?fI(depInc):fN(depInc,2)):depositCCY+' '+fN(depInc,2);
+      document.getElementById('oDepSub').textContent=fN(depYPA)+'% p.a. · '+depositCCY+'1 (Currency Y) '+fN(depRate,5)+'% × '+depDays+'d';
+      document.getElementById('oPremInc').textContent=isPUT?depositCCY+' '+(depositCCY==='IDR'?fI(premInc):fN(premInc,2)):depositCCY+' '+fN(premInc,2);
       document.getElementById('oPremSub').textContent=fN(premYPA)+'% · '+(isPUT?'PUT':'CALL')+' price/Spot × Notional';
-      document.getElementById('oTotInc').textContent=isPUT?'IDR '+fI(totInc):curCCY+' '+fN(totInc,2);
+      document.getElementById('oTotInc').textContent=isPUT?depositCCY+' '+(depositCCY==='IDR'?fI(totInc):fN(totInc,2)):depositCCY+' '+fN(totInc,2);
       document.getElementById('oTotSub').textContent=p(yldPA);
       const maxY=yldPA;
       [[depY0,'#CBD5E1'],[depYPA,'#94A3B8'],[premYPA,'#FCA5A5'],[yldPA,'#790008']].forEach(([val,col],i)=>{
@@ -880,11 +1126,11 @@ function calc(){
         document.getElementById('bFill'+i).style.background=col;
       });
       if(isPUT){
-        document.getElementById('oNC').textContent='S_T > '+fI(K)+' → No Conversion\nFull IDR '+fI(N)+' returned\n+ Total income IDR '+fI(totInc);
-        document.getElementById('oCV').textContent='S_T < '+fI(K)+' → Conversion\nIDR → '+curCCY+' '+fN(N/K,2)+'\n+ Total income IDR '+fI(totInc);
+        document.getElementById('oNC').textContent='S_T > '+fI(K)+' → No Conversion\nFull IDR '+fI(N)+' returned\n+ Total income '+depositCCY+' '+(depositCCY==='IDR'?fI(totInc):fN(totInc,2));
+        document.getElementById('oCV').textContent='S_T < '+fI(K)+' → Conversion\nIDR → '+alternateCCY+' '+fN(N/K,2)+'\n+ Total income '+depositCCY+' '+(depositCCY==='IDR'?fI(totInc):fN(totInc,2));
       } else {
-        document.getElementById('oNC').textContent='S_T < '+fI(K)+' → No Conversion\nFull '+curCCY+' '+fN(N,2)+' returned\n+ Total income '+curCCY+' '+fN(totInc,2);
-        document.getElementById('oCV').textContent='S_T > '+fI(K)+' → Conversion\n'+curCCY+' '+fN(N,2)+' → IDR '+fI(N*K)+'\n+ Total income '+curCCY+' '+fN(totInc,2);
+        document.getElementById('oNC').textContent='S_T < '+fI(K)+' → No Conversion\nFull '+depositCCY+' '+fN(N,2)+' returned\n+ Total income '+depositCCY+' '+fN(totInc,2);
+        document.getElementById('oCV').textContent='S_T > '+fI(K)+' → Conversion\n'+depositCCY+' '+fN(N,2)+' → '+alternateCCY+' '+fN(N*K,2)+'\n+ Total income '+depositCCY+' '+fN(totInc,2);
       }
       // Insight based on moneyness and conv prob
       let insight='';
@@ -948,17 +1194,17 @@ function updateSplit(){
 
   // Customer card
   document.getElementById('sCustPct').textContent=p(custYld)+(isFloored?' ⚑':'')+'  (gross)';
-  document.getElementById('sCustIDR').textContent=(_isPUT?'IDR '+fI(custInc):curCCY+' '+fN(custInc,2));
+  document.getElementById('sCustIDR').textContent=(_isPUT?depositCCY+' '+(depositCCY==='IDR'?fI(custInc):fN(custInc,2)):depositCCY+' '+fN(custInc,2));
   document.getElementById('sCustSub').textContent=isFloored?'⚑ Floored at IDR Currency(Y) deposit rate':pct+'% × total implied yield';
 
   // Net after tax
   document.getElementById('sCustNetPct').textContent=p(custNetYld);
-  document.getElementById('sCustNetIDR').textContent=(_isPUT?'IDR '+fI(custNetInc)+' (tax IDR '+fI(custTaxInc)+')'  :curCCY+' '+fN(custNetInc,2)+' (tax '+curCCY+' '+fN(custTaxInc,2)+')');
+  document.getElementById('sCustNetIDR').textContent=(_isPUT?depositCCY+' '+(depositCCY==='IDR'?fI(custNetInc):fN(custNetInc,2))+' (tax IDR '+fI(custTaxInc)+')'  :depositCCY+' '+fN(custNetInc,2)+' (tax '+depositCCY+' '+fN(custTaxInc,2)+')');
   document.getElementById('sCustNetSub').textContent='Gross '+p(custYld)+' − PPh 20% = Net '+p(custNetYld)+' p.a.';
 
   // Bank card
   document.getElementById('sBankPct').textContent=p(bankYld);
-  document.getElementById('sBankIDR').textContent=(_isPUT?'IDR '+fI(bankInc):curCCY+' '+fN(bankInc,2));
+  document.getElementById('sBankIDR').textContent=(_isPUT?depositCCY+' '+(depositCCY==='IDR'?fI(bankInc):fN(bankInc,2)):depositCCY+' '+fN(bankInc,2));
   document.getElementById('sBankSub').textContent=(100-pct)+'% spread from total implied yield';
 
   // Bars
@@ -968,76 +1214,103 @@ function updateSplit(){
   document.getElementById('sFCust').style.width=grossYld>0?Math.min((custYld/grossYld)*100,100)+'%':'0%';
   document.getElementById('sFBank').style.width=grossYld>0?Math.min((bankYld/grossYld)*100,100)+'%':'0%';
 }
-calc();
+rebuildAltDropdown();
+applyPair();
 
-// ------------------------------------------------------------
-// Fetch live rates from Supabase (Rates Dashboard writes to this same table).
-// Runs after the first calc() above, so the page never shows blank — it renders
-// instantly with the fallback defaults, then quietly re-renders with live data.
-// If the fetch fails (offline, RLS issue, etc.) the fallback defaults just stay.
-// ------------------------------------------------------------
+// ─────────────────────────────────────────────────────────────────
+// LIVE RATES — fetched from Supabase (same table as Rates Dashboard)
+// Page loads instantly with fallback hardcoded values above,
+// then silently updates with live data. If fetch fails, fallback stays.
+// ─────────────────────────────────────────────────────────────────
 (async function loadLiveRates(){
   try{
-    const SUPABASE_URL = 'https://xavhlnwodzhqxdhryowm.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhhdmhsbndvZHpocXhkaHJ5b3dtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxNTk5MzMsImV4cCI6MjEwMTczNTkzM30.fYJ0ZDRyImv9KT07-cW1qn9135jHFSnzybOJvnK1z70';
+    const SUPABASE_URL='https://xavhlnwodzhqxdhryowm.supabase.co';
+    const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhhdmhsbndvZHpocXhkaHJ5b3dtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxNTk5MzMsImV4cCI6MjEwMTczNTkzM30.fYJ0ZDRyImv9KT07-cW1qn9135jHFSnzybOJvnK1z70';
     if(!window.supabase) return;
-    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    const { data, error } = await sb.from('strike_calc_rates').select('*').eq('id', 1).single();
-    if(error || !data) return;
+    const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+    const {data,error}=await sb.from('strike_calc_rates').select('*').eq('id',1).single();
+    if(error||!data) return;
 
-    const TENORS_LIVE = [1,7,14,30,60,90,120,150,180,360];
-    const toTable = arr => (Array.isArray(arr) && arr.length===TENORS_LIVE.length)
-      ? TENORS_LIVE.map((d,i)=>({d, r: Number(arr[i])||0}))
-      : null;
+    const T=[1,7,14,30,60,90,120,150,180,360];
+    const toArr=arr=>(Array.isArray(arr)&&arr.length===10)?T.map((d,i)=>({d,r:Number(arr[i])||0})):null;
 
-    const dep = data.deposit_rates || {};
-    const opt = data.option_rates || {};
-    // Only overwrite a currency if the fetched data actually has it — otherwise
-    // keep whatever fallback default was already rendered for that currency.
-    if(toTable(dep.IDR)) IDR_DEP = toTable(dep.IDR);
-    if(toTable(dep.USD)) USD_DEP = toTable(dep.USD);
-    if(toTable(dep.AUD)) AUD_DEP = toTable(dep.AUD);
-    if(toTable(dep.EUR)) EUR_DEP = toTable(dep.EUR);
-    if(toTable(dep.GBP)) GBP_DEP = toTable(dep.GBP);
-    if(toTable(dep.NZD)) NZD_DEP = toTable(dep.NZD);
-    if(toTable(dep.SGD)) SGD_DEP = toTable(dep.SGD);
-    if(toTable(opt.IDR)) IDR_OPT = toTable(opt.IDR);
-    if(toTable(opt.USD)) USD_OPT = toTable(opt.USD);
-    if(toTable(opt.AUD)) AUD_OPT = toTable(opt.AUD);
-    if(toTable(opt.EUR)) EUR_OPT = toTable(opt.EUR);
-    if(toTable(opt.GBP)) GBP_OPT = toTable(opt.GBP);
-    if(toTable(opt.NZD)) NZD_OPT = toTable(opt.NZD);
-    if(toTable(opt.SGD)) SGD_OPT = toTable(opt.SGD);
-    CCY_DEP = {'USD':USD_DEP,'AUD':AUD_DEP,'EUR':EUR_DEP,'GBP':GBP_DEP,'NZD':NZD_DEP,'SGD':SGD_DEP};
-    CCY_OPT = {'USD':USD_OPT,'AUD':AUD_OPT,'EUR':EUR_OPT,'GBP':GBP_OPT,'NZD':NZD_OPT,'SGD':SGD_OPT};
+    const dep=data.deposit_rates||{};
+    const opt=data.option_rates||{};
+    if(toArr(dep.IDR)) IDR_DEP=toArr(dep.IDR);
+    if(toArr(dep.USD)) USD_DEP=toArr(dep.USD);
+    if(toArr(dep.AUD)) AUD_DEP=toArr(dep.AUD);
+    if(toArr(dep.EUR)) EUR_DEP=toArr(dep.EUR);
+    if(toArr(dep.GBP)) GBP_DEP=toArr(dep.GBP);
+    if(toArr(dep.NZD)) NZD_DEP=toArr(dep.NZD);
+    if(toArr(dep.SGD)) SGD_DEP=toArr(dep.SGD);
+    if(toArr(opt.IDR)) IDR_OPT=toArr(opt.IDR);
+    if(toArr(opt.USD)) USD_OPT=toArr(opt.USD);
+    if(toArr(opt.AUD)) AUD_OPT=toArr(opt.AUD);
+    if(toArr(opt.EUR)) EUR_OPT=toArr(opt.EUR);
+    if(toArr(opt.GBP)) GBP_OPT=toArr(opt.GBP);
+    if(toArr(opt.NZD)) NZD_OPT=toArr(opt.NZD);
+    if(toArr(opt.SGD)) SGD_OPT=toArr(opt.SGD);
+    if(toArr(dep.JPY)) JPY_DEP=toArr(dep.JPY);
+    if(toArr(opt.JPY)) JPY_OPT=toArr(opt.JPY);
+    CCY_DEP={'USD':USD_DEP,'AUD':AUD_DEP,'EUR':EUR_DEP,'GBP':GBP_DEP,'NZD':NZD_DEP,'SGD':SGD_DEP,'JPY':JPY_DEP,'IDR':IDR_DEP};
+    CCY_OPT={'USD':USD_OPT,'AUD':AUD_OPT,'EUR':EUR_OPT,'GBP':GBP_OPT,'NZD':NZD_OPT,'SGD':SGD_OPT,'JPY':JPY_OPT,'IDR':IDR_OPT};
 
-    if(Array.isArray(data.holidays) && data.holidays.length){
-      HOLIDAYS = new Set(data.holidays.map(h=>h.date));
+    if(Array.isArray(data.holidays)&&data.holidays.length){
+      HOLIDAYS=new Set(data.holidays.map(h=>h.date));
     }
 
-    // Show when the rates were last updated (WIB).
-    const noteEl = document.getElementById('ratesUpdatedNote');
-    if(noteEl){
-      if(data.updated_at){
-        const d = new Date(data.updated_at);
-        const datePart = d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric',timeZone:'Asia/Jakarta'});
-        const timePart = d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Jakarta'}).replace(':','.');
-        noteEl.textContent = 'Rates last updated: ' + datePart + ' ' + timePart + ' WIB';
-      } else {
-        noteEl.textContent = 'Rates last updated: —';
-      }
+    // Show timestamp
+    if(data.updated_at){
+      const d=new Date(data.updated_at);
+      const ts=d.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'})+' '+
+               d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})+' WIB';
+      const el=document.getElementById('ratesTimestamp');
+      if(el) el.textContent='Rates: '+ts;
     }
 
     calc(); // re-render with live data
   }catch(err){
-    // Silent fallback — calculator keeps working with the hardcoded defaults above.
-    console.warn('Live rates unavailable, using fallback defaults:', err);
-    const noteEl = document.getElementById('ratesUpdatedNote');
-    if(noteEl) noteEl.textContent = 'Rates last updated: showing fallback values';
+    console.warn('Live rates unavailable, using fallback defaults:',err);
   }
 })();
+;
 
 
+
+
+// ── Multi-char keyboard search for CCY dropdown ──
+const ALL_CCY_CODES=['EUR','GBP','AUD','NZD','USD','SGD','JPY','IDR'];
+let _kkBuf='';     // accumulated keystrokes
+let _kkTimer=null; // reset timer
+
+document.addEventListener('keydown',function(ev){
+  // Only handle letters A-Z
+  if(!/^[a-zA-Z]$/.test(ev.key)) return;
+
+  // Find which dropdown is open
+  let openDD=null;
+  document.querySelectorAll('.ccy-dropdown-menu.show').forEach(m=>{
+    openDD=m.id.replace('_menu','');
+  });
+  if(!openDD) return;
+
+  // Accumulate buffer
+  _kkBuf+=ev.key.toUpperCase();
+  clearTimeout(_kkTimer);
+  _kkTimer=setTimeout(()=>{ _kkBuf=''; }, 800);
+
+  // Find first matching visible currency
+  const match=ALL_CCY_CODES.find(ccy=>{
+    if(!ccy.startsWith(_kkBuf)) return false;
+    const item=document.querySelector('#'+openDD+'_menu .ccy-dropdown-item[data-val="'+ccy+'"]');
+    return item && item.style.display!=='none' && !item.classList.contains('disabled');
+  });
+
+  if(match){
+    selectCCY(openDD, match);
+    _kkBuf=''; // reset after successful match
+  }
+});
 
 function generatePDF(){
   var N=document.getElementById('iNotional').value||'—';
@@ -1183,21 +1456,17 @@ function generatePDF(){
   +'</div>'
   +'</body></html>';
 
-  // Open a real tab (synchronously, in direct response to the click) and print
-  // from there. The old hidden-iframe + delayed print() approach gets silently
-  // blocked on iOS Safari because it isn't seen as a direct user gesture.
-  var w = window.open('', '_blank');
-  if (!w) {
-    alert('Popup diblokir browser. Izinkan popup untuk situs ini (biasanya lewat ikon "aA" atau pengaturan Safari), lalu coba lagi.');
-    return;
-  }
-  w.document.open();
-  w.document.write(html);
-  w.document.close();
-  w.focus();
-  setTimeout(function(){
-    try { w.print(); } catch(e) { /* user can still print manually from the tab */ }
-  }, 300);
+  // Use hidden iframe - NEVER touches main page DOM/CSS
+  var iframe=document.createElement('iframe');
+  iframe.style.cssText='position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;border:none;opacity:0';
+  document.body.appendChild(iframe);
+  var doc=iframe.contentDocument||iframe.contentWindow.document;
+  doc.open();doc.write(html);doc.close();
+  iframe.onload=function(){
+    iframe.contentWindow.focus();
+    iframe.contentWindow.print();
+    setTimeout(function(){document.body.removeChild(iframe);},3000);
+  };
 }
 </script>
 </body>
