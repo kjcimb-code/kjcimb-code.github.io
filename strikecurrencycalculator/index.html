@@ -382,7 +382,7 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
         <label class="field-label" id="spotPairLabel">Spot Rate (USD/IDR)</label>
         <div class="field-wrap">
           <div class="field-pre" id="spotSuffix">USD/IDR</div>
-          <input type="text" id="iSpot" oninput="fmtSpotLive(this);checkSpotDecimals();onPointsChange()" onblur="fmtSpot(this,true);checkSpotDecimals();onPointsChange()" style="letter-spacing:.02em">
+          <input type="text" id="iSpot" inputmode="decimal" enterkeyhint="next" oninput="fmtSpotLive(this);checkSpotDecimals();onPointsChange()" onblur="fmtSpot(this,true);checkSpotDecimals();onPointsChange();document.getElementById('iPoints').focus();document.getElementById('iPoints').select()" style="letter-spacing:.02em">
         </div>
       <div id="spotDecWarn" style="display:none;margin-top:4px;font-size:10px;color:#B45309;font-family:var(--mono);font-weight:600"></div>
       </div>
@@ -395,7 +395,7 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
             <button id="btnPlus" onclick="setSign(1)" style="border:none;background:#F8FAFC;color:var(--slate);font-weight:700;font-size:14px;padding:0 14px;cursor:pointer;min-width:44px">+</button>
           </div>
           <div class="field-wrap" style="width:110px">
-            <input type="number" id="iPoints" value="50" min="0" step="any" oninput="onPointsChange()" style="text-align:center;font-family:var(--mono);font-weight:600;font-size:15px" placeholder="50">
+            <input type="number" id="iPoints" value="50" min="0" step="any" inputmode="decimal" enterkeyhint="next" oninput="onPointsChange()" onblur="document.getElementById('iVol').focus();document.getElementById('iVol').select()" style="text-align:center;font-family:var(--mono);font-weight:600;font-size:15px" placeholder="50">
             <div class="field-suf" style="font-size:10px">pts</div>
           </div>
           <div class="field-wrap" style="flex:1">
@@ -407,14 +407,14 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
       <div class="field">
         <label class="field-label" style="font-size:10px">Volatility</label>
         <div class="field-wrap">
-          <input type="number" id="iVol" placeholder="e.g. 3.5" step="0.01" oninput="calc()" style="font-size:13px">
+          <input type="number" id="iVol" inputmode="decimal" enterkeyhint="next" placeholder="e.g. 3.5" step="0.01" oninput="calc()" onblur="document.getElementById('iTenor').focus();document.getElementById('iTenor').select()" style="font-size:13px">
           <div class="field-suf">%</div>
         </div>
       </div>
       <div class="field">
         <label class="field-label" style="font-size:10px">Deposit Tenor</label>
         <div class="field-wrap">
-          <input type="number" id="iTenor" placeholder="e.g. 14" min="1" max="365" oninput="calc()" style="font-size:13px">
+          <input type="number" id="iTenor" inputmode="numeric" enterkeyhint="done" placeholder="e.g. 14" min="1" max="365" oninput="calc()" style="font-size:13px">
           <div class="field-suf">days</div>
         </div>
 <div class="tenor-warn" id="tenorWarn">⚠️ Tenor terlalu pendek — Fixing Date harus setidaknya 1 hari setelah Start TD.</div>

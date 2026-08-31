@@ -51,7 +51,10 @@ body{
 
 /* TABS */
 .tabs{display:flex;gap:6px;margin-bottom:16px;background:var(--ink-2);border:1px solid var(--line);
-  border-radius:13px;padding:5px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  border-radius:13px;padding:5px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+  -webkit-mask-image:linear-gradient(to right,#000 calc(100% - 28px),transparent 100%);
+  mask-image:linear-gradient(to right,#000 calc(100% - 28px),transparent 100%)}
+.tabs.at-end{-webkit-mask-image:none;mask-image:none}
 .tabs::-webkit-scrollbar{display:none}
 .tab{flex:0 0 auto;white-space:nowrap;text-align:center;padding:9px 16px;border-radius:9px;font-family:var(--sans);font-size:13px;font-weight:600;
   color:var(--text-1);cursor:pointer;user-select:none;transition:.15s}
@@ -258,6 +261,7 @@ textarea,.cell-input,.vol-input,.markup-input input,.hol-add input,.hol-add sele
 @media(max-width:640px){
   #cimbLogo{height:17px !important}
   #hdrTitle{font-size:14px !important}
+  .tab{padding:9px 12px;font-size:12px}
 }
 @media(max-width:480px){
   .adj-grid{grid-template-columns:1fr !important}
@@ -456,43 +460,59 @@ Isra Mihraj Nabi Muhammad
     <div class="card">
       <div class="card-title">⚙️ Vol Adjustment Rules</div>
       <div class="card-sub">
-        Jika salah satu kondisi terpenuhi → tambah adjustment. Max total = 1 kondisi saja (tidak kumulatif).
+        Dua rule terpisah, masing-masing dengan threshold &amp; tambahan vol sendiri-sendiri. Kalau cuma satu syarat yang terpenuhi, dipakai tambahan rule itu. Kalau dua-duanya terpenuhi sekaligus, dipakai yang <b style="color:var(--text-0)">paling besar</b> di antara keduanya — tidak dijumlah.
       </div>
 
-      <div class="adj-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
-
-        <div>
-          <label style="font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:5px">Tenor ≥</label>
-          <div style="display:flex;align-items:center;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:var(--ink-3)">
-            <input type="number" id="adjTenorDays" value="28" oninput="updateAdjExample()" min="1" max="365"
-              style="border:none;padding:8px 10px;font-family:var(--mono);font-weight:600;font-size:13px;width:100%;outline:none;text-align:center;background:transparent;color:var(--text-0)">
-            <span style="padding:0 10px;font-size:11.5px;color:var(--text-1);background:rgba(255,255,255,.04);border-left:1px solid var(--line);white-space:nowrap">hari</span>
+      <!-- Rule 1: Notional -->
+      <div style="border:1px solid var(--line);border-radius:11px;padding:14px;margin-bottom:12px;background:rgba(255,255,255,.02)">
+        <div style="font-family:var(--sans);font-size:12.5px;font-weight:700;color:var(--text-0);margin-bottom:10px">Rule 1 — Notional</div>
+        <div class="adj-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div>
+            <label style="font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:5px">Notional ≥</label>
+            <div style="display:flex;align-items:center;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:var(--ink-3)">
+              <input type="number" id="adjNotionalUSD" value="250000" oninput="updateAdjExample()" min="1"
+                style="border:none;padding:8px 10px;font-family:var(--mono);font-weight:600;font-size:13px;width:100%;outline:none;text-align:center;background:transparent;color:var(--text-0)">
+              <span style="padding:0 10px;font-size:11.5px;color:var(--text-1);background:rgba(255,255,255,.04);border-left:1px solid var(--line);white-space:nowrap">USD eq.</span>
+            </div>
+          </div>
+          <div>
+            <label style="font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:5px">Tambah Vol</label>
+            <div style="display:flex;align-items:center;border:1px solid var(--maroon-1);border-radius:9px;overflow:hidden;background:var(--ink-3)">
+              <span style="padding:0 10px;font-size:13px;color:#fff;background:rgba(138,0,9,.4);border-right:1px solid var(--maroon-1);font-weight:700">+</span>
+              <input type="number" id="adjNotionalVolAdd" value="0.5" oninput="updateAdjExample()" min="0" step="0.1"
+                style="border:none;padding:8px 10px;font-family:var(--mono);font-weight:700;font-size:14px;color:#fff;width:100%;outline:none;text-align:center;background:transparent">
+              <span style="padding:0 10px;font-size:11.5px;color:#fff;background:rgba(138,0,9,.4);border-left:1px solid var(--maroon-1);font-weight:600">%</span>
+            </div>
           </div>
         </div>
-
-        <div>
-          <label style="font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:5px">Notional ≥</label>
-          <div style="display:flex;align-items:center;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:var(--ink-3)">
-            <input type="number" id="adjNotionalUSD" value="250000" oninput="updateAdjExample()" min="1"
-              style="border:none;padding:8px 10px;font-family:var(--mono);font-weight:600;font-size:13px;width:100%;outline:none;text-align:center;background:transparent;color:var(--text-0)">
-            <span style="padding:0 10px;font-size:11.5px;color:var(--text-1);background:rgba(255,255,255,.04);border-left:1px solid var(--line);white-space:nowrap">USD eq.</span>
-          </div>
-        </div>
-
-        <div>
-          <label style="font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:5px">Tambah Vol</label>
-          <div style="display:flex;align-items:center;border:1px solid var(--maroon-1);border-radius:9px;overflow:hidden;background:var(--ink-3)">
-            <span style="padding:0 10px;font-size:13px;color:#fff;background:rgba(138,0,9,.4);border-right:1px solid var(--maroon-1);font-weight:700">+</span>
-            <input type="number" id="adjVolAdd" value="0.5" oninput="updateAdjExample()" min="0" step="0.1"
-              style="border:none;padding:8px 10px;font-family:var(--mono);font-weight:700;font-size:14px;color:#fff;width:100%;outline:none;text-align:center;background:transparent">
-            <span style="padding:0 10px;font-size:11.5px;color:#fff;background:rgba(138,0,9,.4);border-left:1px solid var(--maroon-1);font-weight:600">%</span>
-          </div>
-        </div>
-
       </div>
 
-      <div style="background:var(--blue-bg);border:1px solid rgba(126,178,255,.28);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--blue);line-height:1.5">
-        💡 Jika tenor ≥ <b id="adjShowDays" style="color:#fff">28</b> hari <i>atau</i> notional ≥ <b id="adjShowUSD" style="color:#fff">250,000</b> USD eq. → vol ditambah <b id="adjShowPct" style="color:#fff">+0.5%</b> flat (tidak kumulatif)
+      <!-- Rule 2: Tenor -->
+      <div style="border:1px solid var(--line);border-radius:11px;padding:14px;margin-bottom:14px;background:rgba(255,255,255,.02)">
+        <div style="font-family:var(--sans);font-size:12.5px;font-weight:700;color:var(--text-0);margin-bottom:10px">Rule 2 — Tenor</div>
+        <div class="adj-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div>
+            <label style="font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:5px">Tenor ≥</label>
+            <div style="display:flex;align-items:center;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:var(--ink-3)">
+              <input type="number" id="adjTenorDays" value="28" oninput="updateAdjExample()" min="1" max="365"
+                style="border:none;padding:8px 10px;font-family:var(--mono);font-weight:600;font-size:13px;width:100%;outline:none;text-align:center;background:transparent;color:var(--text-0)">
+              <span style="padding:0 10px;font-size:11.5px;color:var(--text-1);background:rgba(255,255,255,.04);border-left:1px solid var(--line);white-space:nowrap">hari</span>
+            </div>
+          </div>
+          <div>
+            <label style="font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:5px">Tambah Vol</label>
+            <div style="display:flex;align-items:center;border:1px solid var(--maroon-1);border-radius:9px;overflow:hidden;background:var(--ink-3)">
+              <span style="padding:0 10px;font-size:13px;color:#fff;background:rgba(138,0,9,.4);border-right:1px solid var(--maroon-1);font-weight:700">+</span>
+              <input type="number" id="adjTenorVolAdd" value="0.5" oninput="updateAdjExample()" min="0" step="0.1"
+                style="border:none;padding:8px 10px;font-family:var(--mono);font-weight:700;font-size:14px;color:#fff;width:100%;outline:none;text-align:center;background:transparent">
+              <span style="padding:0 10px;font-size:11.5px;color:#fff;background:rgba(138,0,9,.4);border-left:1px solid var(--maroon-1);font-weight:600">%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--blue-bg);border:1px solid rgba(126,178,255,.28);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--blue);line-height:1.6">
+        💡 <span id="adjExampleText"></span>
       </div>
 
     </div>
@@ -557,16 +577,22 @@ document.querySelectorAll('.tab').forEach(t=>{
   });
 });
 
-/* Fade-out hint on horizontally-scrollable rate tables — hides once fully
-   scrolled so the last column isn't left looking clipped. Delegated on the
-   capture phase since 'scroll' doesn't bubble and tables get re-rendered. */
+/* Fade-out hint on horizontally-scrollable rate tables and the tab bar —
+   hides once fully scrolled so the last item isn't left looking clipped.
+   Delegated on the capture phase since 'scroll' doesn't bubble and content
+   gets re-rendered. */
+function updateScrollFade(el){
+  const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 2;
+  el.classList.toggle('at-end', atEnd);
+}
 document.addEventListener('scroll', (e)=>{
   const el = e.target;
-  if(el.classList && el.classList.contains('table-scroll')){
-    const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 2;
-    el.classList.toggle('at-end', atEnd);
+  if(el.classList && (el.classList.contains('table-scroll') || el.classList.contains('tabs'))){
+    updateScrollFade(el);
   }
 }, true);
+// Check the tab bar's initial state too, in case all tabs already fit.
+document.querySelectorAll('.tabs').forEach(updateScrollFade);
 
 /* ---------- TAB 1: PASTE & PARSE RATES ---------- */
 const SAMPLE_PASTE = `Currency (Y)\t1\t7\t14\t30\t60\t90\t120\t150\t180\t360
@@ -1033,18 +1059,21 @@ function parseVolInput() {
 
 function getAdjRules() {
   return {
-    tenorDays:   parseFloat(document.getElementById('adjTenorDays')?.value)   || 28,
-    notionalUSD: parseFloat(document.getElementById('adjNotionalUSD')?.value) || 250000,
-    volAdd:      parseFloat(document.getElementById('adjVolAdd')?.value)       || 0.5,
+    tenorDays:      parseFloat(document.getElementById('adjTenorDays')?.value)      || 28,
+    tenorVolAdd:    parseFloat(document.getElementById('adjTenorVolAdd')?.value)    || 0.5,
+    notionalUSD:    parseFloat(document.getElementById('adjNotionalUSD')?.value)    || 250000,
+    notionalVolAdd: parseFloat(document.getElementById('adjNotionalVolAdd')?.value) || 0.5,
   };
 }
 
 function updateAdjExample() {
   const r = getAdjRules();
-  const s=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
-  s('adjShowDays', r.tenorDays);
-  s('adjShowUSD', r.notionalUSD.toLocaleString('en-US'));
-  s('adjShowPct', '+'+r.volAdd.toFixed(1)+'%');
+  const el = document.getElementById('adjExampleText');
+  if(!el) return;
+  el.innerHTML =
+    `Notional ≥ <b style="color:#fff">${r.notionalUSD.toLocaleString('en-US')}</b> USD eq. → vol <b style="color:#fff">+${r.notionalVolAdd.toFixed(1)}%</b>. `
+    + `Tenor ≥ <b style="color:#fff">${r.tenorDays}</b> hari → vol <b style="color:#fff">+${r.tenorVolAdd.toFixed(1)}%</b>. `
+    + `Kalau dua-duanya terpenuhi sekaligus, dipakai yang <b style="color:#fff">paling besar</b> di antara keduanya (tidak dijumlah).`;
 }
 
 async function saveVol() {
@@ -1054,7 +1083,7 @@ async function saveVol() {
   try {
     const { error } = await sbClient.from('strike_calc_rates').update({
       volatility: parsedVols,
-      vol_adjustments: {tenorDays:adj.tenorDays,notionalUSD:adj.notionalUSD,volAdd:adj.volAdd},
+      vol_adjustments: {tenorDays:adj.tenorDays,tenorVolAdd:adj.tenorVolAdd,notionalUSD:adj.notionalUSD,notionalVolAdd:adj.notionalVolAdd},
       updated_at: new Date().toISOString(),
       updated_by: currentUser ? currentUser.username : null
     }).eq('id', RATES_ROW_ID);
@@ -1068,30 +1097,32 @@ async function saveVol() {
 }
 
 async function loadVolData() {
-  if(!sbClient) return;
-  try {
-    const { data } = await sbClient.from('strike_calc_rates').select('volatility,vol_adjustments,updated_at,updated_by').eq('id', RATES_ROW_ID).single();
-    if(data && data.volatility && Object.keys(data.volatility).length > 0) {
-      parsedVols = data.volatility;
-      // Populate textarea
-      const lines = Object.entries(parsedVols).map(([k,v]) => k + ' = ' + v.toFixed(2)).join('\n');
-      document.getElementById('volRawInput').value = lines;
-      parseVolInput();
-      if(data.updated_at) {
-        const d = new Date(data.updated_at);
-        setMeta('volMeta', 'Last saved: ' + d.toLocaleDateString('id-ID') + ' ' + d.toLocaleTimeString('id-ID') + (data.updated_by?' by '+data.updated_by:''));
+  if(sbClient) {
+    try {
+      const { data } = await sbClient.from('strike_calc_rates').select('volatility,vol_adjustments,updated_at,updated_by').eq('id', RATES_ROW_ID).single();
+      if(data && data.volatility && Object.keys(data.volatility).length > 0) {
+        parsedVols = data.volatility;
+        // Populate textarea
+        const lines = Object.entries(parsedVols).map(([k,v]) => k + ' = ' + v.toFixed(2)).join('\n');
+        document.getElementById('volRawInput').value = lines;
+        parseVolInput();
+        if(data.updated_at) {
+          const d = new Date(data.updated_at);
+          setMeta('volMeta', 'Last saved: ' + d.toLocaleDateString('id-ID') + ' ' + d.toLocaleTimeString('id-ID') + (data.updated_by?' by '+data.updated_by:''));
+        }
       }
-      // Load adjustment rules
-      if(data.vol_adjustments) {
+      // Adjustment rules are independent of whether volatility data exists.
+      if(data && data.vol_adjustments) {
         const a = data.vol_adjustments;
         const el = (id) => document.getElementById(id);
-        if(el('adjTenorDays')   && a.tenorDays)   el('adjTenorDays').value   = a.tenorDays;
-        if(el('adjNotionalUSD') && a.notionalUSD) el('adjNotionalUSD').value = a.notionalUSD;
-        if(el('adjVolAdd')      && a.volAdd)      el('adjVolAdd').value      = a.volAdd;
-        updateAdjExample();
+        if(el('adjTenorDays')      && a.tenorDays)      el('adjTenorDays').value      = a.tenorDays;
+        if(el('adjNotionalUSD')    && a.notionalUSD)    el('adjNotionalUSD').value    = a.notionalUSD;
+        if(el('adjTenorVolAdd'))    el('adjTenorVolAdd').value    = a.tenorVolAdd    ?? a.volAdd ?? 0.5;
+        if(el('adjNotionalVolAdd')) el('adjNotionalVolAdd').value = a.notionalVolAdd ?? a.volAdd ?? 0.5;
       }
-    }
-  } catch(e) { console.warn('loadVolData:', e); }
+    } catch(e) { console.warn('loadVolData:', e); }
+  }
+  updateAdjExample();
 }
 // ─────────────────────────────────────────────────
 

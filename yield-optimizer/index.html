@@ -294,7 +294,7 @@ let liveHolidays = [];
 
 // Live vol from Supabase
 let liveVols = {};
-let adjRules = {tenorDays:28, notionalUSD:250000, volAdd:0.5};
+let adjRules = {tenorDays:28, tenorVolAdd:0.5, notionalUSD:250000, notionalVolAdd:0.5};
 
 // ─── CORE MATH ────────────────────────────────────────────────────────────
 function interp(days,table){
@@ -346,13 +346,13 @@ function Ncdf(x){
   return 0.5*(1+sign*y);
 }
 
-function calcYield(dep, alt, tenor, strikeOffsetPips, notionalRaw, useAdj){
+function calcYield(dep, alt, tenor, strikeOffsetPips, notionalRaw, volDelta){
   const pi = getPairInfo(dep, alt);
   if(!pi.spot) return null;
   const vol = liveVols[pi.name];
   if(!vol) return null;
 
-  const adjVol = useAdj ? vol + adjRules.volAdd : vol;
+  const adjVol = vol + (volDelta||0);
   const sigma  = adjVol / 100;
   const T      = tenor / 365;
   const depRate= interp(tenor, CCY_DEP[dep]) / 100;
@@ -464,11 +464,17 @@ function runOptimizer(){
   const pairs=HIERARCHY.filter(alt=>alt!==depositCCY).map(alt=>getPairInfo(depositCCY,alt));
   const tenor=activeTenor;
 
-  // Check adjustments
+  // Check adjustments — tenor and notional each have their own vol add.
+  // If only one condition is met, use that rule's amount. If both are met,
+  // use whichever amount is larger (never both added together).
   const notUSD=getNotUSD();
   const tenorAdj=tenor>=adjRules.tenorDays;
   const notAdj=notUSD!==null&&notUSD>=adjRules.notionalUSD;
   const useAdj=tenorAdj||notAdj;
+  let volDelta=0;
+  if(tenorAdj&&notAdj) volDelta=Math.max(adjRules.tenorVolAdd,adjRules.notionalVolAdd);
+  else if(tenorAdj)    volDelta=adjRules.tenorVolAdd;
+  else if(notAdj)      volDelta=adjRules.notionalVolAdd;
 
   title.textContent=`Hasil — ${depositCCY} · ${tenor}d`;
 
@@ -480,19 +486,19 @@ function runOptimizer(){
     const vol=liveVols[pi.name];
     const rowYields=STRIKES.map((pips,si)=>{
       if(!vol) return null;
-      const y=calcYield(depositCCY,pi.name.replace(depositCCY,'').replace('/','').replace('/',''),tenor,pips,null,useAdj);
+      const y=calcYield(depositCCY,pi.name.replace(depositCCY,'').replace('/','').replace('/',''),tenor,pips,null,volDelta);
       return y;
     });
     // Actually recalculate with alt
     const alt=pi.base===depositCCY?pi.quote:pi.base;
     const rowY=STRIKES.map(pips=>{
       if(!vol) return null;
-      return calcYield(depositCCY,alt,tenor,pips,null,useAdj);
+      return calcYield(depositCCY,alt,tenor,pips,null,volDelta);
     });
     const maxY=Math.max(...rowY.filter(v=>v!==null));
     const maxIdx=rowY.findIndex(v=>v===maxY);
     if(maxY>globalBest.yield&&maxIdx>=0){
-      globalBest={yield:maxY,pair:pi.name,mode:pi.mode,strike:STRIKES[maxIdx],strikeLbl:STRIKE_LABELS[maxIdx],vol:vol+(useAdj?adjRules.volAdd:0)};
+      globalBest={yield:maxY,pair:pi.name,mode:pi.mode,strike:STRIKES[maxIdx],strikeLbl:STRIKE_LABELS[maxIdx],vol:vol+volDelta};
     }
     rows.push({pi,alt,yields:rowY,maxY,maxIdx,vol});
   });
@@ -506,9 +512,11 @@ function runOptimizer(){
   // Adj notice
   if(useAdj){
     let reasons=[];
-    if(tenorAdj) reasons.push(`tenor ${tenor}d ≥ ${adjRules.tenorDays}d`);
-    if(notAdj) reasons.push(`notional ≥ ${adjRules.notionalUSD.toLocaleString()} USD`);
-    html+=`<div class="adj-notice">⚡ Vol +${adjRules.volAdd}% (${reasons.join(' & ')})</div>`;
+    if(tenorAdj) reasons.push(`tenor ${tenor}d ≥ ${adjRules.tenorDays}d (+${adjRules.tenorVolAdd}%)`);
+    if(notAdj) reasons.push(`notional ≥ ${adjRules.notionalUSD.toLocaleString()} USD (+${adjRules.notionalVolAdd}%)`);
+    let noticeText = `⚡ Vol +${volDelta}% — ${reasons.join(' & ')}`;
+    if(tenorAdj && notAdj) noticeText += ' · dipakai yang terbesar, tidak dijumlah';
+    html+=`<div class="adj-notice">${noticeText}</div>`;
   }
 
   // Best banner
@@ -533,7 +541,7 @@ function runOptimizer(){
       <td>
         <span class="pair-badge">${pi.name}</span>
         <span class="mode-badge mode-${pi.mode}">${pi.mode}</span>
-        ${hasVol?`<br><span style="font-size:9px;color:var(--slate)">vol ${(vol+(useAdj?adjRules.volAdd:0)).toFixed(2)}%</span>`:''}
+        ${hasVol?`<br><span style="font-size:9px;color:var(--slate)">vol ${(vol+volDelta).toFixed(2)}%</span>`:''}
       </td>
       ${yields.map((y,i)=>{
         if(!hasVol) return `<td class="no-vol" colspan="1">—</td>`;
@@ -594,7 +602,12 @@ function runOptimizer(){
       const a=data.vol_adjustments;
       if(a.tenorDays)   adjRules.tenorDays=a.tenorDays;
       if(a.notionalUSD) adjRules.notionalUSD=a.notionalUSD;
-      if(a.volAdd)      adjRules.volAdd=a.volAdd;
+      // Separate vol-add per rule. Falls back to the old shared "volAdd"
+      // field for rows saved before tenor/notional were split apart.
+      if(a.tenorVolAdd!=null)    adjRules.tenorVolAdd=a.tenorVolAdd;
+      else if(a.volAdd!=null)    adjRules.tenorVolAdd=a.volAdd;
+      if(a.notionalVolAdd!=null) adjRules.notionalVolAdd=a.notionalVolAdd;
+      else if(a.volAdd!=null)    adjRules.notionalVolAdd=a.volAdd;
     }
 
     if(data.updated_at){
