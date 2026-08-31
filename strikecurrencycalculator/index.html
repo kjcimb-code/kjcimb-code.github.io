@@ -313,10 +313,10 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
         </div>
       </div>
 
-      <div style="display:flex;gap:6px;align-items:flex-start">
+      <div style="display:flex;gap:6px;align-items:flex-end">
 
         <div style="flex:1;min-width:0">
-          <div style="font-size:9px;font-family:var(--mono);color:var(--slate);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Deposit Currency</div>
+          <div style="font-size:9px;font-family:var(--mono);color:var(--slate);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Base Currency</div>
           <div class="ccy-dropdown" id="iDepCCY_wrap">
             <div class="ccy-dropdown-btn" id="iDepCCY_btn" tabindex="0"
               onclick="toggleCCYDropdown('iDepCCY')"
@@ -330,7 +330,7 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
           </div>
         </div>
 
-        <div style="display:flex;align-items:center;padding-top:20px;flex-shrink:0">
+        <div style="display:flex;align-items:center;flex-shrink:0;padding-bottom:1px">
           <button onclick="swapCCY()" title="Swap"
             style="width:32px;height:38px;border:1.5px solid var(--border);border-radius:8px;
                    background:#fff;cursor:pointer;font-size:16px;display:flex;align-items:center;
@@ -382,8 +382,9 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
         <label class="field-label" id="spotPairLabel">Spot Rate (USD/IDR)</label>
         <div class="field-wrap">
           <div class="field-pre" id="spotSuffix">USD/IDR</div>
-          <input type="text" id="iSpot" oninput="onPointsChange()" onblur="fmtSpot(this,true);onPointsChange()" style="letter-spacing:.02em">
+          <input type="text" id="iSpot" oninput="fmtSpotLive(this);checkSpotDecimals();onPointsChange()" onblur="fmtSpot(this,true);checkSpotDecimals();onPointsChange()" style="letter-spacing:.02em">
         </div>
+      <div id="spotDecWarn" style="display:none;margin-top:4px;font-size:10px;color:#B45309;font-family:var(--mono);font-weight:600"></div>
       </div>
 
       <div class="field">
@@ -416,8 +417,8 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
           <input type="number" id="iTenor" placeholder="e.g. 14" min="1" max="365" oninput="calc()" style="font-size:13px">
           <div class="field-suf">days</div>
         </div>
-<div class="tenor-warn" id="tenorWarn">⚠️ Tenor terlalu pendek — Fixing Date harus setidaknya 1 hari setelah Start Deposit.</div>
-        <div class="field-hint">Start Deposit → Maturity Date</div>
+<div class="tenor-warn" id="tenorWarn">⚠️ Tenor terlalu pendek — Fixing Date harus setidaknya 1 hari setelah Start TD.</div>
+        <div class="field-hint">Start TD → Maturity Date</div>
       </div>
     </div>
 
@@ -453,7 +454,7 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
         <div class="date-sub">Today · T+0</div>
       </div>
       <div class="date-card">
-        <div class="date-lbl">Value Date (Start Deposit)</div>
+        <div class="date-lbl">Value Date (Start TD)</div>
         <div class="date-val" id="dVal">—</div>
         <div class="date-sub">T+2 business days</div>
       </div>
@@ -517,12 +518,18 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
 
       <div style="margin-bottom:16px">
         <div class="res-row">
-          <span class="res-lbl">PUT Option Price (GK Model)</span>
-          <div class="res-val"><div class="res-main" id="oPutPrice">—</div><div class="res-sub" id="rPerCCY">IDR per USD</div></div>
+          <span class="res-lbl" id="lPriceLabel">PUT Option Price (GK)</span>
+          <div class="res-val">
+            <div class="res-main" id="oPutPrice">—</div>
+            <div class="res-sub" id="rPerCCY"></div>
+          </div>
         </div>
         <div class="res-row">
-          <span class="res-lbl" id="lUsdNotLabel">USD Notional (Notional ÷ Spot)</span>
-          <div class="res-val"><div class="res-main" id="oUsdNot">—</div><div class="res-sub" id="rUsdEquivSub">USD equivalent</div></div>
+          <span class="res-lbl" id="lUsdNotLabel">Alternate Notional</span>
+          <div class="res-val">
+            <div class="res-main" id="oUsdNot">—</div>
+            <div class="res-sub" id="rUsdEquivSub"></div>
+          </div>
         </div>
         <div class="res-row">
           <span class="res-lbl">① Deposit Interest Income</span>
@@ -722,6 +729,81 @@ function swapCCY(){
     el.style.display=v===depositCCY?'none':'';
   });
   applyPair();
+}
+
+
+
+function fmtSpotLive(el){
+  const pi=getPairInfo(depositCCY,alternateCCY);
+  if(pi.dec===0){
+    // IDR pair: format as integer with commas live
+    const raw=el.value.replace(/[^0-9]/g,'');
+    el.value=raw?parseInt(raw).toLocaleString('en-US'):'';
+  }
+  // Other pairs: let user type freely (decimals needed)
+}
+
+function checkSpotDecimals(){
+  const pi=getPairInfo(depositCCY,alternateCCY);
+  const rawVal=document.getElementById('iSpot').value.replace(/,/g,'');
+  const warn=document.getElementById('spotDecWarn');
+  if(!warn||!rawVal) return;
+  const n=parseFloat(rawVal);
+  if(isNaN(n)||n<=0){warn.style.display='none';return;}
+
+  const dotIdx=rawVal.indexOf('.');
+  const actualDec=dotIdx<0?0:rawVal.length-dotIdx-1;
+  const defSpot=PAIR_SPOTS[pi.name];
+  const defFmt=defSpot?(pi.dec===0?Math.round(defSpot).toLocaleString('en-US'):defSpot.toFixed(pi.dec)):null;
+  const eg=defFmt?'e.g. '+defFmt:'';
+
+  // Decimal check
+  if(pi.dec===0){
+    if(dotIdx>=0){
+      warn.style.display='';
+      warn.textContent='⚠ '+pi.name+': tidak pakai desimal, harus bilangan bulat ('+eg+')';
+      return;
+    }
+  } else if(actualDec!==pi.dec){
+    warn.style.display='';
+    warn.textContent='⚠ '+pi.name+': harus tepat '+pi.dec+' angka desimal ('+eg+')';
+    return;
+  }
+
+  // Range check
+  const isIDRpair=pi.base==='IDR'||pi.quote==='IDR';
+  const isJPYpair=pi.base==='JPY'||pi.quote==='JPY';
+  if(isIDRpair&&!isJPYpair){
+    // Non-JPY IDR pairs: range 1,000–50,000
+    if(n<1000||n>50000){
+      warn.style.display='';
+      warn.textContent='⚠ '+pi.name+': nilai '+n.toLocaleString('en-US')+' sepertinya tidak wajar. '+eg;
+      return;
+    }
+  } else if(pi.name==='JPY/IDR'){
+    // JPY/IDR: range 50–1,000
+    if(n<50||n>1000){
+      warn.style.display='';
+      warn.textContent='⚠ JPY/IDR: nilai di luar rentang wajar (50–1,000). '+eg;
+      return;
+    }
+  } else if(isJPYpair){
+    // Other JPY pairs (USD/JPY etc): range 50–500
+    if(n<50||n>500){
+      warn.style.display='';
+      warn.textContent='⚠ '+pi.name+': nilai di luar rentang wajar (50–500). '+eg;
+      return;
+    }
+  } else {
+    // Major pairs: range 0.01–10
+    if(n<0.01||n>10){
+      warn.style.display='';
+      warn.textContent='⚠ '+pi.name+': nilai di luar rentang wajar (0.01–10). '+eg;
+      return;
+    }
+  }
+
+  warn.style.display='none';
 }
 
 function rebuildAltDropdown(){
@@ -1002,7 +1084,7 @@ function calc(){
   const K=getNum('iStrike');
   const vol=parseFloat(document.getElementById('iVol').value)||0;
   const tenor=parseInt(document.getElementById('iTenor').value)||0;
-  document.getElementById('oConverted').textContent=(N>0&&K>0)?(isPUT?alternateCCY+' '+fN(N/K,2):alternateCCY+' '+fN(N*K,2)):'—';
+  document.getElementById('oConverted').textContent=(N>0&&K>0)?(isPUT?fN(N/K,2):fN(N*K,2)):'—';
   let today=new Date();today.setHours(0,0,0,0);while(!isBD(today))today.setDate(today.getDate()+1);
   document.getElementById('dTx').textContent=fmtD(today);
   const valDate=addBD(today,2);
@@ -1071,6 +1153,8 @@ function calc(){
     const idrOptR=rdRate; const usdOptR=rfRate;
     document.getElementById('rIdrDep').textContent=fN(depRate,5)+'%';
     document.getElementById('rIdrDepLabel').textContent=depositCCY+' — Deposit Rate (Currency Y)';
+    const _lpl=document.getElementById('lPriceLabel');
+    if(_lpl) _lpl.textContent='Option Price';
     document.getElementById('rIdrDepNote').textContent=depositCCY+'1 — Currency (Y) · '+depDays+'d deposit';
     // Display deposit CCY and alternate CCY rates (not GK rd/rf)
     const depOptRate=interp(optDays,CCY_OPT[depositCCY]||IDR_OPT);
@@ -1129,12 +1213,12 @@ function calc(){
       document.getElementById('oYield').textContent=p(yldPA);
       document.getElementById('oYieldSub').textContent=optDays+'d option · '+depDays+'d deposit · notional '+(isPUT?depositCCY+' '+(depositCCY==='IDR'?fI(N):fN(N,2)):depositCCY+' '+fN(N,2));
       document.getElementById('oYieldBar').style.width=Math.min((depY0/yldPA)*100,100)+'%';
-      document.getElementById('oPutPrice').textContent=(function(){const base=getPairInfo(depositCCY,alternateCCY).base; return fN(putPrice,base==='IDR'?2:5);})()+' / '+alternateCCY+alternateCCY+' '+fN(putPrice,5)+' / '+depositCCY+' ('+(isPUT?'PUT':'CALL')+' price · GK Model)';
-      if(document.getElementById('rPerCCY')) document.getElementById('rPerCCY').textContent=depositCCY+' per '+alternateCCY;
-      document.getElementById('lUsdNotLabel').textContent=alternateCCY+' Notional ('+(isPUT?'÷ Spot':'deposited')+')';
-      if(document.getElementById('rUsdEquivSub')) document.getElementById('rUsdEquivSub').textContent=alternateCCY+' equivalent';
+      document.getElementById('oPutPrice').textContent=fN(putPrice,pairInfo.dec===0?2:5);
+      if(document.getElementById('rPerCCY')) document.getElementById('rPerCCY').textContent=pairInfo.quote+'/'+pairInfo.base+' · '+(isPUT?'PUT':'CALL')+' price (GK)';
+      document.getElementById('lUsdNotLabel').textContent=alternateCCY+(isPUT?' Notional (÷ Spot)':' Notional (× Spot)');
+      if(document.getElementById('rUsdEquivSub')) document.getElementById('rUsdEquivSub') && (document.getElementById('rUsdEquivSub').textContent=isPUT?'if exercised · ÷ Spot':'if exercised · × Spot');
       document.getElementById('oUsdNot').textContent=alternateCCY+' '+(isPUT?fN(N/S,4):fN(N*S,2));
-      document.getElementById('oUsdNotLabel') && (document.getElementById('oUsdNotLabel').textContent=alternateCCY+' Notional (deposited)');
+      document.getElementById('oUsdNotLabel') && (document.getElementById('lUsdNotLabel').textContent=alternateCCY+' Notional');
       document.getElementById('oDepInc').textContent=isPUT?depositCCY+' '+(depositCCY==='IDR'?fI(depInc):fN(depInc,2)):depositCCY+' '+fN(depInc,2);
       document.getElementById('oDepSub').textContent=fN(depYPA)+'% p.a. · '+depositCCY+'1 (Currency Y) '+fN(depRate,5)+'% × '+depDays+'d';
       document.getElementById('oPremInc').textContent=isPUT?depositCCY+' '+(depositCCY==='IDR'?fI(premInc):fN(premInc,2)):depositCCY+' '+fN(premInc,2);
@@ -1422,7 +1506,7 @@ function generatePDF(){
   +'<table class="tl-table"><tr>'
   +'<td><div class="dot dot-r"></div><div class="tl-date">'+dTx+'</div><div class="tl-name">Transaction Date</div><div class="tl-badge" style="color:#8B0000">Start Option</div></td>'
   +'<td><div style="border-top:2px solid #ccc;margin-top:7px"></div></td>'
-  +'<td><div class="dot dot-b"></div><div class="tl-date">'+dVal+'</div><div class="tl-name">Value Date</div><div class="tl-badge" style="color:#1a56db">Start Deposit</div></td>'
+  +'<td><div class="dot dot-b"></div><div class="tl-date">'+dVal+'</div><div class="tl-name">Value Date</div><div class="tl-badge" style="color:#1a56db">Start TD</div></td>'
   +'<td><div style="border-top:2px solid #ccc;margin-top:7px"></div></td>'
   +'<td><div class="dot dot-r"></div><div class="tl-date">'+dFix+'</div><div class="tl-name">Fixing Date</div></td>'
   +'<td><div style="border-top:2px solid #ccc;margin-top:7px"></div></td>'
