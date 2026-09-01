@@ -1376,18 +1376,19 @@ applyPair();
 
     // Show timestamp — English month + 24h colon time, matching the
     // fallback string's format ("31 Aug 2026") instead of Indonesian
-    // locale output ("31 Agu 2026, 02.15"). Updates both the footer
-    // indicator (with dot + time) and the header subtitle (date only).
+    // locale output ("31 Agu 2026, 02.15"). Header and footer both get
+    // the green dot + date + time now that we're on live data.
     if(data.updated_at){
       const d=new Date(data.updated_at);
       const MONTHS_EN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
       const pad=n=>String(n).padStart(2,'0');
       const dateOnly=pad(d.getDate())+' '+MONTHS_EN[d.getMonth()]+' '+d.getFullYear();
       const ts=dateOnly+', '+pad(d.getHours())+':'+pad(d.getMinutes());
+      const dot='<span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#22C55E;margin-right:4px;vertical-align:middle"></span>';
       const el=document.getElementById('ratesTimestamp');
-      if(el) el.innerHTML='<span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#22C55E;margin-right:4px;vertical-align:middle"></span>Deposit Rates ref: '+ts;
+      if(el) el.innerHTML=dot+'Deposit Rates ref: '+ts;
       const elHdr=document.getElementById('ratesTimestampHdr');
-      if(elHdr) elHdr.textContent=dateOnly;
+      if(elHdr) elHdr.innerHTML=dot+ts;
     }
 
     calc(); // re-render with live data
