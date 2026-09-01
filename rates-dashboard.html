@@ -763,7 +763,7 @@ async function saveRates(){
     document.getElementById('pasteBox').value = '';
     document.getElementById('parseNotice').innerHTML =
       '<div class="notice ok"><span class="ic">✓</span><div><b>Tersimpan.</b> Rate baru langsung berlaku untuk kalkulator.</div></div>';
-    setMeta('ratesMeta', nowStr());
+    setMeta('ratesMeta', nowStr() + (currentUser ? ' oleh '+currentUser.username : ''));
   } catch(err) {
     document.getElementById('parseNotice').innerHTML =
       '<div class="notice warn"><span class="ic">⚠</span><div><b>Gagal menyimpan ke Supabase.</b> '+(err.message||err)+'</div></div>';
@@ -802,12 +802,12 @@ async function loadCurrentRates(){
     savedDeposit = data.deposit_rates || {};
     savedOption  = data.option_rates  || {};
     renderCurrentRates();
-    setMeta('ratesMeta', data.updated_at ? new Date(data.updated_at).toLocaleString('id-ID',{dateStyle:'full',timeStyle:'medium'}) + ' WIB' : nowStr());
+    setMeta('ratesMeta', (data.updated_at ? fmtDateStr(new Date(data.updated_at)) : nowStr()) + (data.updated_by ? ' oleh '+data.updated_by : ''));
     // also seed the holiday tab from the same row
     if (Array.isArray(data.holidays) && data.holidays.length) {
       holidays = data.holidays;
       renderHolidays();
-      setMeta('holMeta', data.updated_at ? new Date(data.updated_at).toLocaleString('id-ID',{dateStyle:'full',timeStyle:'medium'}) + ' WIB' : nowStr());
+      setMeta('holMeta', (data.updated_at ? fmtDateStr(new Date(data.updated_at)) : nowStr()) + (data.updated_by ? ' oleh '+data.updated_by : ''));
     }
   } catch(err) {
     console.warn('Could not load live rates from Supabase, using sample data instead:', err);
@@ -885,7 +885,7 @@ async function touchHolMeta(){
       updated_by: currentUser ? currentUser.username : null
     }).eq('id', RATES_ROW_ID);
     if (error) throw error;
-    setMeta('holMeta', nowStr());
+    setMeta('holMeta', nowStr() + (currentUser ? ' oleh '+currentUser.username : ''));
   } catch(err) {
     setMeta('holMeta', 'Gagal menyimpan ke Supabase — ' + (err.message||err));
   }
@@ -917,7 +917,7 @@ document.querySelectorAll('.year-btn').forEach(b=>{
 });
 
 renderHolidays();
-setMeta('holMeta', 'Kamis, 06 Agustus 2026 09:12:45 WIB');
+setMeta('holMeta', '—');
 
 /* ---------- TAB 3b: HOLIDAYS — paste import (CCY / Date / Holiday) ---------- */
 let parsedHolidays = [];
