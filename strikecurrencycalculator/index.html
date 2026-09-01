@@ -288,7 +288,7 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
   </div>
   <div class="hdr-bottom">
     <div class="hdr-title">Strike Currency Calculator</div>
-    <div class="hdr-sub">Implied return is indicative &nbsp;·&nbsp; Deposit rates ref: 31-Aug-2026 &nbsp;·&nbsp; Please use the official calculator for more accurate results.</div>
+    <div class="hdr-sub">Implied return is indicative &nbsp;·&nbsp; Deposit rates ref: <span id="ratesTimestampHdr">31 Aug 2026</span> &nbsp;·&nbsp; Please use the official calculator for more accurate results.</div>
   </div>
 </div>
 
@@ -1322,10 +1322,14 @@ function updateSplit(){
 }
 rebuildAltDropdown();
 applyPair();
-// Fallback rates indicator (no dot, date only)
+// Fallback rates indicator (no dot, date only) — keeps both the header
+// subtitle and footer indicator in sync from one source string.
 (function(){
+  const fallbackText='31 Aug 2026';
   const el=document.getElementById('ratesTimestamp');
-  if(el) el.innerHTML='Deposit Rates ref: 31 Aug 2026';
+  if(el) el.innerHTML='Deposit Rates ref: '+fallbackText;
+  const elHdr=document.getElementById('ratesTimestampHdr');
+  if(elHdr) elHdr.textContent=fallbackText;
 })();
 
 // ─────────────────────────────────────────────────────────────────
@@ -1372,14 +1376,18 @@ applyPair();
 
     // Show timestamp — English month + 24h colon time, matching the
     // fallback string's format ("31 Aug 2026") instead of Indonesian
-    // locale output ("31 Agu 2026, 02.15").
+    // locale output ("31 Agu 2026, 02.15"). Updates both the footer
+    // indicator (with dot + time) and the header subtitle (date only).
     if(data.updated_at){
       const d=new Date(data.updated_at);
       const MONTHS_EN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
       const pad=n=>String(n).padStart(2,'0');
-      const ts=pad(d.getDate())+' '+MONTHS_EN[d.getMonth()]+' '+d.getFullYear()+', '+pad(d.getHours())+':'+pad(d.getMinutes());
+      const dateOnly=pad(d.getDate())+' '+MONTHS_EN[d.getMonth()]+' '+d.getFullYear();
+      const ts=dateOnly+', '+pad(d.getHours())+':'+pad(d.getMinutes());
       const el=document.getElementById('ratesTimestamp');
       if(el) el.innerHTML='<span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#22C55E;margin-right:4px;vertical-align:middle"></span>Deposit Rates ref: '+ts;
+      const elHdr=document.getElementById('ratesTimestampHdr');
+      if(elHdr) elHdr.textContent=dateOnly;
     }
 
     calc(); // re-render with live data
