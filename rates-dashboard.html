@@ -1035,7 +1035,7 @@ function parseVolInput() {
     const vol  = parseFloat(m[2]);
     if(pair && !isNaN(vol) && vol > 0) {
       parsedVols[pair] = vol;
-      preview.push(`<tr><td style="font-family:var(--mono);font-weight:600;color:var(--text-0)">${pair}</td><td style="font-family:var(--mono);color:#fff;font-weight:700">${vol.toFixed(2)}%</td></tr>`);
+      preview.push(`<tr style="border:1px solid var(--line)"><td style="padding:5px 10px;border:1px solid var(--line);font-family:var(--mono);font-weight:600;color:var(--text-0)">${pair}</td><td style="padding:5px 10px;border:1px solid var(--line);font-family:var(--mono);color:#fff;font-weight:700">${vol.toFixed(2)}%</td></tr>`);
     }
   });
 
@@ -1046,7 +1046,7 @@ function parseVolInput() {
       + '<table style="width:100%;border-collapse:collapse;font-size:12px">'
       + '<tr style="background:rgba(255,255,255,.04)"><th style="text-align:left;padding:5px 10px;border:1px solid var(--line);font-family:var(--sans);color:var(--text-1)">Pair</th>'
       + '<th style="text-align:left;padding:5px 10px;border:1px solid var(--line);font-family:var(--sans);color:var(--text-1)">Vol p.a.</th></tr>'
-      + preview.map(r => r.replace('<tr>','<tr style="border:1px solid var(--line)"><td style="padding:5px 10px;border:1px solid var(--line);font-family:var(--mono);font-weight:600">')).join('')
+      + preview.join('')
       + '</table>';
     btn.disabled = false;
     btn.style.opacity = '1';
@@ -1146,7 +1146,7 @@ function parseSpotInput() {
     if(pair && !isNaN(val) && val > 0) {
       parsedSpots[pair] = val;
       const dec = pair.includes('IDR') ? 0 : (pair.includes('JPY') ? 2 : 4);
-      preview.push(`<tr><td style="font-family:var(--mono);font-weight:600;color:var(--text-0)">${pair}</td><td style="font-family:var(--mono);color:#fff;font-weight:700">${val.toFixed(dec)}</td></tr>`);
+      preview.push(`<tr style="border:1px solid var(--line)"><td style="padding:5px 10px;border:1px solid var(--line);font-family:var(--mono);font-weight:600;color:var(--text-0)">${pair}</td><td style="padding:5px 10px;border:1px solid var(--line);font-family:var(--mono);color:#fff;font-weight:700">${val.toFixed(dec)}</td></tr>`);
     }
   });
 
@@ -1157,7 +1157,7 @@ function parseSpotInput() {
       + '<table style="width:100%;border-collapse:collapse;font-size:12px">'
       + '<tr style="background:rgba(255,255,255,.04)"><th style="text-align:left;padding:5px 10px;border:1px solid var(--line);font-family:var(--sans);color:var(--text-1)">Pair</th>'
       + '<th style="text-align:left;padding:5px 10px;border:1px solid var(--line);font-family:var(--sans);color:var(--text-1)">Spot</th></tr>'
-      + preview.map(r => r.replace('<tr>','<tr style="border:1px solid var(--line)"><td style="padding:5px 10px;border:1px solid var(--line);font-family:var(--mono);font-weight:600">')).join('')
+      + preview.join('')
       + '</table>';
     btn.disabled = false;
     btn.style.opacity = '1';
