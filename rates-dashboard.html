@@ -452,6 +452,7 @@ Isra Mihraj Nabi Muhammad
         Paste data vol. Format bebas: <code style="background:var(--ink-3);padding:1px 5px;border-radius:4px;color:var(--text-0)">AUDUSD = 4.50</code> atau <code style="background:var(--ink-3);padding:1px 5px;border-radius:4px;color:var(--text-0)">AUDUSD 4.50</code><br>
         Baris dimulai <code style="background:var(--ink-3);padding:1px 5px;border-radius:4px;color:var(--text-0)">Note:</code> diabaikan. Hanya untuk optimizer.
       </div>
+      <div class="updated-box" id="volMetaTop">Last updated: —</div>
       <textarea id="volRawInput" rows="12" placeholder="AUDUSD = 4.50&#10;NZDUSD = 6.00&#10;EURUSD = 3.75&#10;GBPUSD = 3.25&#10;USDSGD = 2.25&#10;USDJPY = 4.75&#10;USDIDR = 3.00&#10;JPYIDR = 3.50&#10;AUDIDR = 3.50&#10;SGDIDR = 2.00"
         oninput="parseVolInput()"></textarea>
       <div id="volPreview" style="margin-top:12px"></div>
@@ -533,6 +534,7 @@ Isra Mihraj Nabi Muhammad
         Paste data spot. Format bebas: <code style="background:var(--ink-3);padding:1px 5px;border-radius:4px;color:var(--text-0)">AUDUSD = 0.7166</code> atau <code style="background:var(--ink-3);padding:1px 5px;border-radius:4px;color:var(--text-0)">AUDUSD 0.7166</code><br>
         Baris dimulai <code style="background:var(--ink-3);padding:1px 5px;border-radius:4px;color:var(--text-0)">Note:</code> diabaikan. Dipakai sebagai referensi spot untuk Yield Optimizer &amp; kalkulator lain.
       </div>
+      <div class="updated-box" id="spotMetaTop">Last updated: —</div>
       <textarea id="spotRawInput" rows="12" placeholder="AUDUSD = 0.7166&#10;NZDUSD = 0.5918&#10;EURUSD = 1.1590&#10;GBPUSD = 1.3544&#10;USDSGD = 1.2729&#10;USDJPY = 159.81&#10;USDIDR = 17749&#10;JPYIDR = 111.06&#10;AUDIDR = 12719&#10;SGDIDR = 13943"
         oninput="parseSpotInput()"></textarea>
       <div id="spotPreview" style="margin-top:12px"></div>
@@ -850,7 +852,9 @@ function setMeta(id, timeStr){
   document.getElementById(id).innerHTML = 'Last updated: <b>' + timeStr + '</b>';
 }
 function nowStr(){
-  const d = new Date();
+  return fmtDateStr(new Date());
+}
+function fmtDateStr(d){
   const pad = n => String(n).padStart(2,'0');
   return `${DAYS_ID[d.getDay()]}, ${pad(d.getDate())} ${MONTHS_ID[d.getMonth()]} ${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())} WIB`;
 }
@@ -1089,6 +1093,7 @@ async function saveVol() {
     }).eq('id', RATES_ROW_ID);
     if(error) throw error;
     setMeta('volMeta', '✓ Tersimpan — ' + new Date().toLocaleTimeString('id-ID'));
+    setMeta('volMetaTop', nowStr());
     document.getElementById('btnSaveVol').style.background = 'linear-gradient(135deg,rgba(52,211,153,.92),rgba(6,95,70,.94))';
     setTimeout(() => { document.getElementById('btnSaveVol').style.background = ''; }, 2000);
   } catch(e) {
@@ -1109,6 +1114,7 @@ async function loadVolData() {
         if(data.updated_at) {
           const d = new Date(data.updated_at);
           setMeta('volMeta', 'Last saved: ' + d.toLocaleDateString('id-ID') + ' ' + d.toLocaleTimeString('id-ID') + (data.updated_by?' by '+data.updated_by:''));
+          setMeta('volMetaTop', fmtDateStr(d) + (data.updated_by?' oleh '+data.updated_by:''));
         }
       }
       // Adjustment rules are independent of whether volatility data exists.
@@ -1179,6 +1185,7 @@ async function saveSpot() {
     }).eq('id', RATES_ROW_ID);
     if(error) throw error;
     setMeta('spotMeta', '✓ Tersimpan — ' + new Date().toLocaleTimeString('id-ID'));
+    setMeta('spotMetaTop', nowStr());
     document.getElementById('btnSaveSpot').style.background = 'linear-gradient(135deg,rgba(52,211,153,.92),rgba(6,95,70,.94))';
     setTimeout(() => { document.getElementById('btnSaveSpot').style.background = ''; }, 2000);
   } catch(e) {
@@ -1187,20 +1194,22 @@ async function saveSpot() {
 }
 
 async function loadSpotData() {
-  if(!sbClient) return;
-  try {
-    const { data } = await sbClient.from('strike_calc_rates').select('spot_rates,updated_at,updated_by').eq('id', RATES_ROW_ID).single();
-    if(data && data.spot_rates && Object.keys(data.spot_rates).length > 0) {
-      parsedSpots = data.spot_rates;
-      const lines = Object.entries(parsedSpots).map(([k,v]) => k + ' = ' + v).join('\n');
-      document.getElementById('spotRawInput').value = lines;
-      parseSpotInput();
-      if(data.updated_at) {
-        const d = new Date(data.updated_at);
-        setMeta('spotMeta', 'Last saved: ' + d.toLocaleDateString('id-ID') + ' ' + d.toLocaleTimeString('id-ID') + (data.updated_by?' by '+data.updated_by:''));
+  if(sbClient) {
+    try {
+      const { data } = await sbClient.from('strike_calc_rates').select('spot_rates,updated_at,updated_by').eq('id', RATES_ROW_ID).single();
+      if(data && data.spot_rates && Object.keys(data.spot_rates).length > 0) {
+        parsedSpots = data.spot_rates;
+        const lines = Object.entries(parsedSpots).map(([k,v]) => k + ' = ' + v).join('\n');
+        document.getElementById('spotRawInput').value = lines;
+        parseSpotInput();
+        if(data.updated_at) {
+          const d = new Date(data.updated_at);
+          setMeta('spotMeta', 'Last saved: ' + d.toLocaleDateString('id-ID') + ' ' + d.toLocaleTimeString('id-ID') + (data.updated_by?' by '+data.updated_by:''));
+          setMeta('spotMetaTop', fmtDateStr(d) + (data.updated_by?' oleh '+data.updated_by:''));
+        }
       }
-    }
-  } catch(e) { console.warn('loadSpotData:', e); }
+    } catch(e) { console.warn('loadSpotData:', e); }
+  }
 }
 // ─────────────────────────────────────────────────
 </script>
