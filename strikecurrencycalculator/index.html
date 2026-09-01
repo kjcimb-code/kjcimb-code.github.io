@@ -1322,6 +1322,11 @@ function updateSplit(){
 }
 rebuildAltDropdown();
 applyPair();
+// Fallback rates indicator (no dot, date only)
+(function(){
+  const el=document.getElementById('ratesTimestamp');
+  if(el) el.innerHTML='Deposit Rates ref: 31 Aug 2026';
+})();
 
 // ─────────────────────────────────────────────────────────────────
 // LIVE RATES — fetched from Supabase (same table as Rates Dashboard)
@@ -1349,15 +1354,15 @@ applyPair();
     if(toArr(dep.GBP)) GBP_DEP=toArr(dep.GBP);
     if(toArr(dep.NZD)) NZD_DEP=toArr(dep.NZD);
     if(toArr(dep.SGD)) SGD_DEP=toArr(dep.SGD);
-    if(toArr(opt.IDR)) IDR_OPT=toArr(opt.IDR);
-    if(toArr(opt.USD)) USD_OPT=toArr(opt.USD);
-    if(toArr(opt.AUD)) AUD_OPT=toArr(opt.AUD);
-    if(toArr(opt.EUR)) EUR_OPT=toArr(opt.EUR);
-    if(toArr(opt.GBP)) GBP_OPT=toArr(opt.GBP);
-    if(toArr(opt.NZD)) NZD_OPT=toArr(opt.NZD);
-    if(toArr(opt.SGD)) SGD_OPT=toArr(opt.SGD);
+    if(toArr(opt.IDR1)) IDR_OPT=toArr(opt.IDR1);
+    if(toArr(opt.USD1)) USD_OPT=toArr(opt.USD1);
+    if(toArr(opt.AUD1)) AUD_OPT=toArr(opt.AUD1);
+    if(toArr(opt.EUR1)) EUR_OPT=toArr(opt.EUR1);
+    if(toArr(opt.GBP1)) GBP_OPT=toArr(opt.GBP1);
+    if(toArr(opt.NZD1)) NZD_OPT=toArr(opt.NZD1);
+    if(toArr(opt.SGD1)) SGD_OPT=toArr(opt.SGD1);
     if(toArr(dep.JPY)) JPY_DEP=toArr(dep.JPY);
-    if(toArr(opt.JPY)) JPY_OPT=toArr(opt.JPY);
+    if(toArr(opt.JPY1)) JPY_OPT=toArr(opt.JPY1);
     CCY_DEP={'USD':USD_DEP,'AUD':AUD_DEP,'EUR':EUR_DEP,'GBP':GBP_DEP,'NZD':NZD_DEP,'SGD':SGD_DEP,'JPY':JPY_DEP,'IDR':IDR_DEP};
     CCY_OPT={'USD':USD_OPT,'AUD':AUD_OPT,'EUR':EUR_OPT,'GBP':GBP_OPT,'NZD':NZD_OPT,'SGD':SGD_OPT,'JPY':JPY_OPT,'IDR':IDR_OPT};
 
@@ -1368,10 +1373,10 @@ applyPair();
     // Show timestamp
     if(data.updated_at){
       const d=new Date(data.updated_at);
-      const ts=d.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'})+' '+
-               d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})+' WIB';
+      const ts=d.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'})
+              +', '+d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
       const el=document.getElementById('ratesTimestamp');
-      if(el) el.textContent='Rates: '+ts;
+      if(el) el.innerHTML='<span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#22C55E;margin-right:4px;vertical-align:middle"></span>Deposit Rates ref: '+ts;
     }
 
     calc(); // re-render with live data
