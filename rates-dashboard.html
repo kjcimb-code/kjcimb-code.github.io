@@ -65,7 +65,10 @@ body{
 .panel.active{display:block}
 
 .card{background:var(--ink-2);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:14px}
-.card-title{font-family:var(--display);font-size:17px;font-weight:600;margin-bottom:3px;color:var(--text-0)}
+.card-title{font-family:var(--display);font-size:17px;font-weight:600;margin-bottom:3px;color:var(--text-0);display:flex;align-items:center;gap:9px}
+.title-badge{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:9px;
+  background:linear-gradient(145deg,rgba(138,0,9,.35),rgba(90,0,6,.3));border:1px solid rgba(255,255,255,.12);
+  font-size:14px;flex-shrink:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 2px 6px rgba(0,0,0,.2)}
 .card-sub{font-family:var(--sans);font-size:12.5px;color:var(--text-1);margin-bottom:12px;line-height:1.5}
 
 textarea{
@@ -300,21 +303,21 @@ textarea,.cell-input,.vol-input,.markup-input input,.hol-add input,.hol-add sele
 
 </div>
 <div class="tabs">
-    <div class="tab active" data-tab="rates">Deposit &amp; Option Rate</div>
-    <div class="tab" data-tab="hol">Hari Libur</div>
-  <div class="tab" data-tab="vol">Volatility</div>
-  <div class="tab" data-tab="spot">Spot Rate</div>
+    <div class="tab active" data-tab="rates">💰 Deposit &amp; Option Rate</div>
+    <div class="tab" data-tab="hol">📅 Hari Libur</div>
+  <div class="tab" data-tab="vol">📊 Volatility</div>
+  <div class="tab" data-tab="spot">💹 Spot Rate</div>
   </div>
 
   <!-- ============ TAB 1: RATES (paste once) ============ -->
   <div class="panel active" id="panel-rates">
 
     <div class="card">
-      <div class="card-title">Rate saat ini</div>
+      <div class="card-title"><span class="title-badge">📋</span>Rate saat ini</div>
       <div class="card-sub">Rate yang sedang aktif dipakai fitur kalkulator.</div>
-      <div class="updated-box" id="ratesMeta">Last updated: —</div>
+      <div class="updated-box" id="ratesMeta">🕒 Last updated: —</div>
 
-      <div class="preview-subtitle">Currency (Y) — Deposit Rate</div>
+      <div class="preview-subtitle">💵 Currency (Y) — Deposit Rate</div>
       <div class="table-scroll">
         <table id="currentTableDep">
           <thead><tr id="currentHeadDep"></tr></thead>
@@ -322,7 +325,7 @@ textarea,.cell-input,.vol-input,.markup-input input,.hol-add input,.hol-add sele
         </table>
       </div>
 
-      <div class="preview-subtitle" style="margin-top:16px">Depo Rate Option</div>
+      <div class="preview-subtitle" style="margin-top:16px">🏦 Depo Rate Option</div>
       <div class="table-scroll">
         <table id="currentTableOpt">
           <thead><tr id="currentHeadOpt"></tr></thead>
@@ -332,7 +335,7 @@ textarea,.cell-input,.vol-input,.markup-input input,.hol-add input,.hol-add sele
     </div>
 
     <div class="card">
-      <div class="card-title">Paste tabel rate</div>
+      <div class="card-title"><span class="title-badge">📥</span>Paste tabel rate</div>
       <div class="card-sub">Copy dua blok tabel (Currency (Y) deposit rate + DEPO RATE OPTION) langsung dari spreadsheet, lalu paste di bawah ini sekali saja. Boleh format tabel (tab-separated) atau satu nilai per baris — dua-duanya kebaca otomatis.</div>
       <textarea id="pasteBox" placeholder="Currency (Y)
 1
@@ -355,17 +358,17 @@ USD1
 3.64%
 ..."></textarea>
       <div class="btn-row">
-        <button class="btn btn-ghost" onclick="clearPaste()">Bersihkan</button>
-        <button class="btn btn-primary" onclick="parsePaste()">Parse pasted data</button>
+        <button class="btn btn-ghost" onclick="clearPaste()">🧹 Bersihkan</button>
+        <button class="btn btn-primary" onclick="parsePaste()">⚡ Parse pasted data</button>
       </div>
       <div id="parseNotice"></div>
     </div>
 
     <div class="card" id="previewCard" style="display:none">
-      <div class="card-title">Preview hasil parse</div>
+      <div class="card-title"><span class="title-badge">🔍</span>Preview hasil parse</div>
       <div class="card-sub">Cek dulu sebelum disimpan — 10 tenor lengkap, dua-duanya (deposit rate &amp; depo rate option).</div>
 
-      <div class="preview-subtitle">Currency (Y) — Deposit Rate</div>
+      <div class="preview-subtitle">💵 Currency (Y) — Deposit Rate</div>
       <div class="table-scroll">
         <table id="previewTableDep">
           <thead><tr id="previewHeadDep"></tr></thead>
@@ -373,7 +376,7 @@ USD1
         </table>
       </div>
 
-      <div class="preview-subtitle" style="margin-top:16px">Depo Rate Option</div>
+      <div class="preview-subtitle" style="margin-top:16px">🏦 Depo Rate Option</div>
       <div class="table-scroll">
         <table id="previewTableOpt">
           <thead><tr id="previewHeadOpt"></tr></thead>
@@ -384,8 +387,8 @@ USD1
       <div id="changeSummary" style="margin-top:16px"></div>
 
       <div class="btn-row">
-        <button class="btn btn-ghost" onclick="dismissPreview()">Batal</button>
-        <button class="btn btn-primary" onclick="saveRates()">Save all changes</button>
+        <button class="btn btn-ghost" onclick="dismissPreview()">✖️ Batal</button>
+        <button class="btn btn-primary" onclick="saveRates()">💾 Save all changes</button>
       </div>
     </div>
   </div>
@@ -394,14 +397,14 @@ USD1
   <div class="panel" id="panel-hol">
 
     <div class="card">
-      <div class="card-title">Kalender hari libur</div>
+      <div class="card-title"><span class="title-badge">📅</span>Kalender hari libur</div>
       <div class="card-sub">Dipakai untuk perhitungan T+2 (Value Date), Fixing Date, dan Maturity Date. Hari Sabtu &amp; Minggu otomatis terhitung libur, tidak perlu ditambahkan manual.</div>
-      <div class="updated-box" id="holMeta">Last updated: —</div>
+      <div class="updated-box" id="holMeta">🕒 Last updated: —</div>
 
       <div class="hol-toolbar">
         <div class="hol-year">
-          <div class="year-btn active" data-year="2026">2026</div>
-          <div class="year-btn" data-year="2027">2027</div>
+          <div class="year-btn active" data-year="2026">📅 2026</div>
+          <div class="year-btn" data-year="2027">📅 2027</div>
         </div>
         <div class="hol-count" id="holCount">17 hari libur nasional</div>
       </div>
@@ -409,14 +412,14 @@ USD1
       <div class="hol-add">
         <input type="date" id="newHolDate" value="2026-01-01">
         <input type="text" id="newHolDesc" placeholder="Nama hari libur, mis. Isra Mikraj">
-        <button class="btn btn-primary" onclick="addHoliday()">+ Tambah</button>
+        <button class="btn btn-primary" onclick="addHoliday()">➕ Tambah</button>
       </div>
 
       <div class="hol-list" id="holList"></div>
     </div>
 
     <div class="card">
-      <div class="card-title">Paste kalender hari libur</div>
+      <div class="card-title"><span class="title-badge">📥</span>Paste kalender hari libur</div>
       <div class="card-sub">Paste dua kolom (Date / Holiday) atau tiga kolom (CCY / Date / Holiday) langsung dari spreadsheet — format tanggal bebas, mis. "Thursday, January 1, 2026". Kolom CCY (kalau ada) diabaikan.</div>
       <textarea id="holPasteBox" placeholder="DATE
 HOLIDAY
@@ -426,19 +429,19 @@ Friday, January 16, 2026
 Isra Mihraj Nabi Muhammad
 ..."></textarea>
       <div class="btn-row">
-        <button class="btn btn-ghost" onclick="clearHolPaste()">Bersihkan</button>
-        <button class="btn btn-primary" onclick="parseHolPaste()">Parse pasted data</button>
+        <button class="btn btn-ghost" onclick="clearHolPaste()">🧹 Bersihkan</button>
+        <button class="btn btn-primary" onclick="parseHolPaste()">⚡ Parse pasted data</button>
       </div>
       <div id="holParseNotice"></div>
     </div>
 
     <div class="card" id="holPreviewCard" style="display:none">
-      <div class="card-title">Preview hasil parse</div>
+      <div class="card-title"><span class="title-badge">🔍</span>Preview hasil parse</div>
       <div class="card-sub">Menyimpan akan menggantikan hari libur yang sudah ada untuk tahun-tahun yang muncul di data ini.</div>
       <div class="hol-list" id="holPreviewList"></div>
       <div class="btn-row">
-        <button class="btn btn-ghost" onclick="dismissHolPreview()">Batal</button>
-        <button class="btn btn-primary" onclick="saveHolPaste()">Save all changes</button>
+        <button class="btn btn-ghost" onclick="dismissHolPreview()">✖️ Batal</button>
+        <button class="btn btn-primary" onclick="saveHolPaste()">💾 Save all changes</button>
       </div>
     </div>
   </div>
@@ -447,26 +450,26 @@ Isra Mihraj Nabi Muhammad
   <div class="panel" id="panel-vol">
 
     <div class="card">
-      <div class="card-title">Base Volatility — Optimizer</div>
+      <div class="card-title"><span class="title-badge">📊</span>Base Volatility — Optimizer</div>
       <div class="card-sub">
         Paste data vol. Format bebas: <code style="background:var(--ink-3);padding:1px 5px;border-radius:4px;color:var(--text-0)">AUDUSD = 4.50</code> atau <code style="background:var(--ink-3);padding:1px 5px;border-radius:4px;color:var(--text-0)">AUDUSD 4.50</code><br>
         Baris dimulai <code style="background:var(--ink-3);padding:1px 5px;border-radius:4px;color:var(--text-0)">Note:</code> diabaikan. Hanya untuk optimizer.
       </div>
-      <div class="updated-box" id="volMetaTop">Last updated: —</div>
+      <div class="updated-box" id="volMetaTop">🕒 Last updated: —</div>
       <textarea id="volRawInput" rows="12" placeholder="AUDUSD = 4.50&#10;NZDUSD = 6.00&#10;EURUSD = 3.75&#10;GBPUSD = 3.25&#10;USDSGD = 2.25&#10;USDJPY = 4.75&#10;USDIDR = 3.00&#10;JPYIDR = 3.50&#10;AUDIDR = 3.50&#10;SGDIDR = 2.00"
         oninput="parseVolInput()"></textarea>
       <div id="volPreview" style="margin-top:12px"></div>
     </div>
 
     <div class="card">
-      <div class="card-title">Vol Adjustment Rules</div>
+      <div class="card-title"><span class="title-badge">⚙️</span>Vol Adjustment Rules</div>
       <div class="card-sub">
         Dua rule terpisah, masing-masing dengan threshold &amp; tambahan vol sendiri-sendiri. Kalau cuma satu syarat yang terpenuhi, dipakai tambahan rule itu. Kalau dua-duanya terpenuhi sekaligus, dipakai yang <b style="color:var(--text-0)">paling besar</b> di antara keduanya — tidak dijumlah.
       </div>
 
       <!-- Rule 1: Notional -->
       <div style="border:1px solid var(--line);border-radius:11px;padding:14px;margin-bottom:12px;background:rgba(255,255,255,.02)">
-        <div style="font-family:var(--sans);font-size:12.5px;font-weight:700;color:var(--text-0);margin-bottom:10px">Rule 1 — Notional</div>
+        <div style="font-family:var(--sans);font-size:12.5px;font-weight:700;color:var(--text-0);margin-bottom:10px">💰 Rule 1 — Notional</div>
         <div class="adj-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <div>
             <label style="font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:5px">Notional ≥</label>
@@ -490,7 +493,7 @@ Isra Mihraj Nabi Muhammad
 
       <!-- Rule 2: Tenor -->
       <div style="border:1px solid var(--line);border-radius:11px;padding:14px;margin-bottom:14px;background:rgba(255,255,255,.02)">
-        <div style="font-family:var(--sans);font-size:12.5px;font-weight:700;color:var(--text-0);margin-bottom:10px">Rule 2 — Tenor</div>
+        <div style="font-family:var(--sans);font-size:12.5px;font-weight:700;color:var(--text-0);margin-bottom:10px">⏳ Rule 2 — Tenor</div>
         <div class="adj-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <div>
             <label style="font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:5px">Tenor ≥</label>
@@ -519,7 +522,7 @@ Isra Mihraj Nabi Muhammad
     </div>
 
     <div class="card" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-      <button id="btnSaveVol" class="btn btn-primary" onclick="saveVol()" disabled>Save Volatility</button>
+      <button id="btnSaveVol" class="btn btn-primary" onclick="saveVol()" disabled>💾 Save Volatility</button>
       <span id="volMeta" style="font-family:var(--mono);font-size:11px;color:var(--text-2)"></span>
     </div>
 
@@ -529,19 +532,19 @@ Isra Mihraj Nabi Muhammad
   <div class="panel" id="panel-spot">
 
     <div class="card">
-      <div class="card-title">Spot Rate</div>
+      <div class="card-title"><span class="title-badge">💹</span>Spot Rate</div>
       <div class="card-sub">
         Paste data spot. Format bebas: <code style="background:var(--ink-3);padding:1px 5px;border-radius:4px;color:var(--text-0)">AUDUSD = 0.7166</code> atau <code style="background:var(--ink-3);padding:1px 5px;border-radius:4px;color:var(--text-0)">AUDUSD 0.7166</code><br>
         Baris dimulai <code style="background:var(--ink-3);padding:1px 5px;border-radius:4px;color:var(--text-0)">Note:</code> diabaikan. Dipakai sebagai referensi spot untuk Yield Optimizer &amp; kalkulator lain.
       </div>
-      <div class="updated-box" id="spotMetaTop">Last updated: —</div>
+      <div class="updated-box" id="spotMetaTop">🕒 Last updated: —</div>
       <textarea id="spotRawInput" rows="12" placeholder="AUDUSD = 0.7166&#10;NZDUSD = 0.5918&#10;EURUSD = 1.1590&#10;GBPUSD = 1.3544&#10;USDSGD = 1.2729&#10;USDJPY = 159.81&#10;USDIDR = 17749&#10;JPYIDR = 111.06&#10;AUDIDR = 12719&#10;SGDIDR = 13943"
         oninput="parseSpotInput()"></textarea>
       <div id="spotPreview" style="margin-top:12px"></div>
     </div>
 
     <div class="card" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-      <button id="btnSaveSpot" class="btn btn-primary" onclick="saveSpot()" disabled>Save Spot Rate</button>
+      <button id="btnSaveSpot" class="btn btn-primary" onclick="saveSpot()" disabled>💾 Save Spot Rate</button>
       <span id="spotMeta" style="font-family:var(--mono);font-size:11px;color:var(--text-2)"></span>
     </div>
 
@@ -849,7 +852,7 @@ let activeYear = 2026;
 
 const MONTHS_ID = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 function setMeta(id, timeStr){
-  document.getElementById(id).innerHTML = 'Last updated: <b>' + timeStr + '</b>';
+  document.getElementById(id).innerHTML = '🕒 Last updated: <b>' + timeStr + '</b>';
 }
 function nowStr(){
   return fmtDateStr(new Date());
@@ -861,7 +864,7 @@ function fmtDateStr(d){
 
 function renderHolidays(){
   const inYear = holidays.filter(h=>h.date.startsWith(String(activeYear))).sort((a,b)=>a.date.localeCompare(b.date));
-  document.getElementById('holCount').textContent = `${inYear.length} hari libur`;
+  document.getElementById('holCount').textContent = `🗓️ ${inYear.length} hari libur`;
 
   document.getElementById('holList').innerHTML = inYear.map((h,i)=>{
     const d = new Date(h.date+'T00:00:00');
