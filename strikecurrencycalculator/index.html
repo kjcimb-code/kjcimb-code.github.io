@@ -288,7 +288,7 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
   </div>
   <div class="hdr-bottom">
     <div class="hdr-title">Strike Currency Calculator</div>
-    <div class="hdr-sub">Implied return is indicative &nbsp;·&nbsp; Deposit rates ref: <span id="ratesTimestampHdr">31 Aug 2026</span> &nbsp;·&nbsp; Please use the official calculator for more accurate results.</div>
+    <div class="hdr-sub">Implied return is indicative &nbsp;·&nbsp; Deposit rates ref: 3-Sep-2026 &nbsp;·&nbsp; Please use the official calculator for more accurate results.</div>
   </div>
 </div>
 
@@ -321,11 +321,11 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
             <div class="ccy-dropdown-btn" id="iDepCCY_btn" tabindex="0"
               onclick="toggleCCYDropdown('iDepCCY')"
               onkeydown="if(event.key==='Enter'||event.key===' ')toggleCCYDropdown('iDepCCY')">
-              <span id="iDepCCY_val"><svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="6.5" fill="#CE1126"/><rect y="6.5" width="18" height="6.5" fill="#fff"/></svg> IDR</span>
+              <span id="iDepCCY_val">🇮🇩 IDR</span>
               <span class="ccy-dropdown-arrow">▼</span>
             </div>
             <div class="ccy-dropdown-menu" id="iDepCCY_menu">
-              <div class="ccy-dropdown-item" data-val="EUR" onclick="selectCCY('iDepCCY','EUR')"><span class="dd-flag"><svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#003399"/><circle cx="9" cy="3.2" r="0.55" fill="#FC0"/><circle cx="11.2" cy="3.8" r="0.55" fill="#FC0"/><circle cx="12.7" cy="5.6" r="0.55" fill="#FC0"/><circle cx="12.7" cy="7.9" r="0.55" fill="#FC0"/><circle cx="11.2" cy="9.7" r="0.55" fill="#FC0"/><circle cx="9" cy="10.3" r="0.55" fill="#FC0"/><circle cx="6.8" cy="9.7" r="0.55" fill="#FC0"/><circle cx="5.3" cy="7.9" r="0.55" fill="#FC0"/><circle cx="5.3" cy="5.6" r="0.55" fill="#FC0"/><circle cx="6.8" cy="3.8" r="0.55" fill="#FC0"/></svg></span><span style="flex:1">EUR</span><span class="dd-check"></span></div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="GBP" onclick="selectCCY('iDepCCY','GBP')"><span class="dd-flag"><svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#00247D"/><path d="M0,0 L18,13 M18,0 L0,13" stroke="#fff" stroke-width="2.6"/><path d="M0,0 L18,13 M18,0 L0,13" stroke="#CF142B" stroke-width="0.9"/><path d="M9,0 V13 M0,6.5 H18" stroke="#fff" stroke-width="4.3"/><path d="M9,0 V13 M0,6.5 H18" stroke="#CF142B" stroke-width="2.6"/></svg></span><span style="flex:1">GBP</span><span class="dd-check"></span></div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="AUD" onclick="selectCCY('iDepCCY','AUD')"><span class="dd-flag"><svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#00247D"/><path d="M0,0 L9,6.5 M9,0 L0,6.5" stroke="#fff" stroke-width="1.3"/><path d="M4.5,0 V6.5 M0,3.25 H9" stroke="#fff" stroke-width="2.1"/><path d="M4.5,0 V6.5 M0,3.25 H9" stroke="#CF142B" stroke-width="1.1"/><circle cx="14" cy="3" r="0.7" fill="#fff"/><circle cx="15.5" cy="6" r="0.6" fill="#fff"/><circle cx="13.5" cy="8.5" r="0.6" fill="#fff"/><circle cx="16.5" cy="9.5" r="0.5" fill="#fff"/><circle cx="11.5" cy="6" r="0.5" fill="#fff"/></svg></span><span style="flex:1">AUD</span><span class="dd-check"></span></div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="NZD" onclick="selectCCY('iDepCCY','NZD')"><span class="dd-flag"><svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#00247D"/><path d="M0,0 L9,6.5 M9,0 L0,6.5" stroke="#fff" stroke-width="1.3"/><path d="M4.5,0 V6.5 M0,3.25 H9" stroke="#fff" stroke-width="2.1"/><path d="M4.5,0 V6.5 M0,3.25 H9" stroke="#CF142B" stroke-width="1.1"/><circle cx="13.5" cy="3" r="0.9" fill="#CF142B" stroke="#fff" stroke-width="0.3"/><circle cx="16.5" cy="4.5" r="0.9" fill="#CF142B" stroke="#fff" stroke-width="0.3"/><circle cx="15.5" cy="8" r="0.9" fill="#CF142B" stroke="#fff" stroke-width="0.3"/><circle cx="12.5" cy="9.5" r="0.7" fill="#CF142B" stroke="#fff" stroke-width="0.3"/></svg></span><span style="flex:1">NZD</span><span class="dd-check"></span></div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="USD" onclick="selectCCY('iDepCCY','USD')"><span class="dd-flag"><svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#fff"/><g fill="#B22234"><rect y="0" width="18" height="1"/><rect y="2" width="18" height="1"/><rect y="4" width="18" height="1"/><rect y="6" width="18" height="1"/><rect y="8" width="18" height="1"/><rect y="10" width="18" height="1"/><rect y="12" width="18" height="1"/></g><rect width="8" height="7" fill="#3C3B6E"/></svg></span><span style="flex:1">USD</span><span class="dd-check"></span></div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="SGD" onclick="selectCCY('iDepCCY','SGD')"><span class="dd-flag"><svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="6.5" fill="#EF3340"/><rect y="6.5" width="18" height="6.5" fill="#fff"/><circle cx="4.3" cy="3.2" r="2" fill="#fff"/><circle cx="5.3" cy="3.2" r="1.7" fill="#EF3340"/></svg></span><span style="flex:1">SGD</span><span class="dd-check"></span></div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="JPY" onclick="selectCCY('iDepCCY','JPY')"><span class="dd-flag"><svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#fff"/><circle cx="9" cy="6.5" r="3.7" fill="#BC002D"/></svg></span><span style="flex:1">JPY</span><span class="dd-check"></span></div><div class="dd-divider"></div><div class="ccy-dropdown-item active" data-val="IDR" onclick="selectCCY('iDepCCY','IDR')"><span class="dd-flag"><svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="6.5" fill="#CE1126"/><rect y="6.5" width="18" height="6.5" fill="#fff"/></svg></span><span style="flex:1">IDR</span><span class="dd-check">●</span></div>
+              <div class="ccy-dropdown-item" data-val="EUR" onclick="selectCCY('iDepCCY','EUR')"><span class="dd-flag">🇪🇺</span><span style="flex:1">EUR</span><span class="dd-check"></span></div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="GBP" onclick="selectCCY('iDepCCY','GBP')"><span class="dd-flag">🇬🇧</span><span style="flex:1">GBP</span><span class="dd-check"></span></div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="AUD" onclick="selectCCY('iDepCCY','AUD')"><span class="dd-flag">🇦🇺</span><span style="flex:1">AUD</span><span class="dd-check"></span></div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="NZD" onclick="selectCCY('iDepCCY','NZD')"><span class="dd-flag">🇳🇿</span><span style="flex:1">NZD</span><span class="dd-check"></span></div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="USD" onclick="selectCCY('iDepCCY','USD')"><span class="dd-flag">🇺🇸</span><span style="flex:1">USD</span><span class="dd-check"></span></div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="SGD" onclick="selectCCY('iDepCCY','SGD')"><span class="dd-flag">🇸🇬</span><span style="flex:1">SGD</span><span class="dd-check"></span></div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="JPY" onclick="selectCCY('iDepCCY','JPY')"><span class="dd-flag">🇯🇵</span><span style="flex:1">JPY</span><span class="dd-check"></span></div><div class="dd-divider"></div><div class="ccy-dropdown-item active" data-val="IDR" onclick="selectCCY('iDepCCY','IDR')"><span class="dd-flag">🇮🇩</span><span style="flex:1">IDR</span><span class="dd-check">●</span></div>
             </div>
           </div>
         </div>
@@ -347,11 +347,11 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
             <div class="ccy-dropdown-btn" id="iAltCCY_btn" tabindex="0"
               onclick="toggleCCYDropdown('iAltCCY')"
               onkeydown="if(event.key==='Enter'||event.key===' ')toggleCCYDropdown('iAltCCY')">
-              <span id="iAltCCY_val"><svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#fff"/><g fill="#B22234"><rect y="0" width="18" height="1"/><rect y="2" width="18" height="1"/><rect y="4" width="18" height="1"/><rect y="6" width="18" height="1"/><rect y="8" width="18" height="1"/><rect y="10" width="18" height="1"/><rect y="12" width="18" height="1"/></g><rect width="8" height="7" fill="#3C3B6E"/></svg> USD</span>
+              <span id="iAltCCY_val">🇺🇸 USD</span>
               <span class="ccy-dropdown-arrow">▼</span>
             </div>
             <div class="ccy-dropdown-menu" id="iAltCCY_menu">
-              <div class="ccy-dropdown-item" data-val="EUR" onclick="selectCCY('iAltCCY','EUR')"><span class="dd-flag"><svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#003399"/><circle cx="9" cy="3.2" r="0.55" fill="#FC0"/><circle cx="11.2" cy="3.8" r="0.55" fill="#FC0"/><circle cx="12.7" cy="5.6" r="0.55" fill="#FC0"/><circle cx="12.7" cy="7.9" r="0.55" fill="#FC0"/><circle cx="11.2" cy="9.7" r="0.55" fill="#FC0"/><circle cx="9" cy="10.3" r="0.55" fill="#FC0"/><circle cx="6.8" cy="9.7" r="0.55" fill="#FC0"/><circle cx="5.3" cy="7.9" r="0.55" fill="#FC0"/><circle cx="5.3" cy="5.6" r="0.55" fill="#FC0"/><circle cx="6.8" cy="3.8" r="0.55" fill="#FC0"/></svg></span><span style="flex:1">EUR</span><span class="dd-check"></span></div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="GBP" onclick="selectCCY('iAltCCY','GBP')"><span class="dd-flag"><svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#00247D"/><path d="M0,0 L18,13 M18,0 L0,13" stroke="#fff" stroke-width="2.6"/><path d="M0,0 L18,13 M18,0 L0,13" stroke="#CF142B" stroke-width="0.9"/><path d="M9,0 V13 M0,6.5 H18" stroke="#fff" stroke-width="4.3"/><path d="M9,0 V13 M0,6.5 H18" stroke="#CF142B" stroke-width="2.6"/></svg></span><span style="flex:1">GBP</span><span class="dd-check"></span></div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="AUD" onclick="selectCCY('iAltCCY','AUD')"><span class="dd-flag"><svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#00247D"/><path d="M0,0 L9,6.5 M9,0 L0,6.5" stroke="#fff" stroke-width="1.3"/><path d="M4.5,0 V6.5 M0,3.25 H9" stroke="#fff" stroke-width="2.1"/><path d="M4.5,0 V6.5 M0,3.25 H9" stroke="#CF142B" stroke-width="1.1"/><circle cx="14" cy="3" r="0.7" fill="#fff"/><circle cx="15.5" cy="6" r="0.6" fill="#fff"/><circle cx="13.5" cy="8.5" r="0.6" fill="#fff"/><circle cx="16.5" cy="9.5" r="0.5" fill="#fff"/><circle cx="11.5" cy="6" r="0.5" fill="#fff"/></svg></span><span style="flex:1">AUD</span><span class="dd-check"></span></div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="NZD" onclick="selectCCY('iAltCCY','NZD')"><span class="dd-flag"><svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#00247D"/><path d="M0,0 L9,6.5 M9,0 L0,6.5" stroke="#fff" stroke-width="1.3"/><path d="M4.5,0 V6.5 M0,3.25 H9" stroke="#fff" stroke-width="2.1"/><path d="M4.5,0 V6.5 M0,3.25 H9" stroke="#CF142B" stroke-width="1.1"/><circle cx="13.5" cy="3" r="0.9" fill="#CF142B" stroke="#fff" stroke-width="0.3"/><circle cx="16.5" cy="4.5" r="0.9" fill="#CF142B" stroke="#fff" stroke-width="0.3"/><circle cx="15.5" cy="8" r="0.9" fill="#CF142B" stroke="#fff" stroke-width="0.3"/><circle cx="12.5" cy="9.5" r="0.7" fill="#CF142B" stroke="#fff" stroke-width="0.3"/></svg></span><span style="flex:1">NZD</span><span class="dd-check"></span></div><div class="dd-divider"></div><div class="ccy-dropdown-item active" data-val="USD" onclick="selectCCY('iAltCCY','USD')"><span class="dd-flag"><svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#fff"/><g fill="#B22234"><rect y="0" width="18" height="1"/><rect y="2" width="18" height="1"/><rect y="4" width="18" height="1"/><rect y="6" width="18" height="1"/><rect y="8" width="18" height="1"/><rect y="10" width="18" height="1"/><rect y="12" width="18" height="1"/></g><rect width="8" height="7" fill="#3C3B6E"/></svg></span><span style="flex:1">USD</span><span class="dd-check">●</span></div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="SGD" onclick="selectCCY('iAltCCY','SGD')"><span class="dd-flag"><svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="6.5" fill="#EF3340"/><rect y="6.5" width="18" height="6.5" fill="#fff"/><circle cx="4.3" cy="3.2" r="2" fill="#fff"/><circle cx="5.3" cy="3.2" r="1.7" fill="#EF3340"/></svg></span><span style="flex:1">SGD</span><span class="dd-check"></span></div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="JPY" onclick="selectCCY('iAltCCY','JPY')"><span class="dd-flag"><svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#fff"/><circle cx="9" cy="6.5" r="3.7" fill="#BC002D"/></svg></span><span style="flex:1">JPY</span><span class="dd-check"></span></div><div class="dd-divider"></div><div class="ccy-dropdown-item" style="display:none" data-val="IDR" onclick="selectCCY('iAltCCY','IDR')"><span class="dd-flag"><svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="6.5" fill="#CE1126"/><rect y="6.5" width="18" height="6.5" fill="#fff"/></svg></span><span style="flex:1">IDR</span><span class="dd-check"></span></div>
+              <div class="ccy-dropdown-item" data-val="EUR" onclick="selectCCY('iAltCCY','EUR')"><span class="dd-flag">🇪🇺</span><span style="flex:1">EUR</span><span class="dd-check"></span></div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="GBP" onclick="selectCCY('iAltCCY','GBP')"><span class="dd-flag">🇬🇧</span><span style="flex:1">GBP</span><span class="dd-check"></span></div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="AUD" onclick="selectCCY('iAltCCY','AUD')"><span class="dd-flag">🇦🇺</span><span style="flex:1">AUD</span><span class="dd-check"></span></div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="NZD" onclick="selectCCY('iAltCCY','NZD')"><span class="dd-flag">🇳🇿</span><span style="flex:1">NZD</span><span class="dd-check"></span></div><div class="dd-divider"></div><div class="ccy-dropdown-item active" data-val="USD" onclick="selectCCY('iAltCCY','USD')"><span class="dd-flag">🇺🇸</span><span style="flex:1">USD</span><span class="dd-check">●</span></div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="SGD" onclick="selectCCY('iAltCCY','SGD')"><span class="dd-flag">🇸🇬</span><span style="flex:1">SGD</span><span class="dd-check"></span></div><div class="dd-divider"></div><div class="ccy-dropdown-item" data-val="JPY" onclick="selectCCY('iAltCCY','JPY')"><span class="dd-flag">🇯🇵</span><span style="flex:1">JPY</span><span class="dd-check"></span></div><div class="dd-divider"></div><div class="ccy-dropdown-item" style="display:none" data-val="IDR" onclick="selectCCY('iAltCCY','IDR')"><span class="dd-flag">🇮🇩</span><span style="flex:1">IDR</span><span class="dd-check"></span></div>
             </div>
           </div>
         </div>
@@ -619,20 +619,20 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
 
 
 
-let HOLIDAYS=new Set(['2026-01-01','2026-01-16','2026-02-16','2026-02-17','2026-03-18','2026-03-19','2026-03-20','2026-03-21','2026-03-23','2026-03-24','2026-04-03','2026-05-01','2026-05-14','2026-05-15','2026-05-27','2026-05-28','2026-05-31','2026-06-01','2026-06-16','2026-08-17','2026-08-25','2026-12-24','2026-12-25']);
+const HOLIDAYS=new Set(['2026-01-01','2026-01-16','2026-02-16','2026-02-17','2026-03-18','2026-03-19','2026-03-20','2026-03-21','2026-03-23','2026-03-24','2026-04-03','2026-05-01','2026-05-14','2026-05-15','2026-05-27','2026-05-28','2026-05-31','2026-06-01','2026-06-16','2026-08-17','2026-08-25','2026-12-24']);
 // Currency (Y) IDR — deposit interest (PUT mode)
 let IDR_DEP=[{d:1,r:5.78},{d:7,r:6.1},{d:14,r:6.11},{d:30,r:6.47},{d:60,r:6.74},{d:90,r:6.76},{d:120,r:6.79},{d:150,r:6.81},{d:180,r:6.83},{d:360,r:6.85}];
 // Currency (Y) USD — deposit interest (CALL mode)
 let USD_DEP=[{d:1,r:3.48},{d:7,r:3.5},{d:14,r:3.52},{d:30,r:4.06},{d:60,r:4.18},{d:90,r:4.23},{d:120,r:4.31},{d:150,r:4.36},{d:180,r:4.41},{d:360,r:4.43}];
 // DEPO RATE OPTION IDR1 — GK model rd
-let IDR_OPT=[{d:1,r:6.16},{d:7,r:6.06},{d:14,r:6.07},{d:30,r:6.11},{d:60,r:6.11},{d:90,r:6.14},{d:120,r:6.16},{d:150,r:6.18},{d:180,r:6.21},{d:360,r:6.35}];
+let IDR_OPT=[{d:1,r:5.75},{d:7,r:6.08},{d:14,r:6.08},{d:30,r:6.1},{d:60,r:6.1},{d:90,r:6.12},{d:120,r:0.0},{d:150,r:0.0},{d:180,r:6.22},{d:360,r:6.38}];
 // DEPO RATE OPTION USD1 — GK model rf
-let USD_OPT=[{d:1,r:3.64},{d:7,r:3.63},{d:14,r:3.63},{d:30,r:3.68},{d:60,r:3.72},{d:90,r:3.76},{d:120,r:3.81},{d:150,r:3.84},{d:180,r:3.87},{d:360,r:4.03}];
-let AUD_OPT=[{d:1,r:4.35},{d:7,r:4.35},{d:14,r:4.35},{d:30,r:4.36},{d:60,r:4.42},{d:90,r:4.49},{d:120,r:4.53},{d:150,r:4.56},{d:180,r:4.59},{d:360,r:4.71}];
-let EUR_OPT=[{d:1,r:2.23},{d:7,r:2.19},{d:14,r:2.19},{d:30,r:2.31},{d:60,r:2.37},{d:90,r:2.41},{d:120,r:2.44},{d:150,r:2.48},{d:180,r:2.51},{d:360,r:2.67}];
-let GBP_OPT=[{d:1,r:3.73},{d:7,r:3.73},{d:14,r:3.73},{d:30,r:3.75},{d:60,r:3.76},{d:90,r:3.8},{d:120,r:3.84},{d:150,r:3.88},{d:180,r:3.92},{d:360,r:4.15}];
-let NZD_OPT=[{d:1,r:2.59},{d:7,r:2.71},{d:14,r:2.71},{d:30,r:2.73},{d:60,r:2.74},{d:90,r:2.79},{d:120,r:2.86},{d:150,r:2.9},{d:180,r:2.94},{d:360,r:3.19}];
-let SGD_OPT=[{d:1,r:1.3},{d:7,r:1.3},{d:14,r:1.3},{d:30,r:1.3},{d:60,r:1.3},{d:90,r:1.32},{d:120,r:1.33},{d:150,r:1.34},{d:180,r:1.35},{d:360,r:1.46}];
+let USD_OPT=[{d:1,r:3.66},{d:7,r:3.63},{d:14,r:3.69},{d:30,r:3.76},{d:60,r:3.8},{d:90,r:3.84},{d:120,r:3.9},{d:150,r:3.94},{d:180,r:3.97},{d:360,r:4.17}];
+let AUD_OPT=[{d:1,r:4.35},{d:7,r:4.35},{d:14,r:4.36},{d:30,r:4.39},{d:60,r:4.46},{d:90,r:4.53},{d:120,r:4.58},{d:150,r:4.62},{d:180,r:4.65},{d:360,r:4.78}];
+let EUR_OPT=[{d:1,r:2.25},{d:7,r:2.19},{d:14,r:2.23},{d:30,r:2.34},{d:60,r:2.39},{d:90,r:2.44},{d:120,r:2.48},{d:150,r:2.52},{d:180,r:2.56},{d:360,r:2.76}];
+let GBP_OPT=[{d:1,r:3.73},{d:7,r:3.73},{d:14,r:3.73},{d:30,r:3.76},{d:60,r:3.77},{d:90,r:3.83},{d:120,r:3.89},{d:150,r:3.93},{d:180,r:3.98},{d:360,r:4.27}];
+let NZD_OPT=[{d:1,r:2.69},{d:7,r:2.75},{d:14,r:2.75},{d:30,r:2.75},{d:60,r:2.77},{d:90,r:2.79},{d:120,r:2.85},{d:150,r:2.89},{d:180,r:2.93},{d:360,r:3.18}];
+let SGD_OPT=[{d:1,r:1.26},{d:7,r:0.0},{d:14,r:0.0},{d:30,r:1.36},{d:60,r:1.37},{d:90,r:1.38},{d:120,r:0.0},{d:150,r:0.0},{d:180,r:1.43},{d:360,r:1.53}];
 
 
 let AUD_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:1.25},{d:30,r:3.41},{d:60,r:3.41},{d:90,r:3.41},{d:120,r:3.43},{d:150,r:3.44},{d:180,r:3.46},{d:360,r:3.42}];
@@ -642,7 +642,7 @@ let NZD_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:0.95},{d:30,r:2.41},{d:60,r:2.41}
 let SGD_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:0.69},{d:30,r:1.56},{d:60,r:1.61},{d:90,r:1.66},{d:120,r:1.7},{d:150,r:1.73},{d:180,r:1.76},{d:360,r:1.75}];
 
 let JPY_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:0.34},{d:30,r:0.41},{d:60,r:0.41},{d:90,r:0.41},{d:120,r:0.43},{d:150,r:0.44},{d:180,r:0.46},{d:360,r:0.46}];
-let JPY_OPT=[{d:1,r:0.98},{d:7,r:0.98},{d:14,r:0.98},{d:30,r:1.03},{d:60,r:1.11},{d:90,r:1.16},{d:120,r:1.2},{d:150,r:1.24},{d:180,r:1.28},{d:360,r:1.48}];
+let JPY_OPT=[{d:1,r:0.98},{d:7,r:0.98},{d:14,r:0.98},{d:30,r:1.08},{d:60,r:1.16},{d:90,r:1.2},{d:120,r:1.24},{d:150,r:1.29},{d:180,r:1.33},{d:360,r:1.57}];
 let CCY_DEP={'USD':USD_DEP,'AUD':AUD_DEP,'EUR':EUR_DEP,'GBP':GBP_DEP,'NZD':NZD_DEP,'SGD':SGD_DEP,'JPY':JPY_DEP,'IDR':IDR_DEP};
 
 let CCY_OPT={'USD':USD_OPT,'AUD':AUD_OPT,'EUR':EUR_OPT,'GBP':GBP_OPT,'NZD':NZD_OPT,'SGD':SGD_OPT,'JPY':JPY_OPT,'IDR':IDR_OPT};
@@ -652,6 +652,7 @@ const ALL_CCY=['EUR','GBP','AUD','NZD','USD','SGD','JPY','IDR'];
 const PAIR_SPOTS={'EUR/GBP':0.8557,'EUR/AUD':1.6174,'EUR/NZD':1.9584,'EUR/USD':1.159,'EUR/SGD':1.4753,'EUR/JPY':185.22,'EUR/IDR':20571,'GBP/AUD':1.89,'GBP/NZD':2.2886,'GBP/USD':1.3544,'GBP/SGD':1.724,'GBP/JPY':216.45,'GBP/IDR':24039,'AUD/NZD':1.2109,'AUD/USD':0.7166,'AUD/SGD':0.9122,'AUD/JPY':114.52,'AUD/IDR':12719,'NZD/USD':0.5918,'NZD/SGD':0.7533,'NZD/JPY':94.57,'NZD/IDR':10504,'USD/SGD':1.2729,'USD/JPY':159.81,'USD/IDR':17749,'SGD/JPY':125.55,'SGD/IDR':13943,'JPY/IDR':111.06};
 const VOL_HINTS_PAIR={'AUD/USD':'e.g. 4.50','NZD/USD':'e.g. 6.00','EUR/USD':'e.g. 3.75','GBP/USD':'e.g. 3.25','USD/SGD':'e.g. 2.25','USD/JPY':'e.g. 4.75','USD/IDR':'e.g. 3.50','JPY/IDR':'e.g. 3.50','AUD/IDR':'e.g. 3.50','SGD/IDR':'e.g. 2.00'};
 let depositCCY='IDR',alternateCCY='USD';
+let isPUT_g=true;
 
 function getPairInfo(dep,alt){
   const isDepBase=RANK[dep]<RANK[alt];
@@ -678,9 +679,9 @@ function toggleCCYDropdown(id){
   if(!isOpen){menu.classList.add('show');btn.classList.add('open');}
 }
 function selectCCY(id, val){
-  const flagMap={EUR:'<svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#003399"/><circle cx="9" cy="3.2" r="0.55" fill="#FC0"/><circle cx="11.2" cy="3.8" r="0.55" fill="#FC0"/><circle cx="12.7" cy="5.6" r="0.55" fill="#FC0"/><circle cx="12.7" cy="7.9" r="0.55" fill="#FC0"/><circle cx="11.2" cy="9.7" r="0.55" fill="#FC0"/><circle cx="9" cy="10.3" r="0.55" fill="#FC0"/><circle cx="6.8" cy="9.7" r="0.55" fill="#FC0"/><circle cx="5.3" cy="7.9" r="0.55" fill="#FC0"/><circle cx="5.3" cy="5.6" r="0.55" fill="#FC0"/><circle cx="6.8" cy="3.8" r="0.55" fill="#FC0"/></svg>',GBP:'<svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#00247D"/><path d="M0,0 L18,13 M18,0 L0,13" stroke="#fff" stroke-width="2.6"/><path d="M0,0 L18,13 M18,0 L0,13" stroke="#CF142B" stroke-width="0.9"/><path d="M9,0 V13 M0,6.5 H18" stroke="#fff" stroke-width="4.3"/><path d="M9,0 V13 M0,6.5 H18" stroke="#CF142B" stroke-width="2.6"/></svg>',AUD:'<svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#00247D"/><path d="M0,0 L9,6.5 M9,0 L0,6.5" stroke="#fff" stroke-width="1.3"/><path d="M4.5,0 V6.5 M0,3.25 H9" stroke="#fff" stroke-width="2.1"/><path d="M4.5,0 V6.5 M0,3.25 H9" stroke="#CF142B" stroke-width="1.1"/><circle cx="14" cy="3" r="0.7" fill="#fff"/><circle cx="15.5" cy="6" r="0.6" fill="#fff"/><circle cx="13.5" cy="8.5" r="0.6" fill="#fff"/><circle cx="16.5" cy="9.5" r="0.5" fill="#fff"/><circle cx="11.5" cy="6" r="0.5" fill="#fff"/></svg>',NZD:'<svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#00247D"/><path d="M0,0 L9,6.5 M9,0 L0,6.5" stroke="#fff" stroke-width="1.3"/><path d="M4.5,0 V6.5 M0,3.25 H9" stroke="#fff" stroke-width="2.1"/><path d="M4.5,0 V6.5 M0,3.25 H9" stroke="#CF142B" stroke-width="1.1"/><circle cx="13.5" cy="3" r="0.9" fill="#CF142B" stroke="#fff" stroke-width="0.3"/><circle cx="16.5" cy="4.5" r="0.9" fill="#CF142B" stroke="#fff" stroke-width="0.3"/><circle cx="15.5" cy="8" r="0.9" fill="#CF142B" stroke="#fff" stroke-width="0.3"/><circle cx="12.5" cy="9.5" r="0.7" fill="#CF142B" stroke="#fff" stroke-width="0.3"/></svg>',USD:'<svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#fff"/><g fill="#B22234"><rect y="0" width="18" height="1"/><rect y="2" width="18" height="1"/><rect y="4" width="18" height="1"/><rect y="6" width="18" height="1"/><rect y="8" width="18" height="1"/><rect y="10" width="18" height="1"/><rect y="12" width="18" height="1"/></g><rect width="8" height="7" fill="#3C3B6E"/></svg>',SGD:'<svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="6.5" fill="#EF3340"/><rect y="6.5" width="18" height="6.5" fill="#fff"/><circle cx="4.3" cy="3.2" r="2" fill="#fff"/><circle cx="5.3" cy="3.2" r="1.7" fill="#EF3340"/></svg>',JPY:'<svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#fff"/><circle cx="9" cy="6.5" r="3.7" fill="#BC002D"/></svg>',IDR:'<svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="6.5" fill="#CE1126"/><rect y="6.5" width="18" height="6.5" fill="#fff"/></svg>'};
+  const flagMap={EUR:'🇪🇺',GBP:'🇬🇧',AUD:'🇦🇺',NZD:'🇳🇿',USD:'🇺🇸',SGD:'🇸🇬',JPY:'🇯🇵',IDR:'🇮🇩'};
   const flagEl=document.getElementById(id+'_val');
-  if(flagEl) flagEl.innerHTML=(flagMap[val]||'')+' '+val;
+  if(flagEl) flagEl.textContent=(flagMap[val]||'')+' '+val;
   const flagMap2=flagMap;
   document.getElementById(id+'_menu').classList.remove('show');
   document.getElementById(id+'_btn').classList.remove('open');
@@ -706,10 +707,10 @@ document.addEventListener('click',function(e){
 function swapCCY(){
   const oldDep=depositCCY, oldAlt=alternateCCY;
   depositCCY=oldAlt; alternateCCY=oldDep;
-  const _fm={EUR:'<svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#003399"/><circle cx="9" cy="3.2" r="0.55" fill="#FC0"/><circle cx="11.2" cy="3.8" r="0.55" fill="#FC0"/><circle cx="12.7" cy="5.6" r="0.55" fill="#FC0"/><circle cx="12.7" cy="7.9" r="0.55" fill="#FC0"/><circle cx="11.2" cy="9.7" r="0.55" fill="#FC0"/><circle cx="9" cy="10.3" r="0.55" fill="#FC0"/><circle cx="6.8" cy="9.7" r="0.55" fill="#FC0"/><circle cx="5.3" cy="7.9" r="0.55" fill="#FC0"/><circle cx="5.3" cy="5.6" r="0.55" fill="#FC0"/><circle cx="6.8" cy="3.8" r="0.55" fill="#FC0"/></svg>',GBP:'<svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#00247D"/><path d="M0,0 L18,13 M18,0 L0,13" stroke="#fff" stroke-width="2.6"/><path d="M0,0 L18,13 M18,0 L0,13" stroke="#CF142B" stroke-width="0.9"/><path d="M9,0 V13 M0,6.5 H18" stroke="#fff" stroke-width="4.3"/><path d="M9,0 V13 M0,6.5 H18" stroke="#CF142B" stroke-width="2.6"/></svg>',AUD:'<svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#00247D"/><path d="M0,0 L9,6.5 M9,0 L0,6.5" stroke="#fff" stroke-width="1.3"/><path d="M4.5,0 V6.5 M0,3.25 H9" stroke="#fff" stroke-width="2.1"/><path d="M4.5,0 V6.5 M0,3.25 H9" stroke="#CF142B" stroke-width="1.1"/><circle cx="14" cy="3" r="0.7" fill="#fff"/><circle cx="15.5" cy="6" r="0.6" fill="#fff"/><circle cx="13.5" cy="8.5" r="0.6" fill="#fff"/><circle cx="16.5" cy="9.5" r="0.5" fill="#fff"/><circle cx="11.5" cy="6" r="0.5" fill="#fff"/></svg>',NZD:'<svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#00247D"/><path d="M0,0 L9,6.5 M9,0 L0,6.5" stroke="#fff" stroke-width="1.3"/><path d="M4.5,0 V6.5 M0,3.25 H9" stroke="#fff" stroke-width="2.1"/><path d="M4.5,0 V6.5 M0,3.25 H9" stroke="#CF142B" stroke-width="1.1"/><circle cx="13.5" cy="3" r="0.9" fill="#CF142B" stroke="#fff" stroke-width="0.3"/><circle cx="16.5" cy="4.5" r="0.9" fill="#CF142B" stroke="#fff" stroke-width="0.3"/><circle cx="15.5" cy="8" r="0.9" fill="#CF142B" stroke="#fff" stroke-width="0.3"/><circle cx="12.5" cy="9.5" r="0.7" fill="#CF142B" stroke="#fff" stroke-width="0.3"/></svg>',USD:'<svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#fff"/><g fill="#B22234"><rect y="0" width="18" height="1"/><rect y="2" width="18" height="1"/><rect y="4" width="18" height="1"/><rect y="6" width="18" height="1"/><rect y="8" width="18" height="1"/><rect y="10" width="18" height="1"/><rect y="12" width="18" height="1"/></g><rect width="8" height="7" fill="#3C3B6E"/></svg>',SGD:'<svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="6.5" fill="#EF3340"/><rect y="6.5" width="18" height="6.5" fill="#fff"/><circle cx="4.3" cy="3.2" r="2" fill="#fff"/><circle cx="5.3" cy="3.2" r="1.7" fill="#EF3340"/></svg>',JPY:'<svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#fff"/><circle cx="9" cy="6.5" r="3.7" fill="#BC002D"/></svg>',IDR:'<svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="6.5" fill="#CE1126"/><rect y="6.5" width="18" height="6.5" fill="#fff"/></svg>'};
+  const _fm={EUR:'🇪🇺',GBP:'🇬🇧',AUD:'🇦🇺',NZD:'🇳🇿',USD:'🇺🇸',SGD:'🇸🇬',JPY:'🇯🇵',IDR:'🇮🇩'};
   // Update dep button
   const dv=document.getElementById('iDepCCY_val');
-  if(dv) dv.innerHTML=(_fm[depositCCY]||'')+' '+depositCCY;
+  if(dv) dv.textContent=(_fm[depositCCY]||'')+' '+depositCCY;
   // Update dep menu active
   document.querySelectorAll('#iDepCCY_menu .ccy-dropdown-item').forEach(el=>{
     const isA=el.dataset.val===depositCCY;
@@ -719,7 +720,7 @@ function swapCCY(){
   });
   // Update alt button
   const av=document.getElementById('iAltCCY_val');
-  if(av) av.innerHTML=(_fm[alternateCCY]||'')+' '+alternateCCY;
+  if(av) av.textContent=(_fm[alternateCCY]||'')+' '+alternateCCY;
   // Rebuild alt menu (hide new depositCCY)
   document.querySelectorAll('#iAltCCY_menu .ccy-dropdown-item').forEach(el=>{
     const v=el.dataset.val;
@@ -819,8 +820,8 @@ function rebuildAltDropdown(){
   if(alternateCCY===depositCCY){
     const first=ALL_CCY.find(x=>x!==depositCCY);
     alternateCCY=first||'USD';
-    const _fm={EUR:'<svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#003399"/><circle cx="9" cy="3.2" r="0.55" fill="#FC0"/><circle cx="11.2" cy="3.8" r="0.55" fill="#FC0"/><circle cx="12.7" cy="5.6" r="0.55" fill="#FC0"/><circle cx="12.7" cy="7.9" r="0.55" fill="#FC0"/><circle cx="11.2" cy="9.7" r="0.55" fill="#FC0"/><circle cx="9" cy="10.3" r="0.55" fill="#FC0"/><circle cx="6.8" cy="9.7" r="0.55" fill="#FC0"/><circle cx="5.3" cy="7.9" r="0.55" fill="#FC0"/><circle cx="5.3" cy="5.6" r="0.55" fill="#FC0"/><circle cx="6.8" cy="3.8" r="0.55" fill="#FC0"/></svg>',GBP:'<svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#00247D"/><path d="M0,0 L18,13 M18,0 L0,13" stroke="#fff" stroke-width="2.6"/><path d="M0,0 L18,13 M18,0 L0,13" stroke="#CF142B" stroke-width="0.9"/><path d="M9,0 V13 M0,6.5 H18" stroke="#fff" stroke-width="4.3"/><path d="M9,0 V13 M0,6.5 H18" stroke="#CF142B" stroke-width="2.6"/></svg>',AUD:'<svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#00247D"/><path d="M0,0 L9,6.5 M9,0 L0,6.5" stroke="#fff" stroke-width="1.3"/><path d="M4.5,0 V6.5 M0,3.25 H9" stroke="#fff" stroke-width="2.1"/><path d="M4.5,0 V6.5 M0,3.25 H9" stroke="#CF142B" stroke-width="1.1"/><circle cx="14" cy="3" r="0.7" fill="#fff"/><circle cx="15.5" cy="6" r="0.6" fill="#fff"/><circle cx="13.5" cy="8.5" r="0.6" fill="#fff"/><circle cx="16.5" cy="9.5" r="0.5" fill="#fff"/><circle cx="11.5" cy="6" r="0.5" fill="#fff"/></svg>',NZD:'<svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#00247D"/><path d="M0,0 L9,6.5 M9,0 L0,6.5" stroke="#fff" stroke-width="1.3"/><path d="M4.5,0 V6.5 M0,3.25 H9" stroke="#fff" stroke-width="2.1"/><path d="M4.5,0 V6.5 M0,3.25 H9" stroke="#CF142B" stroke-width="1.1"/><circle cx="13.5" cy="3" r="0.9" fill="#CF142B" stroke="#fff" stroke-width="0.3"/><circle cx="16.5" cy="4.5" r="0.9" fill="#CF142B" stroke="#fff" stroke-width="0.3"/><circle cx="15.5" cy="8" r="0.9" fill="#CF142B" stroke="#fff" stroke-width="0.3"/><circle cx="12.5" cy="9.5" r="0.7" fill="#CF142B" stroke="#fff" stroke-width="0.3"/></svg>',USD:'<svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#fff"/><g fill="#B22234"><rect y="0" width="18" height="1"/><rect y="2" width="18" height="1"/><rect y="4" width="18" height="1"/><rect y="6" width="18" height="1"/><rect y="8" width="18" height="1"/><rect y="10" width="18" height="1"/><rect y="12" width="18" height="1"/></g><rect width="8" height="7" fill="#3C3B6E"/></svg>',SGD:'<svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="6.5" fill="#EF3340"/><rect y="6.5" width="18" height="6.5" fill="#fff"/><circle cx="4.3" cy="3.2" r="2" fill="#fff"/><circle cx="5.3" cy="3.2" r="1.7" fill="#EF3340"/></svg>',JPY:'<svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="13" fill="#fff"/><circle cx="9" cy="6.5" r="3.7" fill="#BC002D"/></svg>',IDR:'<svg width="18" height="13" viewBox="0 0 18 13" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;border-radius:2px;flex-shrink:0"><rect width="18" height="6.5" fill="#CE1126"/><rect y="6.5" width="18" height="6.5" fill="#fff"/></svg>'};
-    document.getElementById('iAltCCY_val').innerHTML=(_fm[alternateCCY]||'')+' '+alternateCCY;
+    const _fm={EUR:'🇪🇺',GBP:'🇬🇧',AUD:'🇦🇺',NZD:'🇳🇿',USD:'🇺🇸',SGD:'🇸🇬',JPY:'🇯🇵',IDR:'🇮🇩'};
+    document.getElementById('iAltCCY_val').textContent=(_fm[alternateCCY]||'')+' '+alternateCCY;
     menu.querySelectorAll('.ccy-dropdown-item').forEach(el=>{
       const isActive=el.dataset.val===alternateCCY;
       el.classList.toggle('active',isActive);
@@ -849,7 +850,7 @@ function applyPair(){
   if(el('pairLabel')){el('pairLabel').textContent=pi.name;}
   if(el('modeLabel')){el('modeLabel').textContent=pi.mode;el('modeLabel').style.background=pi.mode==='PUT'?'#790008':'#1D4ED8';}
   if(el('lNotionalPre')){el('lNotionalPre').textContent=depositCCY;}
-  if(el('spotPairLabel')){el('spotPairLabel').textContent='Spot Rate ('+pi.name+')';}
+  if(el('spotPairLabel')){el('spotPairLabel').textContent=(pi.mode==='PUT'?'Spot Offer Rate':'Spot Bid Rate')+' ('+pi.name+')';}
   if(el('spotSuffix')){el('spotSuffix').textContent=pi.name;}
   if(el('iSpot')){el('iSpot').value='';el('iSpot').placeholder=pi.dec===0?pi.spot.toLocaleString('en-US'):pi.spot.toFixed(pi.dec);}
   if(el('iStrike')){el('iStrike').value='';el('iStrike').placeholder='Strike Price';}
@@ -1079,6 +1080,7 @@ function calc(){
     }
   })();
   const isPUT=getPairInfo(depositCCY,alternateCCY).mode==='PUT';
+  isPUT_g=isPUT;
   const N=getNum('iNotional');
   const S=getNum('iSpot');
   const K=getNum('iStrike');
@@ -1322,14 +1324,10 @@ function updateSplit(){
 }
 rebuildAltDropdown();
 applyPair();
-// Fallback rates indicator (no dot, date only) — keeps both the header
-// subtitle and footer indicator in sync from one source string.
+// Fallback rates indicator (no dot, date only)
 (function(){
-  const fallbackText='31 Aug 2026';
   const el=document.getElementById('ratesTimestamp');
-  if(el) el.innerHTML='Deposit Rates ref: '+fallbackText;
-  const elHdr=document.getElementById('ratesTimestampHdr');
-  if(elHdr) elHdr.textContent=fallbackText;
+  if(el) el.innerHTML='Deposit Rates ref: 3 Sep 2026';
 })();
 
 // ─────────────────────────────────────────────────────────────────
@@ -1341,10 +1339,14 @@ applyPair();
   try{
     const SUPABASE_URL='https://xavhlnwodzhqxdhryowm.supabase.co';
     const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhhdmhsbndvZHpocXhkaHJ5b3dtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxNTk5MzMsImV4cCI6MjEwMTczNTkzM30.fYJ0ZDRyImv9KT07-cW1qn9135jHFSnzybOJvnK1z70';
-    if(!window.supabase) return;
-    const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+    // Try both window.supabase and global supabase (CDN version differences)
+    const _sb = window.supabase || (typeof supabase !== 'undefined' ? supabase : null);
+    if(!_sb) { console.warn('[Rates] Supabase CDN not loaded'); return; }
+    const sb=_sb.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+    console.log('[Rates] Fetching from Supabase...');
     const {data,error}=await sb.from('strike_calc_rates').select('*').eq('id',1).single();
-    if(error||!data) return;
+    if(error||!data){ console.warn('[Rates] Fetch error:',JSON.stringify(error)); console.info('[Rates] Using fallback hardcoded data'); return; }
+    console.log('[Rates] Data received, deposit_rates keys:',Object.keys(data.deposit_rates||{}));
 
     const T=[1,7,14,30,60,90,120,150,180,360];
     const toArr=arr=>(Array.isArray(arr)&&arr.length===10)?T.map((d,i)=>({d,r:Number(arr[i])||0})):null;
@@ -1374,26 +1376,19 @@ applyPair();
       HOLIDAYS=new Set(data.holidays.map(h=>h.date));
     }
 
-    // Show timestamp — English month + 24h colon time, matching the
-    // fallback string's format ("31 Aug 2026") instead of Indonesian
-    // locale output ("31 Agu 2026, 02.15"). Header and footer both get
-    // the green dot + date + time now that we're on live data.
+    // Show timestamp
     if(data.updated_at){
       const d=new Date(data.updated_at);
-      const MONTHS_EN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      const pad=n=>String(n).padStart(2,'0');
-      const dateOnly=pad(d.getDate())+' '+MONTHS_EN[d.getMonth()]+' '+d.getFullYear();
-      const ts=dateOnly+', '+pad(d.getHours())+':'+pad(d.getMinutes());
-      const dot='<span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#22C55E;margin-right:4px;vertical-align:middle"></span>';
+      const ts=d.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'})
+              +', '+d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
       const el=document.getElementById('ratesTimestamp');
-      if(el) el.innerHTML=dot+'Deposit Rates ref: '+ts;
-      const elHdr=document.getElementById('ratesTimestampHdr');
-      if(elHdr) elHdr.innerHTML=dot+ts;
+      if(el) el.innerHTML='<span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#22C55E;margin-right:4px;vertical-align:middle"></span>Deposit Rates ref: '+ts;
     }
 
+    console.log('[Rates] Live rates applied ✓');
     calc(); // re-render with live data
   }catch(err){
-    console.warn('Live rates unavailable, using fallback defaults:',err);
+    console.warn('[Rates] Error:',err);
   }
 })();
 ;
@@ -1437,7 +1432,9 @@ document.addEventListener('keydown',function(ev){
 
 function generatePDF(){
   var N=document.getElementById('iNotional').value||'—';
-  var ccy=curCCY||'USD';
+  var ccy=depositCCY||'IDR';
+  var altCcy=alternateCCY||'USD';
+  var isPUT=isPUT_g;
   var S=document.getElementById('iSpot').value||'—';
   var K=document.getElementById('iStrike').value||'—';
   var pts=(ptsSign<0?'&minus;':'+')+''+(document.getElementById('iPoints').value||'0')+' pts';
@@ -1514,7 +1511,7 @@ function generatePDF(){
   +'<table class="info" style="width:100%;border-collapse:collapse;margin-bottom:12px">'
   +'<tr><td class="lb">Nominal Base Currency</td><td class="vl">IDR '+N+'</td></tr>'
   +'<tr><td class="lb">If Converted &mdash; '+ccy+'</td><td class="vl">'+ccy+' '+convVal+'</td></tr>'
-  +'<tr><td class="lb">Spot Rate ('+ccy+'/IDR)</td><td class="vl">'+S+'</td></tr>'
+  +'<tr><td class="lb">'+(isPUT?'Spot Offer Rate':'Spot Bid Rate')+' ('+ccy+'/IDR)</td><td class="vl">'+S+'</td></tr>'
   +'<tr><td class="lb">Strike Price</td><td class="vl">'+K+' <span style="font-size:10px;color:#666">('+pts+')</span></td></tr>'
   +'</table>'
 
