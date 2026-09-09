@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Interest Rate Swap USD Pricer — Treasury EBB Sales, CIMB Niaga</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --maroon:#790008;--maroon-d:#52000A;--red:#ED3024;
+  --ink:#1A1A1A;--brown:#6B5A55;--warm:#9C8B85;
+  --border:#E9E0DB;--bg:#FAF7F5;--white:#FFFFFF;
+  --panel:#F4EEEB;
+  --green:#0F7A4E;--green-l:#E9F7EF;
+  --red-l:#FDECEA;
+  --amber:#8A5A00;--amber-l:#FFF6E2;
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
+}
+html,body{background:var(--bg);color:var(--ink);font-family:var(--sans)}
+input::-webkit-inner-spin-button,input::-webkit-outer-spin-button{-webkit-appearance:none}
+input[type=number]{-moz-appearance:textfield}
+
+/* ============ HEADER ============ */
+.hdr-wrap{position:relative;overflow:hidden;box-shadow:0 16px 36px rgba(30,10,8,.32);clip-path:polygon(0 0,100% 0,100% 100%,0 97%)}
+.hdr-top{background:linear-gradient(115deg,#8C0009 0%,#6E0007 55%,#4A0006 100%);padding:11px 32px;display:flex;align-items:center;gap:14px;position:relative;z-index:2;border-bottom:2px solid var(--red)}
+.hdr-logo{width:88px;flex-shrink:0;filter:drop-shadow(0 1px 2px rgba(0,0,0,.25))}
+.hdr-div-v{width:1px;height:18px;background:rgba(255,255,255,.35)}
+.hdr-label{font-family:var(--mono);font-size:10.5px;color:rgba(255,255,255,.92);letter-spacing:.14em;text-transform:uppercase}
+.hdr-bottom{background:linear-gradient(115deg,#1D1D1D 0%,#141414 65%,#0E0E0E 100%);padding:18px 32px 24px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
+.hdr-accent{position:absolute;right:-60px;top:-90px;width:320px;height:320px;opacity:.06;pointer-events:none;z-index:0}
+.hdr-title{font-size:21px;font-weight:700;color:#fff;letter-spacing:-.015em;position:relative;z-index:1}
+.hdr-sub{font-size:11.5px;color:rgba(255,255,255,.5);font-family:var(--mono);margin-top:3px;position:relative;z-index:1}
+.logo-link{display:inline-flex;transition:opacity .15s;border-radius:6px}
+.logo-link:hover{opacity:.85}
+.logo-link:focus-visible{outline:2px solid rgba(255,255,255,.6);outline-offset:3px}
+
+/* ============ LAYOUT ============ */
+.app{max-width:1240px;margin:0 auto;padding:0 26px 46px}
+
+/* ---- HERO STRIP ---- */
+.hero{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:22px 0}
+.hero-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+.hero-card .hl{font-size:10.5px;font-family:var(--mono);color:var(--warm);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.hero-card .hv{font-size:23px;font-family:var(--mono);font-weight:600;color:var(--ink)}
+.hero-card.swap{background:var(--ink);border-color:var(--ink)}
+.hero-card.swap .hl{color:rgba(255,255,255,.55)}
+.hero-card.swap .hv{color:#fff}
+.hero-card.swap .hv.pos{color:#7FE0AC}
+.hero-card.swap .hv.neg{color:#FF9B93}
+.hero-tag{display:inline-block;margin-left:10px;padding:2px 9px;border-radius:20px;font-size:10px;font-family:var(--mono);font-weight:600;vertical-align:middle}
+.hero-tag.up{background:rgba(127,224,172,.18);color:#7FE0AC;border:1px solid rgba(127,224,172,.4)}
+.hero-tag.down{background:rgba(255,155,147,.18);color:#FF9B93;border:1px solid rgba(255,155,147,.4)}
+.hero-tag.flat{background:rgba(255,255,255,.1);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.25)}
+@media (max-width:900px){.hero{grid-template-columns:1fr 1fr}}
+
+/* ---- MAIN GRID ---- */
+.grid{display:grid;grid-template-columns:380px 1fr;gap:18px;align-items:start}
+@media (max-width:960px){.grid{grid-template-columns:1fr}}
+
+/* ============ SECTION CARD ============ */
+.sec{background:var(--white);border-radius:12px;overflow:hidden;border:1px solid var(--border);margin-bottom:18px}
+.sec-hdr{padding:11px 18px;display:flex;align-items:center;gap:9px}
+.sec-hdr-btn{margin-left:auto;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);color:#fff;font-family:var(--mono);font-size:10.5px;font-weight:600;padding:5px 12px;border-radius:14px;cursor:pointer;transition:all .15s}
+.sec-hdr-btn:hover{background:rgba(255,255,255,.25)}
+.curve-meta{margin-top:10px;padding:10px 13px;background:var(--panel);border:1px solid var(--border);border-radius:9px;font-size:11px;color:var(--brown);line-height:1.7;display:none}
+.live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:6px;box-shadow:0 0 0 3px rgba(15,122,78,.18);vertical-align:middle}
+.curve-meta.show{display:block}
+.curve-meta b{color:var(--ink)}
+.curve-meta a{color:var(--maroon);text-decoration:none}
+.curve-meta a:hover{text-decoration:underline}
+.sec-hdr.dark{background:var(--ink)}
+.sec-hdr.brand{background:var(--maroon)}
+.sec-badge{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.12em;color:rgba(255,255,255,.5);text-transform:uppercase}
+.sec-name{font-size:13px;font-weight:600;color:#fff}
+.sec-body{padding:20px}
+
+/* ============ FIELDS ============ */
+.field{margin-bottom:15px}
+.field:last-child{margin-bottom:0}
+.field-label{font-size:10.5px;font-weight:600;color:var(--brown);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;display:block}
+.field-wrap{display:flex;align-items:stretch;border:1.5px solid var(--border);border-radius:9px;overflow:hidden;background:var(--white);transition:border-color .15s}
+.field-wrap:focus-within{border-color:var(--maroon)}
+.field-wrap input,.field-wrap select{flex:1;border:none;outline:none;padding:0 12px;height:40px;font-size:13.5px;font-weight:500;color:var(--ink);background:transparent;font-family:var(--mono);width:100%}
+.field-wrap input:disabled{background:#EEEAE8;color:#A89B96;cursor:not-allowed}
+.field-wrap:has(input:disabled){border-color:#EEEAE8;background:#EEEAE8}
+.field-pre{padding:0 12px;background:var(--panel);color:var(--brown);font-size:13px;font-family:var(--mono);font-weight:600;display:flex;align-items:center;white-space:nowrap;border-right:1.5px solid var(--border)}
+
+/* CUSTOM DATE PICKER (dropdowns, no native browser widget) */
+.date-picker{display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:7px}
+.date-picker select{border:1.5px solid var(--border);border-radius:9px;background:var(--white);color:var(--ink);font-family:var(--mono);font-size:13px;font-weight:500;height:40px;padding:0 8px;cursor:pointer;transition:border-color .15s}
+.date-picker select:focus{outline:none;border-color:var(--maroon)}
+.date-dow{font-size:11px;font-family:var(--mono);color:var(--maroon);margin-top:6px;font-weight:600}
+
+/* ============ CUSTOM DROPDOWN (fully custom, no native OS list) ============ */
+.cdd{position:relative}
+.cdd-btn{border:1.5px solid var(--border);border-radius:9px;background:var(--white);height:40px;padding:0 12px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-family:var(--mono);font-size:13px;font-weight:500;color:var(--ink);transition:border-color .15s;user-select:none}
+.cdd-btn:hover{border-color:var(--warm)}
+.cdd.open .cdd-btn{border-color:var(--maroon);box-shadow:0 0 0 3px rgba(121,0,8,.08)}
+.cdd-caret{color:var(--warm);font-size:9px;margin-left:8px;transition:transform .15s}
+.cdd.open .cdd-caret{transform:rotate(180deg);color:var(--maroon)}
+.cdd-menu{display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--white);border:1.5px solid var(--border);border-radius:11px;box-shadow:0 16px 40px rgba(42,20,18,.18);max-height:230px;overflow-y:auto;z-index:30;padding:6px}
+.cdd.open .cdd-menu{display:block}
+.cdd-opt{padding:9px 11px;border-radius:8px;font-family:var(--mono);font-size:13px;cursor:pointer;color:var(--ink);transition:background .12s}
+.cdd-opt:hover{background:var(--red-l)}
+.cdd-opt.sel{background:var(--maroon);color:#fff;font-weight:600}
+select{cursor:pointer}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+.seg{display:flex;background:var(--panel);border-radius:9px;padding:4px;border:1px solid var(--border)}
+.seg button{flex:1;padding:10px 8px;border:none;background:transparent;color:var(--brown);font-family:var(--mono);font-size:12px;font-weight:600;border-radius:6px;cursor:pointer;transition:all .15s}
+.seg button.active{background:var(--maroon);color:#fff;box-shadow:0 2px 8px rgba(121,0,8,.35)}
+
+.tenor-btns{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.tenor-btns button{padding:9px 4px;border-radius:8px;border:1.5px solid var(--border);background:var(--white);color:var(--brown);font-family:var(--mono);font-size:11.5px;font-weight:600;cursor:pointer;transition:all .15s}
+.tenor-btns button.active{background:var(--red-l);border-color:var(--maroon);color:var(--maroon)}
+.tenor-btns button:hover{border-color:var(--warm)}
+.dir-explain{margin-top:10px;padding:11px 13px;background:var(--panel);border:1px solid var(--border);border-radius:9px;font-size:11.5px;line-height:1.6;color:var(--brown)}
+.dir-explain b{color:var(--ink)}
+.dir-explain .side{display:block;margin-top:5px;padding-top:5px;border-top:1px dashed var(--border)}
+
+/* ============ TABLES ============ */
+.table-scroll{overflow:auto;border-radius:9px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
+thead th{position:sticky;top:0;background:var(--ink);color:#fff;text-align:right;padding:10px;font-weight:600;white-space:nowrap;font-size:10.5px;letter-spacing:.03em;text-transform:uppercase}
+thead th:first-child,tbody td:first-child{text-align:left}
+tbody td{padding:8px 10px;text-align:right;color:var(--ink);border-bottom:1px solid var(--border);white-space:nowrap}
+tbody tr:nth-child(even){background:var(--panel)}
+tbody tr:hover{background:var(--red-l)}
+
+input.curve-in{width:60px;background:var(--white);border:1.5px solid var(--border);border-radius:6px;color:var(--ink);font-family:var(--mono);font-size:11px;padding:5px 6px;text-align:right;transition:all .15s}
+input.curve-in:focus{outline:none;border-color:var(--maroon)}
+input.curve-in.mid-in{font-weight:700;color:var(--maroon);border-color:#EAD4D2}
+input.curve-in:disabled{background:#EEEAE8;color:#B7ABA6;border-color:#EEEAE8;cursor:not-allowed}
+.mid-cell{display:flex;align-items:center;justify-content:flex-end;gap:5px}
+.mid-reset{background:none;border:none;color:var(--warm);font-size:13px;cursor:pointer;padding:0 2px;line-height:1}
+.mid-reset:hover{color:var(--maroon)}
+
+.tabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:1.5px solid var(--border)}
+.tabs button{padding:10px 18px;border:none;background:transparent;color:var(--warm);font-family:var(--mono);font-size:11.5px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .15s}
+.tabs button.active{color:var(--maroon);border-bottom-color:var(--maroon)}
+.tabpane{display:none}
+.tabpane.active{display:block}
+
+.btn-primary{width:100%;padding:13px;border:none;border-radius:9px;background:var(--maroon);color:#fff;font-family:var(--mono);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .15s;letter-spacing:.02em}
+.btn-primary:hover{background:var(--maroon-d)}
+.note{font-size:11px;color:var(--warm);font-family:var(--mono);margin-top:12px;line-height:1.6}
+.footer{text-align:center;margin-top:26px;font-size:10.5px;font-family:var(--mono);color:var(--warm)}
+
+/* ============ LEDGER (Fixed vs Float breakdown with +/- signs) ============ */
+.ledger-row{display:flex;align-items:center;gap:13px;padding:11px 0;border-bottom:1px solid var(--border)}
+.ledger-row:last-child{border-bottom:none}
+.ledger-sign{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;font-family:var(--mono);background:var(--panel);color:var(--brown);flex-shrink:0}
+.ledger-sign.pos{background:var(--green-l);color:var(--green)}
+.ledger-sign.neg{background:var(--red-l);color:var(--red)}
+.ledger-label{flex:1;color:var(--brown);font-size:12.5px}
+.ledger-val{font-weight:600;color:var(--ink);font-size:14.5px;font-family:var(--mono)}
+.ledger-divider{height:2px;background:var(--maroon);margin:3px 0 0}
+.ledger-row.total{padding-top:15px}
+.ledger-row.total .ledger-sign{background:var(--ink);color:#fff}
+.ledger-row.total .ledger-label{color:var(--ink);font-weight:700;font-size:13px}
+.ledger-row.total .ledger-val{font-size:20px;color:var(--maroon)}
+.ledger-row.total .ledger-val.pos{color:var(--green)}
+.ledger-row.total .ledger-val.neg{color:var(--red)}
+
+/* ============ METHOD MODAL / METHOD BTN ============ */
+.method-btn{background:none;border:1px solid var(--border);color:var(--maroon);font-family:var(--mono);font-size:10.5px;padding:5px 13px;border-radius:14px;cursor:pointer;transition:all .15s}
+.method-btn:hover{background:var(--red-l);border-color:var(--maroon)}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(42,33,31,.6);z-index:100;align-items:center;justify-content:center;padding:24px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--white);border-radius:14px;max-width:660px;width:100%;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 24px 70px rgba(0,0,0,.35)}
+.modal-hdr{background:var(--ink);color:#fff;padding:15px 22px;border-radius:14px 14px 0 0;display:flex;align-items:center;justify-content:space-between;font-weight:600;font-size:14px}
+.modal-close{background:none;border:none;color:rgba(255,255,255,.7);font-size:17px;cursor:pointer;padding:2px 8px}
+.modal-close:hover{color:#fff}
+.modal-body{padding:22px 26px;overflow-y:auto;font-size:13px;line-height:1.65;color:var(--ink)}
+.modal-body h4{font-size:12px;color:var(--maroon);text-transform:uppercase;letter-spacing:.05em;margin:20px 0 7px;font-family:var(--mono)}
+.modal-body h4:first-child{margin-top:0}
+.modal-body p{margin-bottom:9px;color:var(--brown)}
+.modal-body b{color:var(--ink)}
+.modal-body .formula{background:var(--panel);border:1px solid var(--border);border-radius:9px;padding:11px 15px;font-family:var(--mono);font-size:13px;margin:9px 0 13px;color:var(--maroon-d);text-align:center}
+.modal-body .warn{background:var(--amber-l);border:1px solid #F0D68A;border-radius:9px;padding:10px 13px;color:var(--amber);font-size:12px}
+</style>
+</head>
+<body>
+
+<div class="hdr-wrap">
+<div class="hdr-top">
+  <a href="/" class="logo-link" aria-label="Back to homepage">
+  <svg class="hdr-logo" viewBox="0 0 1084 166" xmlns="http://www.w3.org/2000/svg">
+    <rect width="165.25" height="165.25" fill="#fff"/>
+    <path fill="#790008" d="M22.01 31.02C34.87 48.24 47.92 65.31 60.84 82.48 48.03 99.72 34.9 116.72 22.07 133.95c29.33.12 58.65 0 87.98.06 13.2-17.08 25.92-34.53 39.21-51.55l-.25.01C136.06 65.3 123.05 48.17 110.12 31 80.75 31.02 51.38 30.97 22.01 31.02z"/>
+    <path fill="#fff" d="M22.01 31.02c29.37-.05 58.74 0 88.11-.02C123.05 48.17 136.06 65.3 149.01 82.47 119.62 82.53 90.23 82.5 60.84 82.48 47.92 65.31 34.87 48.24 22.01 31.02z"/>
+    <path fill="#ed3024" d="M60.84 82.48c29.39.02 58.78.05 88.17-.01l.25-.01C135.97 99.48 123.25 116.93 110.05 134.01 80.72 133.95 51.4 134.07 22.07 133.95 34.9 116.72 48.03 99.72 60.84 82.48z"/>
+    <path fill="#fff" d="M221.25 48.29C231.09 36.02 246.22 28.14 261.94 27.25c14.89-1.15 30.04 4.08 41.23 13.93-5.05 5.09-10.11 10.15-15.2 15.2-8.61-6.98-20.57-9.73-31.29-6.67-11.96 3.14-21.56 13.36-24.23 25.4-3.26 13.07 1.45 27.92 12.2 36.2 12.28 10.05 31.33 9.54 43.4-.61 5.06 5.07 10.23 10.05 15.16 15.26-9.99 8.68-22.98 13.9-36.24 14.06-16.71.46-33.45-6.89-44.36-19.56-7.63-8.69-12.49-19.79-13.58-31.31-1.53-14.52 2.94-29.57 12.22-40.86zM323.25 30.25c7.25 0 14.49.01 21.74-.01.02 35.59 0 71.17.01 106.76-7.25 0-14.5.01-21.75-.01.01-35.58 0-71.16 0-106.74zM371 30c7.05-.02 14.1.04 21.16-.03 12.57 22.61 24.82 45.42 37.55 67.95C442.05 75.24 454.57 52.67 466.91 30c7.11.02 14.22 0 21.34.01-.04 35.6.07 71.19-.06 106.79-7.24-.11-14.47.02-21.71-.07.05-21.07 0-42.13.03-63.19C454.04 94.82 442.16 116.47 429.47 137.62 417.35 116.19 404.9 94.95 392.73 73.55c.04 21.07.01 42.13.02 63.2-7.25 0-14.49-.01-21.74.01-.03-35.59 0-71.17-.01-106.76zM513.01 30.24c14.68.02 29.35 0 44.03.01 6.79.13 13.76 1.56 19.56 5.25 14.01 8.56 17.23 30.79 5.53 42.57-1.5 1.6-3.28 2.92-5.05 4.2 6.67 3.51 11.79 10.02 13.03 17.52 1.81 10.12-.5 21.74-8.35 28.88-6.26 5.99-15.16 8.15-23.6 8.26-15.05.16-30.11.03-45.16.07.01-35.59-.02-71.17.01-106.76zm21.74 19.51c-.01 7.75 0 15.5 0 23.25 6.4-.02 12.81.03 19.22-.01 3.73-.07 7.76-.85 10.49-3.6 3.88-4.12 3.98-11.07.53-15.49-2.65-3.19-7.03-4.18-11-4.16-6.42.01-12.83.01-19.24.01zm0 42.76c0 8.24-.01 16.49 0 24.74 7.07.01 14.14-.01 21.21.02 3.31.1 6.79-.83 9.27-3.12 4.94-4.76 5.03-13.63-.01-18.35-2.72-2.58-6.62-3.25-10.23-3.3-6.75-.01-13.5 0-20.24.01z"/>
+    <path fill="#fff" d="M635.24 30.01c3.63.04 7.26-.13 10.89.05 1.66 1.29 2.59 3.31 3.92 4.93C669.97 62.2 689.73 89.53 709.76 116.66c-.02-28.89 0-57.77-.01-86.66 3.75 0 7.5 0 11.25.01 0 65.5 0 71 0 106.49l-11.36.02C688.6 107.58 667.57 78.63 646.5 49.71c0 28.93 0 57.86 0 86.78-3.78-.01-7.56.08-11.32-.08.17-35.46.03-70.93.06-106.4zM749 30c3.75 0 7.49 0 11.25.01 0 35.5-.01 70.99 0 106.48-3.75.03-7.5.01-10.99.02-.03-35.5 0-71 0-106.51zM777.57 137.22c12.97-35.51 25.95-71.02 39.01-106.49 5.2.05 10.39.01 15.59.02 12.37 35.25 24.72 70.52 37.13 105.75-4.42-.01-8.84.01-13.25-.01-3.29-9.43-6.63-18.85-10.02-28.25-14.69.01-29.37.01-44.05.01-3.28 9.65-6.43 19.36-9.72 28.97-4.9-.04-9.8.02-14.69-.01zm28.91-41.74c11.69.05 23.39.01 35.08.02-5.86-17.08-11.64-34.19-17.4-51.3-5.87 17.1-11.86 34.16-17.68 51.28zM894.27 48.18c8.88-9.14 20.76-15.71 33.57-16.89 15.79-1.59 31.51 4.27 44.28 13.26-2.49 3.23-5.11 6.35-7.58 9.59-4.25-6.05-11.78-8.31-18.57-10.14-11.81-3.25-25.21-1.49-35.18 5.84-8.99 6.8-15.03 17.13-17.42 28.08-1.35 11.32-.23 23.68 6.49 33.26 2.31 3.62 6.01 5.95 9.14 8.76 6.68 5.45 15.44 7.92 23.98 7.84 10.51.1 20.91-2.59 30.52-6.72.01-10.94.04-21.88-.03-32.82-8.33.01-16.66.01-24.99 0 0-3.32 0-6.64-.01-9.96 11.83-.07 23.66 0 35.5-.04.02 16.92 0 33.83.01 50.75-11.29 6.3-24.23 8.94-36.97 10.21-13.49.28-27.58-3.18-38.08-12-10.26-8.43-16.25-21.26-18.01-34.26-1.35-15.82 2.67-32.67 13.33-44.77zM992.04 137.11c13.03-35.43 26-70.88 38.93-106.35 5.2-.03 10.4.03 15.61-.05 11.95 33.65 23.63 67.4 35.54 101.07.56 1.51.87 3.09 1 4.71-4.17.02-8.34 0-12.51.02-3.39-9.4-6.69-18.84-10.03-28.25-14.74-.02-29.48-.01-44.21.03-3.16 9.67-6.44 19.3-9.62 28.96-4.9-.03-9.8.16-14.69-.14zm46.54-92.84c-5.8 17.11-11.85 34.13-17.6 51.26 11.65-.06 23.31-.02 34.96-.02-5.67-17.12-11.55-34.17-17.36-51.24z"/>
+  </svg>
+  </a>
+  <div class="hdr-div-v"></div>
+  <span class="hdr-label">Treasury &amp; Financial Institutions</span>
+</div>
+<div class="hdr-bottom">
+  <svg class="hdr-accent" viewBox="0 0 100 100" preserveAspectRatio="none"><polygon points="30,0 100,0 70,100 0,100" fill="#ffffff"/></svg>
+  <div>
+    <div class="hdr-title">Interest Rate Swap Pricer</div>
+    <div class="hdr-sub">USD Fixed to Float or Float to Fixed</div>
+  </div>
+</div>
+</div>
+
+<div class="app">
+
+  <!-- HERO STRIP -->
+  <div class="hero">
+    <div class="hero-card"><div class="hl">🎯 Par Fixed Rate</div><div class="hv" id="rPar">—</div></div>
+    <div class="hero-card"><div class="hl">💬 Quoted Fixed Rate</div><div class="hv" id="rQuoted">—</div></div>
+    <div class="hero-card"><div class="hl">⚡ Leg BPV (per 1bp)</div><div class="hv" id="rBPV">—</div></div>
+    <div class="hero-card swap"><div class="hl" id="rSwapLbl">Swap NPV / Day-1 P&amp;L</div><div class="hv" id="rSwap">—<span class="hero-tag flat" id="rBadge">—</span></div></div>
+  </div>
+
+  <div class="grid">
+    <!-- LEFT: INPUTS -->
+    <div>
+      <div class="sec">
+        <div class="sec-hdr dark"><span class="sec-badge">01</span><span class="sec-name">📋 Trade Details</span></div>
+        <div class="sec-body">
+
+          <div class="field">
+            <div class="field-label">🏦 Leg 1 — Bank Direction</div>
+            <div class="seg">
+              <button id="segPay" class="active" onclick="setDirection('pay')">💸 Pay Fixed</button>
+              <button id="segRecv" onclick="setDirection('recv')">💰 Receive Fixed</button>
+            </div>
+            <div class="dir-explain" id="dirExplain"></div>
+          </div>
+
+          <div class="field">
+            <div class="field-label">📅 Start Date</div>
+            <div class="date-picker">
+              <div class="cdd" id="cdd-startDay"><div class="cdd-btn" tabindex="0" onclick="cddToggle('startDay')" onkeydown="cddKeydown('startDay',event)"><span class="cdd-val"></span><span class="cdd-caret">▾</span></div><div class="cdd-menu" id="cdd-startDay-menu"></div></div>
+              <div class="cdd" id="cdd-startMonth"><div class="cdd-btn" tabindex="0" onclick="cddToggle('startMonth')" onkeydown="cddKeydown('startMonth',event)"><span class="cdd-val"></span><span class="cdd-caret">▾</span></div><div class="cdd-menu" id="cdd-startMonth-menu"></div></div>
+              <div class="cdd" id="cdd-startYear"><div class="cdd-btn" tabindex="0" onclick="cddToggle('startYear')" onkeydown="cddKeydown('startYear',event)"><span class="cdd-val"></span><span class="cdd-caret">▾</span></div><div class="cdd-menu" id="cdd-startYear-menu"></div></div>
+            </div>
+            <div class="date-dow" id="startDow">—</div>
+          </div>
+          <div class="field">
+            <div class="field-label">🏁 Maturity Date</div>
+            <div class="date-picker">
+              <div class="cdd" id="cdd-maturityDay"><div class="cdd-btn" tabindex="0" onclick="cddToggle('maturityDay')" onkeydown="cddKeydown('maturityDay',event)"><span class="cdd-val"></span><span class="cdd-caret">▾</span></div><div class="cdd-menu" id="cdd-maturityDay-menu"></div></div>
+              <div class="cdd" id="cdd-maturityMonth"><div class="cdd-btn" tabindex="0" onclick="cddToggle('maturityMonth')" onkeydown="cddKeydown('maturityMonth',event)"><span class="cdd-val"></span><span class="cdd-caret">▾</span></div><div class="cdd-menu" id="cdd-maturityMonth-menu"></div></div>
+              <div class="cdd" id="cdd-maturityYear"><div class="cdd-btn" tabindex="0" onclick="cddToggle('maturityYear')" onkeydown="cddKeydown('maturityYear',event)"><span class="cdd-val"></span><span class="cdd-caret">▾</span></div><div class="cdd-menu" id="cdd-maturityYear-menu"></div></div>
+            </div>
+            <div class="date-dow" id="maturityDow">—</div>
+          </div>
+
+          <div class="field">
+            <div class="field-label">⏱️ Quick Tenor</div>
+            <div class="tenor-btns">
+              <button onclick="setTenor(12)">1Y</button>
+              <button onclick="setTenor(24)" class="active">2Y</button>
+              <button onclick="setTenor(36)">3Y</button>
+              <button onclick="setTenor(60)">5Y</button>
+              <button onclick="setTenor(84)">7Y</button>
+              <button onclick="setTenor(120)">10Y</button>
+              <button onclick="setTenor(180)">15Y</button>
+              <button onclick="setTenor(360)">30Y</button>
+            </div>
+          </div>
+
+          <div class="row2">
+            <div class="field">
+              <div class="field-label">🔁 Payment Frequency</div>
+              <div class="cdd" id="cdd-periodMo"><div class="cdd-btn" tabindex="0" onclick="cddToggle('periodMo')" onkeydown="cddKeydown('periodMo',event)"><span class="cdd-val"></span><span class="cdd-caret">▾</span></div><div class="cdd-menu" id="cdd-periodMo-menu"></div></div>
+            </div>
+            <div class="field">
+              <div class="field-label">🗓️ Daycount</div>
+              <div class="cdd" id="cdd-daycount"><div class="cdd-btn" tabindex="0" onclick="cddToggle('daycount')" onkeydown="cddKeydown('daycount',event)"><span class="cdd-val"></span><span class="cdd-caret">▾</span></div><div class="cdd-menu" id="cdd-daycount-menu"></div></div>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="field-label">💵 Notional (USD)</div>
+            <div class="field-wrap"><span class="field-pre">$</span><input type="text" id="notional" value="1,000,000"></div>
+          </div>
+
+          <div class="field">
+            <div class="field-label">✏️ Fixed Rate Override (blank = auto Quoted Rate)</div>
+            <div class="field-wrap"><input type="text" id="fixedOverride" placeholder="e.g. 4.0000%"></div>
+          </div>
+
+          <div class="field" style="margin-bottom:0">
+            <div class="field-label">🎯 Profit Margin (bps, dealer)</div>
+            <div class="field-wrap"><input type="number" id="margin" value="0" step="0.5"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-hdr dark"><span class="sec-badge">02</span><span class="sec-name">📈 Market Curve — USD SOFR OIS</span><button class="sec-hdr-btn" onclick="openEditData()">✏️ Edit Data</button></div>
+        <div class="sec-body">
+          <div class="table-scroll" style="max-height:320px">
+            <table>
+              <thead><tr><th>Tenor</th><th>Offer</th><th>Bid</th><th>Mid</th></tr></thead>
+              <tbody id="curveBody"></tbody>
+            </table>
+          </div>
+          <div class="note">Edit Offer/Bid, or edit <b>Mid</b> directly to override — Offer/Bid then grey out (✕ resets). Mid drives the discount curve.</div>
+          <div class="curve-meta" id="curveMeta"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: FIXED VS FLOAT DETAIL, then CASHFLOW & SENSITIVITY -->
+    <div>
+      <div class="sec">
+        <div class="sec-hdr brand"><span class="sec-badge">03</span><span class="sec-name">🔍 Fixed vs Float — Detail</span></div>
+        <div class="sec-body">
+          <div class="ledger">
+            <div class="ledger-row">
+              <span class="ledger-sign" id="ledgerFloatSign">+</span>
+              <span class="ledger-label" id="rFloatLbl">Floating Leg NPV</span>
+              <span class="ledger-val" id="rFloat">—</span>
+            </div>
+            <div class="ledger-row">
+              <span class="ledger-sign" id="ledgerFixedSign">−</span>
+              <span class="ledger-label" id="rFixedLbl">Fixed Leg NPV</span>
+              <span class="ledger-val" id="rFixed">—</span>
+            </div>
+            <div class="ledger-divider"></div>
+            <div class="ledger-row total">
+              <span class="ledger-sign">=</span>
+              <span class="ledger-label">🏆 Net NPV (Bank P&amp;L)</span>
+              <span class="ledger-val" id="rNetNPV">—<span class="hero-tag flat" id="rBadge2" style="margin-left:8px">—</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec" style="margin-bottom:0">
+        <div class="sec-hdr dark"><span class="sec-badge">04</span><span class="sec-name">💰 Cashflow &amp; Sensitivity</span></div>
+        <div class="sec-body">
+          <div class="tabs">
+            <button class="active" onclick="showTab('float')">🌊 Floating Cashflow</button>
+            <button onclick="showTab('fixed')">📌 Fixed Cashflow</button>
+            <button onclick="showTab('sens')">🌡️ Sensitivity (DV01)</button>
+          </div>
+
+          <div class="tabpane active" id="tabFloat">
+            <div class="table-scroll" style="max-height:560px">
+              <table>
+                <thead><tr><th>#</th><th>Start</th><th>End</th><th>Dt</th><th>DF start</th><th>DF end</th><th>Fwd Rate</th><th>Floating PV</th></tr></thead>
+                <tbody id="floatBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="tabpane" id="tabFixed">
+            <div class="table-scroll" style="max-height:560px">
+              <table>
+                <thead><tr><th>#</th><th>Start</th><th>End</th><th>Dt</th><th>DF end</th><th>Fixed Rate</th><th>Fixed CF</th><th>Fixed PV</th></tr></thead>
+                <tbody id="fixedBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="tabpane" id="tabSens">
+            <button class="btn-primary" onclick="runSensitivity()">🌡️ Calculate Sensitivity (bump ±1bp per node)</button>
+            <div class="table-scroll" style="margin-top:14px;max-height:520px">
+              <table>
+                <thead><tr><th>Tenor</th><th>Base Rate</th><th>DV01 (USD)</th></tr></thead>
+                <tbody id="sensBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    © 2026 &nbsp;·&nbsp; Treasury EBB Sales — CIMB Niaga
+    &nbsp;·&nbsp;
+    <button class="method-btn" onclick="openMethod()">📖 Method</button>
+  </div>
+</div>
+
+<!-- METHOD MODAL -->
+<div class="modal-overlay" id="methodOverlay" onclick="if(event.target===this)closeMethod()">
+  <div class="modal">
+    <div class="modal-hdr">
+      <span>Pricing Methodology</span>
+      <button class="modal-close" onclick="closeMethod()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <h4>1. Curve Construction</h4>
+      <p>16 market nodes from O/N to 30Y, each quoted as Offer (rate the bank pays if Pay Fixed) and Bid (rate the bank receives if Receive Fixed). <b>Mid = average(Offer, Bid)</b> is used to build the discount curve by default. Editing Mid directly overrides that node with a manual rate (Offer/Bid grey out for that row).</p>
+
+      <h4>2. Discount Factors (simple money-market convention)</h4>
+      <p>For any date with year-fraction <b>t</b> from the Start Date:</p>
+      <div class="formula">DF(t) = 1 / (1 + r × t)</div>
+      <p>where <b>r</b> is the Mid rate <b>linearly interpolated</b> between the two nearest curve nodes (flat-extrapolated beyond O/N or 30Y). <b>t</b> uses the selected Daycount convention — Act/360 by default, matching standard USD SOFR OIS market convention.</p>
+      <p class="warn">This is a simplified single-curve, simple-interest bootstrap — not a full multi-curve OIS/SOFR compounding bootstrap. Adequate for indicative desk pricing, not a substitute for a validated trade-booking system.</p>
+
+      <h4>3. Cashflow Schedule</h4>
+      <p>Payment dates step forward from Start Date by the chosen frequency until the next step would pass Maturity Date.</p>
+
+      <h4>4. Floating Leg — Forward Rate</h4>
+      <p>Each period's floating rate is the forward rate implied by the curve — from the ratio of discount factors at the period's start and end, not a flat assumption:</p>
+      <div class="formula">Fwd = (DF_start / DF_end − 1) / Dt</div>
+
+      <h4>5. Fixed Leg — Par Rate</h4>
+      <p>The Par Fixed Rate is solved so the swap's NPV = 0 at inception, using the standard par-swap annuity formula:</p>
+      <div class="formula">Par Rate = (1 − DF_maturity) / Σ (Dt<sub>i</sub> × DF<sub>i</sub>)</div>
+
+      <h4>6. Profit Margin &amp; Quoted Rate</h4>
+      <p>A margin (bps) loads on top of the Par Rate, always favoring the bank: <b>Bank Pay Fixed</b> → Quoted = Par − Margin; <b>Bank Receive Fixed</b> → Quoted = Par + Margin. At 0 margin with no override, the trade reprices exactly to fair value (NPV = 0).</p>
+
+      <h4>7. Sensitivity (DV01)</h4>
+      <p>Each curve node is bumped ±1bp independently, the swap is repriced with the Fixed Rate <b>locked</b> at its quoted value (not re-solved to par), and:</p>
+      <div class="formula">DV01 = (NPV<sub>+1bp</sub> − NPV<sub>−1bp</sub>) / 2</div>
+      <p>This is a <b>bucketed / key-rate sensitivity</b> — one node at a time, not a parallel curve shift. It only shows non-zero risk once the rate is fixed away from Par, since a trade priced exactly at Par always reprices back to fair value by construction.</p>
+
+    </div>
+  </div>
+</div>
+
+<!-- EDIT DATA MODAL -->
+<div class="modal-overlay" id="editDataOverlay" onclick="if(event.target===this)closeEditData()">
+  <div class="modal" style="max-width:760px">
+    <div class="modal-hdr">
+      <span>✏️ Edit Market Curve Data</span>
+      <button class="modal-close" onclick="closeEditData()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div id="editDataStep1">
+        <p style="margin-bottom:8px">Paste raw tab-separated rate data below (columns: <b>Tenor, Bid, Offer</b>). Optionally include a <b>Generated:</b> timestamp line and a <b>Sources:</b> block with URLs.</p>
+        <textarea id="pasteArea" placeholder="Tenor&#9;Bid&#9;Offer&#10;O/N&#9;3.6400&#9;3.6400&#10;2W&#9;3.7000&#9;3.7200&#10;...&#10;&#10;Generated: 9 September 2026, 21:57 WIB&#10;&#10;Sources:&#10;https://example.com/rates" style="width:100%;height:200px;border:1.5px solid var(--border);border-radius:9px;padding:12px;font-family:var(--mono);font-size:12px;color:var(--ink);resize:vertical"></textarea>
+        <div id="parseError" style="display:none;margin-top:10px;padding:10px 13px;background:var(--red-l);border:1px solid #F5C6C2;border-radius:9px;color:var(--red);font-size:12px"></div>
+        <button class="btn-primary" style="margin-top:14px" onclick="parseEditData()">🔎 Parse Data</button>
+      </div>
+
+      <div id="editDataStep2" style="display:none">
+        <p style="margin-bottom:4px" id="parseSummary"></p>
+        <div class="table-scroll" style="max-height:340px;margin-top:10px">
+          <table>
+            <thead><tr><th>Tenor</th><th>Bid</th><th>Offer</th><th>Mid</th><th>Match</th></tr></thead>
+            <tbody id="previewBody"></tbody>
+          </table>
+        </div>
+        <div id="previewMeta" style="margin-top:12px;font-size:11.5px;color:var(--brown);line-height:1.7"></div>
+        <div style="display:flex;gap:10px;margin-top:16px">
+          <button class="btn-primary" style="background:var(--ink)" onclick="cancelEditData()">🗑️ Delete / Cancel</button>
+          <button class="btn-primary" onclick="saveEditData()">💾 Save &amp; Apply</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ===================== SUPABASE (shared curve data across devices) ===================== */
+const SUPABASE_URL = 'https://xavhlnwodzhqxdhryowm.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_78guiiUeUt6S3AoOTBLXsg_ofmynJwA';
+const CURVE_ROW_ID = 1;
+const sbClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+/* ===================== CURVE DATA ===================== */
+const CURVE = [
+  {t:'O/N', days:1,  offer:3.6490, bid:3.6310, midOverride:null},
+  {t:'2W',  days:14, offer:3.6560, bid:3.6380, midOverride:null},
+  {t:'1M',  months:1,  offer:3.6540, bid:3.6450, midOverride:null},
+  {t:'3M',  months:3,  offer:3.7630, bid:3.7580, midOverride:null},
+  {t:'6M',  months:6,  offer:3.9020, bid:3.8980, midOverride:null},
+  {t:'9M',  months:9,  offer:3.9950, bid:3.9910, midOverride:null},
+  {t:'1Y',  months:12, offer:4.0750, bid:4.0720, midOverride:null},
+  {t:'2Y',  months:24, offer:4.1220, bid:4.1200, midOverride:null},
+  {t:'3Y',  months:36, offer:4.1190, bid:4.1170, midOverride:null},
+  {t:'4Y',  months:48, offer:4.1220, bid:4.1200, midOverride:null},
+  {t:'5Y',  months:60, offer:4.1380, bid:4.1350, midOverride:null},
+  {t:'7Y',  months:84, offer:4.1970, bid:4.1940, midOverride:null},
+  {t:'10Y', months:120,offer:4.2990, bid:4.2960, midOverride:null},
+  {t:'15Y', months:180,offer:4.4660, bid:4.4630, midOverride:null},
+  {t:'20Y', months:240,offer:4.5440, bid:4.5410, midOverride:null},
+  {t:'30Y', months:360,offer:4.5050, bid:4.5020, midOverride:null},
+];
+
+let direction = 'pay'; // 'pay' = Bank Pay Fixed Rate, 'recv' = Bank Receive Fixed Rate
+let userMarginBps = 0; // the user's own Margin input, tracked separately from the
+                        // implied-bps value shown (read-only) while an override is active
+
+function midOf(n){ return n.midOverride!==null ? n.midOverride : (n.offer+n.bid)/2; }
+
+/* ===================== DATE HELPERS ===================== */
+function addMonths(date, months){
+  const d = new Date(date.getTime());
+  const day = d.getDate();
+  d.setDate(1);
+  d.setMonth(d.getMonth()+months);
+  const lastDay = new Date(d.getFullYear(), d.getMonth()+1, 0).getDate();
+  d.setDate(Math.min(day, lastDay));
+  return d;
+}
+function addDays(date, days){ const d=new Date(date.getTime()); d.setDate(d.getDate()+days); return d; }
+function daysBetween(a,b){ return Math.round((b-a)/86400000); }
+const MONTH_ABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function fmtDate(d){
+  // DD-MMM-YYYY (e.g. 09-Sep-2026), using LOCAL date parts (not toISOString,
+  // which converts to UTC and shifts the date back a day for any positive
+  // UTC offset, e.g. WIB/UTC+7).
+  const dd = String(d.getDate()).padStart(2,'0');
+  const mmm = MONTH_ABBR[d.getMonth()];
+  const y = d.getFullYear();
+  return `${dd}-${mmm}-${y}`;
+}
+function parseDate(str){ const [y,m,dd]=str.split('-').map(Number); return new Date(y,m-1,dd); }
+
+/* ===================== CUSTOM DROPDOWN (fully custom UI, no native OS list) ===================== */
+const CDD = {}; // id -> {options:[{value,label}], value, onChange}
+
+function cddInit(id, options, initialValue, onChange){
+  CDD[id] = {options, value: initialValue, onChange};
+  cddRenderButton(id);
+  cddRenderMenu(id);
+}
+function cddRenderButton(id){
+  const d = CDD[id];
+  const opt = d.options.find(o=>String(o.value)===String(d.value));
+  const btn = document.querySelector(`#cdd-${id} .cdd-val`);
+  if(btn) btn.textContent = opt ? opt.label : '';
+}
+function cddRenderMenu(id){
+  const d = CDD[id];
+  const menu = document.getElementById(`cdd-${id}-menu`);
+  if(!menu) return;
+  menu.innerHTML = d.options.map(o=>
+    `<div class="cdd-opt ${String(o.value)===String(d.value)?'sel':''}" onclick="event.stopPropagation();cddSelect('${id}','${o.value}')">${o.label}</div>`
+  ).join('');
+}
+function cddToggle(id){
+  const el = document.getElementById(`cdd-${id}`);
+  const willOpen = !el.classList.contains('open');
+  document.querySelectorAll('.cdd.open').forEach(e=>e.classList.remove('open'));
+  if(willOpen){
+    el.classList.add('open');
+    // Manually center the selected option inside the menu's own scrollbar
+    // only -- native scrollIntoView() also scrolls ancestor/page scrollers,
+    // which was jumping the whole page down whenever a dropdown opened.
+    const menu = el.querySelector('.cdd-menu');
+    const sel = menu.querySelector('.cdd-opt.sel');
+    if(sel) menu.scrollTop = sel.offsetTop - (menu.clientHeight/2) + (sel.clientHeight/2);
+  }
+}
+function cddSelect(id, value){
+  CDD[id].value = value;
+  cddRenderButton(id);
+  cddRenderMenu(id);
+  document.getElementById(`cdd-${id}`).classList.remove('open');
+  if(CDD[id].onChange) CDD[id].onChange(value);
+}
+function cddGetValue(id){ return CDD[id].value; }
+function cddSetValue(id, value, silent){
+  CDD[id].value = value;
+  cddRenderButton(id);
+  cddRenderMenu(id);
+  if(!silent && CDD[id].onChange) CDD[id].onChange(value);
+}
+function cddSetOptions(id, options){
+  CDD[id].options = options;
+  cddRenderButton(id);
+  cddRenderMenu(id);
+}
+function cddKeydown(id, e){
+  if(e.key==='Enter' || e.key===' '){ e.preventDefault(); cddToggle(id); return; }
+  if(e.key==='Escape'){ document.getElementById('cdd-'+id).classList.remove('open'); return; }
+  if(e.key==='ArrowDown' || e.key==='ArrowUp'){
+    e.preventDefault();
+    const opts = CDD[id].options;
+    const curIdx = opts.findIndex(o=>String(o.value)===String(CDD[id].value));
+    const nextIdx = e.key==='ArrowDown' ? Math.min(curIdx+1, opts.length-1) : Math.max(curIdx-1, 0);
+    cddSelect(id, opts[nextIdx].value);
+    document.getElementById('cdd-'+id).classList.add('open');
+    return;
+  }
+  // typeahead: type letters/numbers to jump to a matching option (buffered, resets after 800ms)
+  if(e.key.length===1 && /[a-z0-9]/i.test(e.key)){
+    e.preventDefault();
+    clearTimeout(CDD[id]._timer);
+    CDD[id]._buf = (CDD[id]._buf||'') + e.key.toLowerCase();
+    const match = CDD[id].options.find(o=>String(o.label).toLowerCase().startsWith(CDD[id]._buf));
+    if(match) cddSelect(id, match.value);
+    CDD[id]._timer = setTimeout(()=>{ CDD[id]._buf=''; }, 800);
+  }
+}
+document.addEventListener('click', e=>{
+  if(!e.target.closest('.cdd')) document.querySelectorAll('.cdd.open').forEach(el=>el.classList.remove('open'));
+});
+
+/* ===================== CUSTOM DATE PICKER (built on cdd) ===================== */
+const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DOW_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+function daysInMonth(year, month){ return new Date(year, month+1, 0).getDate(); }
+
+function populateDatePicker(prefix, initialDate){
+  const year = initialDate.getFullYear(), month = initialDate.getMonth(), day = initialDate.getDate();
+  const monthOptions = MONTH_NAMES.map((m,i)=>({value:i,label:m}));
+  const curYear = new Date().getFullYear();
+  const yearOptions = [];
+  for(let y=curYear-2; y<=curYear+35; y++) yearOptions.push({value:y,label:String(y)});
+  const nDays = daysInMonth(year, month);
+  const dayOptions = Array.from({length:nDays},(_,i)=>({value:i+1,label:String(i+1)}));
+
+  cddInit(prefix+'Day', dayOptions, day, ()=>{ updateDow(prefix); calc(); });
+  cddInit(prefix+'Month', monthOptions, month, ()=>{ refreshDayOptionsCDD(prefix); updateDow(prefix); calc(); });
+  cddInit(prefix+'Year', yearOptions, year, ()=>{ refreshDayOptionsCDD(prefix); updateDow(prefix); calc(); });
+}
+function refreshDayOptionsCDD(prefix){
+  const month = +cddGetValue(prefix+'Month');
+  const year = +cddGetValue(prefix+'Year');
+  const nDays = daysInMonth(year, month);
+  const currentDay = +cddGetValue(prefix+'Day');
+  const dayOptions = Array.from({length:nDays},(_,i)=>({value:i+1,label:String(i+1)}));
+  CDD[prefix+'Day'].options = dayOptions;
+  CDD[prefix+'Day'].value = Math.min(currentDay, nDays);
+  cddRenderButton(prefix+'Day');
+  cddRenderMenu(prefix+'Day');
+}
+function getPickerDate(prefix){
+  const day = +cddGetValue(prefix+'Day');
+  const month = +cddGetValue(prefix+'Month');
+  const year = +cddGetValue(prefix+'Year');
+  return new Date(year, month, day);
+}
+function setPickerDate(prefix, date){
+  cddSetValue(prefix+'Year', date.getFullYear(), true);
+  cddSetValue(prefix+'Month', date.getMonth(), true);
+  refreshDayOptionsCDD(prefix);
+  cddSetValue(prefix+'Day', date.getDate(), true);
+  updateDow(prefix);
+}
+function updateDow(prefix){
+  document.getElementById(prefix+'Dow').textContent = '📆 ' + DOW_NAMES[getPickerDate(prefix).getDay()];
+}
+
+function daycountDen(){
+  const c = +cddGetValue('daycount');
+  return (c===1 || c===2) ? 360 : 365;
+}
+
+/* ===================== CURVE TABLE UI ===================== */
+function buildCurveTable(){
+  const tbody = document.getElementById('curveBody');
+  tbody.innerHTML = '';
+  CURVE.forEach((n,i)=>{
+    const overridden = n.midOverride!==null;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${n.t}</td>
+      <td><input class="curve-in" type="number" step="0.001" value="${n.offer.toFixed(4)}" ${overridden?'disabled':''} onchange="setOfferBid(${i},'offer',this.value)"></td>
+      <td><input class="curve-in" type="number" step="0.001" value="${n.bid.toFixed(4)}" ${overridden?'disabled':''} onchange="setOfferBid(${i},'bid',this.value)"></td>
+      <td><div class="mid-cell">
+        <input class="curve-in mid-in" type="number" step="0.001" value="${midOf(n).toFixed(4)}" onchange="setMid(${i},this.value)">
+        ${overridden?`<button class="mid-reset" title="Reset to Offer/Bid average" onclick="resetMid(${i})">✕</button>`:''}
+      </div></td>`;
+    tbody.appendChild(tr);
+  });
+}
+function setOfferBid(i, which, val){ CURVE[i][which] = +val; calc(); }
+function setMid(i, val){ CURVE[i].midOverride = +val; buildCurveTable(); calc(); }
+function resetMid(i){ CURVE[i].midOverride = null; buildCurveTable(); calc(); }
+
+/* ===================== EDIT DATA (paste, parse, preview, save) ===================== */
+let parsedPreview = null;
+
+function openEditData(){
+  document.getElementById('editDataOverlay').classList.add('open');
+  document.getElementById('editDataStep1').style.display = 'block';
+  document.getElementById('editDataStep2').style.display = 'none';
+  document.getElementById('parseError').style.display = 'none';
+}
+function closeEditData(){
+  document.getElementById('editDataOverlay').classList.remove('open');
+}
+function cancelEditData(){
+  parsedPreview = null;
+  document.getElementById('pasteArea').value = '';
+  document.getElementById('editDataStep1').style.display = 'block';
+  document.getElementById('editDataStep2').style.display = 'none';
+  closeEditData();
+}
+
+function parseCurveText(raw){
+  const lines = raw.split(/\r?\n/);
+  let headerIdx = -1;
+  for(let i=0;i<lines.length;i++){
+    if(/tenor/i.test(lines[i]) && /bid/i.test(lines[i]) && /offer/i.test(lines[i])){ headerIdx = i; break; }
+  }
+  if(headerIdx===-1) throw new Error('Could not find a header row containing Tenor, Bid, and Offer (tab-separated).');
+  const headerCols = lines[headerIdx].split('\t').map(c=>c.trim().toLowerCase());
+  const idxTenor = headerCols.findIndex(c=>c==='tenor');
+  const idxBid = headerCols.findIndex(c=>c==='bid');
+  const idxOffer = headerCols.findIndex(c=>c==='offer');
+  if(idxTenor===-1 || idxBid===-1 || idxOffer===-1) throw new Error('Header row must contain Tenor, Bid, and Offer columns.');
+
+  const rows = [];
+  let i = headerIdx+1;
+  for(; i<lines.length; i++){
+    if(lines[i].trim()===''){ i++; break; }
+    const cols = lines[i].split('\t').map(c=>c.trim());
+    if(cols.length <= Math.max(idxTenor,idxBid,idxOffer)) continue;
+    const tenor = cols[idxTenor];
+    const bid = parseFloat(cols[idxBid]);
+    const offer = parseFloat(cols[idxOffer]);
+    if(!tenor || isNaN(bid) || isNaN(offer)) continue;
+    rows.push({tenor, bid, offer});
+  }
+  if(rows.length===0) throw new Error('No valid data rows found under the header.');
+
+  const restText = lines.slice(i).join('\n');
+  const genMatch = restText.match(/Generated:\s*(.+)/i);
+  const generated = genMatch ? genMatch[1].trim() : null;
+  const sources = [];
+  const srcMatch = restText.match(/Sources?:([\s\S]*)/i);
+  if(srcMatch){
+    srcMatch[1].split('\n').forEach(l=>{
+      const t = l.trim();
+      if(/^https?:\/\//i.test(t)) sources.push(t);
+    });
+  }
+  return {rows, generated, sources};
+}
+
+function parseEditData(){
+  const raw = document.getElementById('pasteArea').value;
+  const errEl = document.getElementById('parseError');
+  errEl.style.display = 'none';
+  try {
+    const parsed = parseCurveText(raw);
+    parsedPreview = parsed;
+    renderEditPreview(parsed);
+    document.getElementById('editDataStep1').style.display = 'none';
+    document.getElementById('editDataStep2').style.display = 'block';
+  } catch(e){
+    errEl.textContent = '⚠️ ' + e.message;
+    errEl.style.display = 'block';
+  }
+}
+
+function renderEditPreview(parsed){
+  let matched = 0;
+  const tbody = document.getElementById('previewBody');
+  tbody.innerHTML = parsed.rows.map(r=>{
+    const idx = CURVE.findIndex(n=>n.t.toLowerCase()===r.tenor.toLowerCase());
+    const mid = ((r.bid+r.offer)/2).toFixed(4);
+    const matchLabel = idx>=0 ? ('✅ '+CURVE[idx].t) : '⚠️ unknown (skipped)';
+    if(idx>=0) matched++;
+    return `<tr><td>${r.tenor}</td><td>${r.bid.toFixed(4)}</td><td>${r.offer.toFixed(4)}</td><td>${mid}%</td><td>${matchLabel}</td></tr>`;
+  }).join('');
+  document.getElementById('parseSummary').innerHTML = `✅ Parsed <b>${parsed.rows.length}</b> rows — <b>${matched}</b> matched an existing curve tenor and will be updated.`;
+
+  let metaHtml = '';
+  if(parsed.generated) metaHtml += `🕐 <b>Generated:</b> ${parsed.generated}<br>`;
+  if(parsed.sources.length) metaHtml += `🔗 <b>Sources (${parsed.sources.length}):</b><br>` + parsed.sources.map(s=>`&nbsp;&nbsp;• <a href="${s}" target="_blank" rel="noopener">${s}</a>`).join('<br>');
+  document.getElementById('previewMeta').innerHTML = metaHtml;
+}
+
+async function saveEditData(){
+  if(!parsedPreview) return;
+  parsedPreview.rows.forEach(r=>{
+    const idx = CURVE.findIndex(n=>n.t.toLowerCase()===r.tenor.toLowerCase());
+    if(idx>=0){
+      CURVE[idx].offer = r.offer;
+      CURVE[idx].bid = r.bid;
+      CURVE[idx].midOverride = null;
+    }
+  });
+
+  const meta = {generated: parsedPreview.generated, sources: parsedPreview.sources};
+  const curveSnapshot = CURVE.map(n=>({t:n.t, offer:n.offer, bid:n.bid}));
+
+  // Try the shared Supabase table first (visible to everyone on any device);
+  // localStorage is always written too as an offline/CDN-blocked fallback.
+  let savedToCloud = false;
+  if(sbClient){
+    try {
+      const { error } = await sbClient.from('irs_curve_data').update({
+        curve: curveSnapshot,
+        generated: meta.generated,
+        sources: meta.sources,
+        updated_at: new Date().toISOString()
+      }).eq('id', CURVE_ROW_ID);
+      if(!error) savedToCloud = true;
+      else console.warn('Supabase save error:', error.message);
+    } catch(e){ console.warn('Supabase save failed:', e); }
+  }
+
+  try {
+    localStorage.setItem('irsCurveData', JSON.stringify({ curve: curveSnapshot, meta }));
+  } catch(e){ /* localStorage unavailable -- proceed without persistence */ }
+
+  renderCurveMeta(meta, savedToCloud);
+  buildCurveTable();
+  calc();
+  closeEditData();
+  cancelEditData();
+}
+
+async function loadCurveFromCloud(){
+  if(!sbClient) return false;
+  try {
+    const { data, error } = await sbClient.from('irs_curve_data')
+      .select('curve,generated,sources,updated_at').eq('id', CURVE_ROW_ID).single();
+    if(error || !data || !data.curve || data.curve.length===0) return false;
+    data.curve.forEach(sc=>{
+      const idx = CURVE.findIndex(n=>n.t.toLowerCase()===sc.t.toLowerCase());
+      if(idx>=0){ CURVE[idx].offer = sc.offer; CURVE[idx].bid = sc.bid; }
+    });
+    renderCurveMeta({generated: data.generated, sources: data.sources||[]}, true);
+    return true;
+  } catch(e){ console.warn('loadCurveFromCloud failed:', e); return false; }
+}
+
+function renderCurveMeta(meta, fromCloud){
+  const el = document.getElementById('curveMeta');
+  if(!meta || (!meta.generated && (!meta.sources || meta.sources.length===0))){
+    el.classList.remove('show');
+    return;
+  }
+  const syncTag = fromCloud
+    ? '<span class="live-dot"></span><span style="color:var(--green)">Synced — visible to everyone</span>'
+    : '<span style="color:var(--amber)">💾 Saved on this device only (cloud unavailable)</span>';
+  let html = syncTag + '<br>';
+  if(meta.generated) html += `🕐 <b>Updated as of:</b> ${meta.generated}<br>`;
+  if(meta.sources && meta.sources.length) html += `🔗 <b>Sources:</b><br>` + meta.sources.map(s=>`&nbsp;&nbsp;• <a href="${s}" target="_blank" rel="noopener">${s}</a>`).join('<br>');
+  el.innerHTML = html;
+  el.classList.add('show');
+}
+
+
+/* ===================== CORE PRICER ===================== */
+function getNodeDtRate(start){
+  const den = daycountDen();
+  return CURVE.map(n=>{
+    const date = n.days ? addDays(start,n.days) : addMonths(start,n.months);
+    const dt = daysBetween(start,date)/den;
+    const mid = midOf(n)/100;
+    return {dt, mid};
+  });
+}
+
+function interpRate(nodeArr, dt){
+  if(dt<=nodeArr[0].dt) return nodeArr[0].mid;
+  const last = nodeArr[nodeArr.length-1];
+  if(dt>=last.dt) return last.mid;
+  for(let i=0;i<nodeArr.length-1;i++){
+    if(dt>=nodeArr[i].dt && dt<=nodeArr[i+1].dt){
+      const w = (dt-nodeArr[i].dt)/(nodeArr[i+1].dt-nodeArr[i].dt);
+      return nodeArr[i].mid + w*(nodeArr[i+1].mid-nodeArr[i].mid);
+    }
+  }
+  return last.mid;
+}
+function df(nodeArr, dt){ const r = interpRate(nodeArr, dt); return 1/(1+r*dt); }
+
+function buildSchedule(start, maturity, periodMo){
+  // Builds periods from start to maturity. If maturity doesn't land on an
+  // exact multiple of periodMo from start, the final period is a SHORT STUB
+  // truncated to end exactly at maturity (not dropped) -- otherwise the
+  // annuity would stop short of the date used for DF_maturity in the Par
+  // Rate formula, breaking the par-swap NPV=0 identity for odd tenors.
+  const periods = [];
+  let d = new Date(start.getTime());
+  while(d < maturity){
+    let nd = addMonths(d, periodMo);
+    if(nd > maturity) nd = new Date(maturity.getTime());
+    periods.push([new Date(d.getTime()), nd]);
+    d = nd;
+  }
+  return periods;
+}
+
+function parseNotional(){
+  return +document.getElementById('notional').value.replace(/,/g,'') || 0;
+}
+function parsePct(str){
+  if(!str) return null;
+  const v = parseFloat(str.replace('%','').trim());
+  return isNaN(v) ? null : v/100;
+}
+
+function calc(){
+  const start = getPickerDate('start');
+  const maturity = getPickerDate('maturity');
+  const periodMo = +cddGetValue('periodMo');
+  const den = daycountDen();
+  const notional = parseNotional();
+  const overrideRate = parsePct(document.getElementById('fixedOverride').value);
+
+  // refresh Mid display for non-overridden rows without wiping user's Offer/Bid focus
+  document.getElementById('curveBody').querySelectorAll('tr').forEach((tr,i)=>{
+    if(CURVE[i].midOverride===null){
+      const midInput = tr.children[3].querySelector('.mid-in');
+      if(document.activeElement !== midInput) midInput.value = midOf(CURVE[i]).toFixed(4);
+    }
+  });
+
+  const nodeArr = getNodeDtRate(start);
+  const periods = buildSchedule(start, maturity, periodMo);
+
+  let annuity = 0, floatNPV = 0;
+  const floatRows = [], fixedRows = [];
+
+  periods.forEach((p,i)=>{
+    const [s,e] = p;
+    const dtPeriod = daysBetween(s,e)/den;
+    const dtS = daysBetween(start,s)/den;
+    const dtE = daysBetween(start,e)/den;
+    const dfS = df(nodeArr, dtS);
+    const dfE = df(nodeArr, dtE);
+    const fwd = (dfS/dfE - 1)/dtPeriod;
+    const floatPV = notional*fwd*dtPeriod*dfE;
+    floatNPV += floatPV;
+    annuity += dtPeriod*dfE;
+    floatRows.push({n:i+1,s,e,dt:dtPeriod,dfS,dfE,fwd,pv:floatPV});
+  });
+
+  const dtMat = daysBetween(start,maturity)/den;
+  const dfMat = df(nodeArr, dtMat);
+  const parRate = (1-dfMat)/annuity;
+
+  const autoQuotedRate = direction==='pay' ? parRate - userMarginBps/10000 : parRate + userMarginBps/10000;
+  const fixedRateUsed = (overrideRate!==null) ? overrideRate : autoQuotedRate;
+  // "Quoted Fixed Rate" always reflects the rate actually being priced --
+  // the override when one is set, otherwise the margin-based auto-quote.
+  const quotedRate = fixedRateUsed;
+
+  // When a manual Fixed Rate Override is set, it takes priority over Margin
+  // for pricing -- so show the *implied* margin that override represents
+  // (relative to Par) and grey out the Margin field to signal it's now
+  // a read-only reflection, not an independent input. userMarginBps (the
+  // user's own real setting) is preserved separately and restored to the
+  // field the moment the override is cleared.
+  const marginInput = document.getElementById('margin');
+  if(overrideRate !== null){
+    const impliedBps = direction==='pay' ? (parRate-overrideRate)*10000 : (overrideRate-parRate)*10000;
+    marginInput.value = impliedBps.toFixed(2);
+    marginInput.disabled = true;
+  } else {
+    marginInput.value = userMarginBps.toFixed(2);
+    marginInput.disabled = false;
+  }
+
+  let fixedNPV = 0;
+  periods.forEach((p,i)=>{
+    const [s,e] = p;
+    const dtPeriod = daysBetween(s,e)/den;
+    const dtE = daysBetween(start,e)/den;
+    const dfE = df(nodeArr, dtE);
+    const cf = notional*fixedRateUsed*dtPeriod;
+    const pv = cf*dfE;
+    fixedNPV += pv;
+    fixedRows.push({n:i+1,s,e,dt:dtPeriod,dfE,rate:fixedRateUsed,cf,pv});
+  });
+
+  const swapNPV = direction==='pay' ? (floatNPV-fixedNPV) : (fixedNPV-floatNPV);
+  const bpv = annuity*notional*0.0001;
+
+  renderResults({parRate,quotedRate,floatNPV,fixedNPV,swapNPV,bpv});
+  renderCashflow(floatRows, fixedRows);
+
+  window.__state = {nodeArr, periods, den, notional, userMarginBps, overrideRate, start, maturity, fixedRateUsed};
+}
+
+function pctStr(x){ return (x*100).toFixed(4)+'%'; }
+function usdStr(x){
+  const sign = x<0 ? '-' : '';
+  return sign + '$' + Math.abs(x).toLocaleString('en-US',{maximumFractionDigits:0});
+}
+
+function renderResults(r){
+  document.getElementById('rPar').textContent = pctStr(r.parRate);
+  document.getElementById('rQuoted').textContent = pctStr(r.quotedRate);
+  document.getElementById('rFloat').textContent = usdStr(r.floatNPV);
+  document.getElementById('rFixed').textContent = usdStr(r.fixedNPV);
+  document.getElementById('rBPV').textContent = usdStr(r.bpv);
+  document.getElementById('rNetNPV').childNodes[0].textContent = usdStr(r.swapNPV);
+
+  const floatSide = direction==='pay' ? 'RECEIVE' : 'PAY';
+  const fixedSide = direction==='pay' ? 'PAY' : 'RECEIVE';
+  document.getElementById('rFloatLbl').textContent = `Floating Leg NPV (Bank ${floatSide})`;
+  document.getElementById('rFixedLbl').textContent = `Fixed Leg NPV (Bank ${fixedSide})`;
+  document.getElementById('rSwapLbl').textContent = `Swap NPV — Bank ${direction==='pay'?'PAY Fixed / RECEIVE Floating':'RECEIVE Fixed / PAY Floating'}`;
+
+  // Ledger signs: '+' = cashflow the bank receives, '-' = cashflow the bank pays
+  const floatSign = document.getElementById('ledgerFloatSign');
+  const fixedSign = document.getElementById('ledgerFixedSign');
+  if(direction==='pay'){
+    floatSign.textContent='+'; floatSign.className='ledger-sign pos';
+    fixedSign.textContent='−'; fixedSign.className='ledger-sign neg';
+  } else {
+    floatSign.textContent='−'; floatSign.className='ledger-sign neg';
+    fixedSign.textContent='+'; fixedSign.className='ledger-sign pos';
+  }
+
+  const swapEl = document.getElementById('rSwap');
+  const netEl = document.getElementById('rNetNPV');
+  const badge = document.getElementById('rBadge');
+  const badge2 = document.getElementById('rBadge2');
+  swapEl.childNodes[0].textContent = usdStr(r.swapNPV);
+  swapEl.classList.remove('pos','neg');
+  netEl.classList.remove('pos','neg');
+  let badgeText, badgeClass;
+  if(Math.abs(r.swapNPV) < 1){ badgeText='⚖️ BREAK EVEN'; badgeClass='hero-tag flat'; }
+  else if(r.swapNPV > 0){ badgeText='✅ UNTUNG'; badgeClass='hero-tag up'; swapEl.classList.add('pos'); netEl.classList.add('pos'); }
+  else { badgeText='🔻 RUGI'; badgeClass='hero-tag down'; swapEl.classList.add('neg'); netEl.classList.add('neg'); }
+  badge.textContent = badgeText; badge.className = badgeClass;
+  badge2.textContent = badgeText; badge2.className = badgeClass;
+}
+
+function renderCashflow(floatRows, fixedRows){
+  const fb = document.getElementById('floatBody');
+  fb.innerHTML = floatRows.map(r=>`<tr>
+    <td>${r.n}</td><td>${fmtDate(r.s)}</td><td>${fmtDate(r.e)}</td>
+    <td>${r.dt.toFixed(6)}</td><td>${r.dfS.toFixed(6)}</td><td>${r.dfE.toFixed(6)}</td>
+    <td>${pctStr(r.fwd)}</td><td>${usdStr(r.pv)}</td></tr>`).join('');
+
+  const xb = document.getElementById('fixedBody');
+  xb.innerHTML = fixedRows.map(r=>`<tr>
+    <td>${r.n}</td><td>${fmtDate(r.s)}</td><td>${fmtDate(r.e)}</td>
+    <td>${r.dt.toFixed(6)}</td><td>${r.dfE.toFixed(6)}</td>
+    <td>${pctStr(r.rate)}</td><td>${usdStr(r.cf)}</td><td>${usdStr(r.pv)}</td></tr>`).join('');
+}
+
+function runSensitivity(){
+  calc();
+  const lockedRate = window.__state.fixedRateUsed;
+  const rows = [];
+  CURVE.forEach((n,i)=>{
+    const baseOverride = n.midOverride;
+    const baseMid = midOf(n);
+    n.midOverride = baseMid + 0.01; // +1bp
+    const up = getSwapNPVFor(lockedRate);
+    n.midOverride = baseMid - 0.01; // -1bp
+    const down = getSwapNPVFor(lockedRate);
+    n.midOverride = baseOverride;
+    const dv01 = (up-down)/2;
+    rows.push({t:n.t, base:baseMid, dv01});
+  });
+  document.getElementById('sensBody').innerHTML = rows.map(r=>
+    `<tr><td>${r.t}</td><td>${r.base.toFixed(4)}%</td><td>${usdStr(r.dv01)}</td></tr>`).join('') +
+    `<tr style="font-weight:700;color:var(--maroon)"><td>Total</td><td></td><td>${usdStr(rows.reduce((a,b)=>a+b.dv01,0))}</td></tr>` +
+    `<tr><td colspan="3" style="color:var(--warm);font-size:10.5px;padding-top:8px;font-weight:400">Fixed Rate locked at ${pctStr(lockedRate)} (the Fixed Rate Used at calculation time) while the curve is bumped ±1bp per node.</td></tr>`;
+  calc();
+}
+
+function getSwapNPVFor(lockedRate){
+  const start = getPickerDate('start');
+  const maturity = getPickerDate('maturity');
+  const periodMo = +cddGetValue('periodMo');
+  const den = daycountDen();
+  const notional = parseNotional();
+
+  const nodeArr = getNodeDtRate(start);
+  const periods = buildSchedule(start, maturity, periodMo);
+  let annuity=0, floatNPV=0;
+  periods.forEach(([s,e])=>{
+    const dtPeriod = daysBetween(s,e)/den;
+    const dtS = daysBetween(start,s)/den, dtE = daysBetween(start,e)/den;
+    const dfS = df(nodeArr,dtS), dfE = df(nodeArr,dtE);
+    const fwd = (dfS/dfE-1)/dtPeriod;
+    floatNPV += notional*fwd*dtPeriod*dfE;
+    annuity += dtPeriod*dfE;
+  });
+  const fixedRateUsed = (lockedRate!==undefined && lockedRate!==null) ? lockedRate : (function(){
+    const dtMat = daysBetween(start,maturity)/den;
+    const dfMat = df(nodeArr,dtMat);
+    const parRate = (1-dfMat)/annuity;
+    return direction==='pay' ? parRate-userMarginBps/10000 : parRate+userMarginBps/10000;
+  })();
+  let fixedNPV=0;
+  periods.forEach(([s,e])=>{
+    const dtPeriod = daysBetween(s,e)/den;
+    const dtE = daysBetween(start,e)/den;
+    const dfE = df(nodeArr,dtE);
+    fixedNPV += notional*fixedRateUsed*dtPeriod*dfE;
+  });
+  return direction==='pay' ? (floatNPV-fixedNPV) : (fixedNPV-floatNPV);
+}
+
+/* ===================== UI EVENTS ===================== */
+function setDirection(dir){
+  direction = dir;
+  document.getElementById('segPay').classList.toggle('active', dir==='pay');
+  document.getElementById('segRecv').classList.toggle('active', dir==='recv');
+  renderDirExplain();
+  calc();
+}
+function renderDirExplain(){
+  const el = document.getElementById('dirExplain');
+  if(direction==='pay'){
+    el.innerHTML =
+      '🏦 <b>Client&#39;s existing debt:</b> Fixed-rate, owed to their original creditor.'
+      + '<span class="side">1️⃣ Client pays <b>Floating</b> to CIMB Niaga.</span>'
+      + '<span class="side">2️⃣ CIMB Niaga pays <b>Fixed</b> to Client — passed straight through to service the original fixed debt.</span>'
+      + '<span class="side">➡️ Net effect: client&#39;s <b>fixed</b> debt is synthetically converted into a <b>floating</b> cost.</span>';
+  } else {
+    el.innerHTML =
+      '🏦 <b>Client&#39;s existing debt:</b> Floating-rate, owed to their original creditor.'
+      + '<span class="side">1️⃣ Client pays <b>Fixed</b> to CIMB Niaga.</span>'
+      + '<span class="side">2️⃣ CIMB Niaga pays <b>Floating</b> to Client — passed straight through to service the original floating debt.</span>'
+      + '<span class="side">➡️ Net effect: client&#39;s <b>floating</b> debt is synthetically converted into a <b>fixed</b> cost (the classic loan-hedging use case).</span>';
+  }
+}
+function setTenor(months){
+  document.querySelectorAll('.tenor-btns button').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  const start = getPickerDate('start');
+  setPickerDate('maturity', addMonths(start, months));
+  calc();
+}
+function showTab(name){
+  document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tabpane').forEach(p=>p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab'+name.charAt(0).toUpperCase()+name.slice(1)).classList.add('active');
+}
+document.getElementById('notional').addEventListener('change', function(){
+  const v = this.value.replace(/,/g,'');
+  if(!isNaN(v) && v!=='') this.value = (+v).toLocaleString('en-US');
+  calc();
+});
+document.getElementById('fixedOverride').addEventListener('change', function(){
+  const p = parsePct(this.value);
+  this.value = (p===null) ? '' : (p*100).toFixed(4)+'%';
+  calc();
+});
+['margin'].forEach(id=>{
+  document.getElementById(id).addEventListener('change', function(){
+    userMarginBps = +this.value || 0;
+    calc();
+  });
+});
+
+/* ===================== METHOD MODAL ===================== */
+function openMethod(){ document.getElementById('methodOverlay').classList.add('open'); }
+function closeMethod(){ document.getElementById('methodOverlay').classList.remove('open'); }
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeMethod(); });
+
+/* ===================== INIT ===================== */
+(async function init(){
+  const today = new Date();
+  populateDatePicker('start', today);
+  populateDatePicker('maturity', addMonths(today,24));
+  updateDow('start');
+  updateDow('maturity');
+
+  cddInit('periodMo', [
+    {value:1, label:'Monthly'},
+    {value:3, label:'Quarterly'},
+    {value:6, label:'Semi-Annual'},
+    {value:12, label:'Annual'}
+  ], 3, calc);
+
+  cddInit('daycount', [
+    {value:1, label:'30/360'},
+    {value:2, label:'Act/360'},
+    {value:3, label:'Act/365'},
+    {value:4, label:'Act/Act'}
+  ], 2, calc);
+
+  // Load curve data: try the shared Supabase table first (visible to
+  // everyone, any device), fall back to this device's localStorage,
+  // otherwise keep the hardcoded defaults declared above.
+  const cloudLoaded = await loadCurveFromCloud();
+  if(!cloudLoaded){
+    try {
+      const saved = localStorage.getItem('irsCurveData');
+      if(saved){
+        const data = JSON.parse(saved);
+        (data.curve||[]).forEach(sc=>{
+          const idx = CURVE.findIndex(n=>n.t.toLowerCase()===sc.t.toLowerCase());
+          if(idx>=0){ CURVE[idx].offer = sc.offer; CURVE[idx].bid = sc.bid; }
+        });
+        renderCurveMeta(data.meta, false);
+      }
+    } catch(e){ /* ignore corrupt or unavailable storage */ }
+  }
+
+  buildCurveTable();
+  renderDirExplain();
+  calc();
+})();
+</script>
+</body>
+</html>
