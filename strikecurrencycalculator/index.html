@@ -382,7 +382,7 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
         <label class="field-label" id="spotPairLabel">Spot Rate (USD/IDR)</label>
         <div class="field-wrap">
           <div class="field-pre" id="spotSuffix">USD/IDR</div>
-          <input type="text" id="iSpot" inputmode="decimal" enterkeyhint="next" oninput="fmtSpotLive(this);checkSpotDecimals();onPointsChange()" onblur="fmtSpot(this,true);checkSpotDecimals();onPointsChange();document.getElementById('iPoints').focus();document.getElementById('iPoints').select()" style="letter-spacing:.02em">
+          <input type="text" id="iSpot" inputmode="decimal" enterkeyhint="next" oninput="fmtSpotLive(this);checkSpotDecimals();onPointsChange()" onblur="fmtSpot(this,true);checkSpotDecimals();onPointsChange();autoAdvance(event,'iPoints')" style="letter-spacing:.02em">
         </div>
       <div id="spotDecWarn" style="display:none;margin-top:4px;font-size:10px;color:#B45309;font-family:var(--mono);font-weight:600"></div>
       </div>
@@ -395,7 +395,7 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
             <button id="btnPlus" onclick="setSign(1)" style="border:none;background:#F8FAFC;color:var(--slate);font-weight:700;font-size:14px;padding:0 14px;cursor:pointer;min-width:44px">+</button>
           </div>
           <div class="field-wrap" style="width:110px">
-            <input type="number" id="iPoints" value="50" min="0" step="any" inputmode="decimal" enterkeyhint="next" oninput="onPointsChange()" onblur="document.getElementById('iVol').focus();document.getElementById('iVol').select()" style="text-align:center;font-family:var(--mono);font-weight:600;font-size:15px" placeholder="50">
+            <input type="text" id="iPoints" value="50" inputmode="decimal" enterkeyhint="next" oninput="this.value=this.value.replace(',','.');onPointsChange()" onblur="autoAdvance(event,'iVol')" style="text-align:center;font-family:var(--mono);font-weight:600;font-size:15px" placeholder="50">
             <div class="field-suf" style="font-size:10px">pts</div>
           </div>
           <div class="field-wrap" style="flex:1">
@@ -407,7 +407,7 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
       <div class="field">
         <label class="field-label" style="font-size:10px">Volatility</label>
         <div class="field-wrap">
-          <input type="number" id="iVol" inputmode="decimal" enterkeyhint="next" placeholder="e.g. 3.5" step="0.01" oninput="calc()" onblur="document.getElementById('iTenor').focus();document.getElementById('iTenor').select()" style="font-size:13px">
+          <input type="text" id="iVol" inputmode="decimal" enterkeyhint="next" placeholder="e.g. 3.5" oninput="this.value=this.value.replace(',','.');calc()" onblur="autoAdvance(event,'iTenor')" style="font-size:13px">
           <div class="field-suf">%</div>
         </div>
       </div>
@@ -733,6 +733,18 @@ function swapCCY(){
 }
 
 
+
+// Auto-advances focus to the next field in the Spot -> Points -> Volatility
+// -> Tenor entry sequence, but only when the blur wasn't caused by the user
+// deliberately clicking (or tabbing to) a different specific field further
+// down the form. Without this check, clicking directly on e.g. Volatility
+// from Spot would get silently overridden back to the Points field.
+function autoAdvance(e, nextId){
+  const rt = e.relatedTarget;
+  if(rt && rt.tagName === 'INPUT') return; // user already chose a specific field — respect it
+  const next = document.getElementById(nextId);
+  if(next){ next.focus(); next.select(); }
+}
 
 function fmtSpotLive(el){
   const pi=getPairInfo(depositCCY,alternateCCY);
