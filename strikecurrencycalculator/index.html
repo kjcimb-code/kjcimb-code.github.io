@@ -365,7 +365,7 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
       <label class="field-label" id="lNotional">Nominal (Base Currency)</label>
       <div class="field-wrap">
         <div class="field-pre" id="lNotionalPre">IDR</div>
-        <input type="text" id="iNotional" value="1,000,000,000" oninput="fmtNotional(this);calc()" style="letter-spacing:.02em">
+        <input type="text" id="iNotional" value="1,000,000,000" inputmode="decimal" oninput="calc()" onblur="fmtNotional(this,true)" style="letter-spacing:.02em">
       </div>
     </div>
     <div class="field">
@@ -625,14 +625,14 @@ let IDR_DEP=[{d:1,r:5.40},{d:7,r:5.57},{d:14,r:5.58},{d:30,r:6.28},{d:60,r:6.41}
 // Currency (Y) USD — deposit interest (CALL mode)
 let USD_DEP=[{d:1,r:3.53},{d:7,r:3.55},{d:14,r:3.57},{d:30,r:4.12},{d:60,r:4.24},{d:90,r:4.30},{d:120,r:4.36},{d:150,r:4.40},{d:180,r:4.43},{d:360,r:4.47}];
 // DEPO RATE OPTION IDR1 — GK model rd
-let IDR_OPT=[{d:1,r:6.05},{d:7,r:5.93},{d:14,r:5.95},{d:30,r:5.99},{d:60,r:5.99},{d:90,r:6.05},{d:120,r:0.0},{d:150,r:0.0},{d:180,r:6.13},{d:360,r:6.28}];
+let IDR_OPT=[{d:1,r:5.69},{d:7,r:5.95},{d:14,r:5.97},{d:30,r:6.02},{d:60,r:6.02},{d:90,r:6.05},{d:120,r:0.0},{d:150,r:0.0},{d:180,r:6.20},{d:360,r:6.28}];
 // DEPO RATE OPTION USD1 — GK model rf
-let USD_OPT=[{d:1,r:3.62},{d:7,r:3.87},{d:14,r:3.88},{d:30,r:3.89},{d:60,r:3.93},{d:90,r:3.98},{d:120,r:4.05},{d:150,r:4.10},{d:180,r:4.14},{d:360,r:4.40}];
-let AUD_OPT=[{d:1,r:4.35},{d:7,r:4.35},{d:14,r:4.35},{d:30,r:4.46},{d:60,r:4.55},{d:90,r:4.61},{d:120,r:4.66},{d:150,r:4.69},{d:180,r:4.73},{d:360,r:4.94}];
-let EUR_OPT=[{d:1,r:2.24},{d:7,r:2.44},{d:14,r:2.44},{d:30,r:2.44},{d:60,r:2.48},{d:90,r:2.53},{d:120,r:2.60},{d:150,r:2.66},{d:180,r:2.71},{d:360,r:3.00}];
-let GBP_OPT=[{d:1,r:3.73},{d:7,r:3.77},{d:14,r:3.78},{d:30,r:3.79},{d:60,r:3.84},{d:90,r:3.90},{d:120,r:3.98},{d:150,r:4.05},{d:180,r:4.12},{d:360,r:4.48}];
-let NZD_OPT=[{d:1,r:2.75},{d:7,r:2.75},{d:14,r:2.75},{d:30,r:2.75},{d:60,r:2.81},{d:90,r:2.86},{d:120,r:2.94},{d:150,r:2.99},{d:180,r:3.05},{d:360,r:3.39}];
-let SGD_OPT=[{d:1,r:1.18},{d:7,r:0.0},{d:14,r:0.0},{d:30,r:1.46},{d:60,r:1.47},{d:90,r:1.49},{d:120,r:0.0},{d:150,r:0.0},{d:180,r:1.54},{d:360,r:1.66}];
+let USD_OPT=[{d:1,r:3.62},{d:7,r:3.86},{d:14,r:3.88},{d:30,r:3.89},{d:60,r:3.93},{d:90,r:3.98},{d:120,r:4.05},{d:150,r:4.10},{d:180,r:4.13},{d:360,r:4.40}];
+let AUD_OPT=[{d:1,r:4.35},{d:7,r:4.35},{d:14,r:4.37},{d:30,r:4.47},{d:60,r:4.55},{d:90,r:4.61},{d:120,r:4.65},{d:150,r:4.69},{d:180,r:4.73},{d:360,r:4.95}];
+let EUR_OPT=[{d:1,r:2.45},{d:7,r:2.44},{d:14,r:2.44},{d:30,r:2.44},{d:60,r:2.47},{d:90,r:2.51},{d:120,r:2.58},{d:150,r:2.64},{d:180,r:2.69},{d:360,r:2.99}];
+let GBP_OPT=[{d:1,r:3.73},{d:7,r:3.78},{d:14,r:3.79},{d:30,r:3.79},{d:60,r:3.84},{d:90,r:3.91},{d:120,r:4.00},{d:150,r:4.07},{d:180,r:4.13},{d:360,r:4.50}];
+let NZD_OPT=[{d:1,r:2.92},{d:7,r:2.75},{d:14,r:2.75},{d:30,r:2.75},{d:60,r:2.81},{d:90,r:2.87},{d:120,r:2.94},{d:150,r:2.99},{d:180,r:3.04},{d:360,r:3.39}];
+let SGD_OPT=[{d:1,r:1.07},{d:7,r:0.0},{d:14,r:0.0},{d:30,r:1.49},{d:60,r:1.51},{d:90,r:1.54},{d:120,r:0.0},{d:150,r:0.0},{d:180,r:1.60},{d:360,r:1.73}];
 
 
 let AUD_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:1.24},{d:30,r:3.41},{d:60,r:3.40},{d:90,r:3.41},{d:120,r:3.42},{d:150,r:3.44},{d:180,r:3.46},{d:360,r:3.41}];
@@ -642,7 +642,7 @@ let NZD_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:0.94},{d:30,r:2.41},{d:60,r:2.40}
 let SGD_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:0.68},{d:30,r:1.56},{d:60,r:1.60},{d:90,r:1.66},{d:120,r:1.69},{d:150,r:1.72},{d:180,r:1.76},{d:360,r:1.75}];
 
 let JPY_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:0.33},{d:30,r:0.41},{d:60,r:0.40},{d:90,r:0.41},{d:120,r:0.42},{d:150,r:0.44},{d:180,r:0.46},{d:360,r:0.46}];
-let JPY_OPT=[{d:1,r:0.98},{d:7,r:0.98},{d:14,r:1.10},{d:30,r:1.17},{d:60,r:1.21},{d:90,r:1.24},{d:120,r:1.29},{d:150,r:1.33},{d:180,r:1.37},{d:360,r:1.59}];
+let JPY_OPT=[{d:1,r:0.98},{d:7,r:0.98},{d:14,r:1.12},{d:30,r:1.18},{d:60,r:1.22},{d:90,r:1.24},{d:120,r:1.29},{d:150,r:1.34},{d:180,r:1.37},{d:360,r:1.58}];
 let CCY_DEP={'USD':USD_DEP,'AUD':AUD_DEP,'EUR':EUR_DEP,'GBP':GBP_DEP,'NZD':NZD_DEP,'SGD':SGD_DEP,'JPY':JPY_DEP,'IDR':IDR_DEP};
 
 let CCY_OPT={'USD':USD_OPT,'AUD':AUD_OPT,'EUR':EUR_OPT,'GBP':GBP_OPT,'NZD':NZD_OPT,'SGD':SGD_OPT,'JPY':JPY_OPT,'IDR':IDR_OPT};
@@ -979,10 +979,16 @@ const putStore={spot:'',strike:'',vol:'',tenor:''};
 const callStore={spot:'',strike:'',vol:'',tenor:''};
 
 
-function fmtNotional(el){
+function fmtNotional(el, force){
+  // Only reformat (add thousand-separator commas) on blur, so mid-edit
+  // states — like deleting the leading digit of "1,000,000,000" — don't
+  // get prematurely parsed and collapsed (e.g. down to "0").
   let v=el.value.replace(/,/g,'');
-  if(isNaN(v)||v==='') return;
-  el.value=parseFloat(v).toLocaleString('en-US');
+  if(v===''||v==='-') return;
+  if(!force) return; // don't reformat while typing
+  const n=parseFloat(v);
+  if(isNaN(n)) return;
+  el.value=n.toLocaleString('en-US');
 }
 function fmtSpot(el, force){
   // Only reformat on blur (force=true) to avoid interrupting typing
@@ -1377,6 +1383,8 @@ applyPair();
     const {data,error}=await sb.from('strike_calc_rates').select('*').eq('id',1).single();
     if(error||!data){ console.warn('[Rates] Fetch error:',JSON.stringify(error)); console.info('[Rates] Using fallback hardcoded data'); return; }
     console.log('[Rates] Data received, deposit_rates keys:',Object.keys(data.deposit_rates||{}));
+    console.log('[Rates] updated_at from Supabase:', data.updated_at, '· updated_by:', data.updated_by||'(unknown)');
+    console.log('[Rates] Sample check — IDR 7d deposit rate:', (data.deposit_rates&&data.deposit_rates.IDR&&data.deposit_rates.IDR[1]), '%  ·  IDR1 7d option rate:', (data.option_rates&&data.option_rates.IDR1&&data.option_rates.IDR1[1]), '%');
 
     const T=[1,7,14,30,60,90,120,150,180,360];
     const toArr=arr=>(Array.isArray(arr)&&arr.length===10)?T.map((d,i)=>({d,r:Number(arr[i])||0})):null;
