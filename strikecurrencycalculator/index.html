@@ -407,7 +407,7 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
       <div class="field">
         <label class="field-label" style="font-size:10px">Volatility</label>
         <div class="field-wrap">
-          <input type="text" id="iVol" inputmode="decimal" enterkeyhint="next" placeholder="e.g. 3.5" oninput="this.value=this.value.replace(',','.');calc()" onblur="autoAdvance(event,'iTenor')" style="font-size:13px">
+          <input type="text" id="iVol" inputmode="decimal" enterkeyhint="next" placeholder="e.g. 3.5" oninput="onVolInput(this)" onblur="autoAdvance(event,'iTenor')" style="font-size:13px">
           <div class="field-suf">%</div>
         </div>
       </div>
@@ -621,28 +621,28 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
 
 let HOLIDAYS=new Set(['2026-01-01','2026-01-16','2026-02-16','2026-02-17','2026-03-18','2026-03-19','2026-03-20','2026-03-21','2026-03-23','2026-03-24','2026-04-03','2026-05-01','2026-05-14','2026-05-15','2026-05-27','2026-05-28','2026-05-31','2026-06-01','2026-06-16','2026-08-17','2026-08-25','2026-12-24']);
 // Currency (Y) IDR — deposit interest (PUT mode)
-let IDR_DEP=[{d:1,r:5.78},{d:7,r:6.1},{d:14,r:6.11},{d:30,r:6.47},{d:60,r:6.74},{d:90,r:6.76},{d:120,r:6.79},{d:150,r:6.81},{d:180,r:6.83},{d:360,r:6.85}];
+let IDR_DEP=[{d:1,r:5.40},{d:7,r:5.57},{d:14,r:5.58},{d:30,r:6.28},{d:60,r:6.41},{d:90,r:6.55},{d:120,r:6.57},{d:150,r:6.59},{d:180,r:6.60},{d:360,r:6.61}];
 // Currency (Y) USD — deposit interest (CALL mode)
-let USD_DEP=[{d:1,r:3.48},{d:7,r:3.5},{d:14,r:3.52},{d:30,r:4.06},{d:60,r:4.18},{d:90,r:4.23},{d:120,r:4.31},{d:150,r:4.36},{d:180,r:4.41},{d:360,r:4.43}];
+let USD_DEP=[{d:1,r:3.53},{d:7,r:3.55},{d:14,r:3.57},{d:30,r:4.12},{d:60,r:4.24},{d:90,r:4.30},{d:120,r:4.36},{d:150,r:4.40},{d:180,r:4.43},{d:360,r:4.47}];
 // DEPO RATE OPTION IDR1 — GK model rd
-let IDR_OPT=[{d:1,r:5.75},{d:7,r:6.08},{d:14,r:6.08},{d:30,r:6.1},{d:60,r:6.1},{d:90,r:6.12},{d:120,r:0.0},{d:150,r:0.0},{d:180,r:6.22},{d:360,r:6.38}];
+let IDR_OPT=[{d:1,r:6.05},{d:7,r:5.93},{d:14,r:5.95},{d:30,r:5.99},{d:60,r:5.99},{d:90,r:6.05},{d:120,r:0.0},{d:150,r:0.0},{d:180,r:6.13},{d:360,r:6.28}];
 // DEPO RATE OPTION USD1 — GK model rf
-let USD_OPT=[{d:1,r:3.66},{d:7,r:3.63},{d:14,r:3.69},{d:30,r:3.76},{d:60,r:3.8},{d:90,r:3.84},{d:120,r:3.9},{d:150,r:3.94},{d:180,r:3.97},{d:360,r:4.17}];
-let AUD_OPT=[{d:1,r:4.35},{d:7,r:4.35},{d:14,r:4.36},{d:30,r:4.39},{d:60,r:4.46},{d:90,r:4.53},{d:120,r:4.58},{d:150,r:4.62},{d:180,r:4.65},{d:360,r:4.78}];
-let EUR_OPT=[{d:1,r:2.25},{d:7,r:2.19},{d:14,r:2.23},{d:30,r:2.34},{d:60,r:2.39},{d:90,r:2.44},{d:120,r:2.48},{d:150,r:2.52},{d:180,r:2.56},{d:360,r:2.76}];
-let GBP_OPT=[{d:1,r:3.73},{d:7,r:3.73},{d:14,r:3.73},{d:30,r:3.76},{d:60,r:3.77},{d:90,r:3.83},{d:120,r:3.89},{d:150,r:3.93},{d:180,r:3.98},{d:360,r:4.27}];
-let NZD_OPT=[{d:1,r:2.69},{d:7,r:2.75},{d:14,r:2.75},{d:30,r:2.75},{d:60,r:2.77},{d:90,r:2.79},{d:120,r:2.85},{d:150,r:2.89},{d:180,r:2.93},{d:360,r:3.18}];
-let SGD_OPT=[{d:1,r:1.26},{d:7,r:0.0},{d:14,r:0.0},{d:30,r:1.36},{d:60,r:1.37},{d:90,r:1.38},{d:120,r:0.0},{d:150,r:0.0},{d:180,r:1.43},{d:360,r:1.53}];
+let USD_OPT=[{d:1,r:3.62},{d:7,r:3.87},{d:14,r:3.88},{d:30,r:3.89},{d:60,r:3.93},{d:90,r:3.98},{d:120,r:4.05},{d:150,r:4.10},{d:180,r:4.14},{d:360,r:4.40}];
+let AUD_OPT=[{d:1,r:4.35},{d:7,r:4.35},{d:14,r:4.35},{d:30,r:4.46},{d:60,r:4.55},{d:90,r:4.61},{d:120,r:4.66},{d:150,r:4.69},{d:180,r:4.73},{d:360,r:4.94}];
+let EUR_OPT=[{d:1,r:2.24},{d:7,r:2.44},{d:14,r:2.44},{d:30,r:2.44},{d:60,r:2.48},{d:90,r:2.53},{d:120,r:2.60},{d:150,r:2.66},{d:180,r:2.71},{d:360,r:3.00}];
+let GBP_OPT=[{d:1,r:3.73},{d:7,r:3.77},{d:14,r:3.78},{d:30,r:3.79},{d:60,r:3.84},{d:90,r:3.90},{d:120,r:3.98},{d:150,r:4.05},{d:180,r:4.12},{d:360,r:4.48}];
+let NZD_OPT=[{d:1,r:2.75},{d:7,r:2.75},{d:14,r:2.75},{d:30,r:2.75},{d:60,r:2.81},{d:90,r:2.86},{d:120,r:2.94},{d:150,r:2.99},{d:180,r:3.05},{d:360,r:3.39}];
+let SGD_OPT=[{d:1,r:1.18},{d:7,r:0.0},{d:14,r:0.0},{d:30,r:1.46},{d:60,r:1.47},{d:90,r:1.49},{d:120,r:0.0},{d:150,r:0.0},{d:180,r:1.54},{d:360,r:1.66}];
 
 
-let AUD_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:1.25},{d:30,r:3.41},{d:60,r:3.41},{d:90,r:3.41},{d:120,r:3.43},{d:150,r:3.44},{d:180,r:3.46},{d:360,r:3.42}];
-let EUR_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:0.79},{d:30,r:1.91},{d:60,r:1.91},{d:90,r:1.91},{d:120,r:1.93},{d:150,r:1.94},{d:180,r:1.96},{d:360,r:1.96}];
-let GBP_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:1.33},{d:30,r:3.66},{d:60,r:3.66},{d:90,r:3.66},{d:120,r:3.68},{d:150,r:3.69},{d:180,r:3.71},{d:360,r:3.71}];
-let NZD_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:0.95},{d:30,r:2.41},{d:60,r:2.41},{d:90,r:2.41},{d:120,r:2.43},{d:150,r:2.44},{d:180,r:2.46},{d:360,r:2.5}];
-let SGD_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:0.69},{d:30,r:1.56},{d:60,r:1.61},{d:90,r:1.66},{d:120,r:1.7},{d:150,r:1.73},{d:180,r:1.76},{d:360,r:1.75}];
+let AUD_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:1.24},{d:30,r:3.41},{d:60,r:3.40},{d:90,r:3.41},{d:120,r:3.42},{d:150,r:3.44},{d:180,r:3.46},{d:360,r:3.41}];
+let EUR_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:0.79},{d:30,r:1.91},{d:60,r:1.90},{d:90,r:1.91},{d:120,r:1.92},{d:150,r:1.94},{d:180,r:1.96},{d:360,r:1.96}];
+let GBP_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:1.32},{d:30,r:3.66},{d:60,r:3.65},{d:90,r:3.66},{d:120,r:3.67},{d:150,r:3.69},{d:180,r:3.71},{d:360,r:3.71}];
+let NZD_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:0.94},{d:30,r:2.41},{d:60,r:2.40},{d:90,r:2.41},{d:120,r:2.42},{d:150,r:2.44},{d:180,r:2.46},{d:360,r:2.50}];
+let SGD_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:0.68},{d:30,r:1.56},{d:60,r:1.60},{d:90,r:1.66},{d:120,r:1.69},{d:150,r:1.72},{d:180,r:1.76},{d:360,r:1.75}];
 
-let JPY_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:0.34},{d:30,r:0.41},{d:60,r:0.41},{d:90,r:0.41},{d:120,r:0.43},{d:150,r:0.44},{d:180,r:0.46},{d:360,r:0.46}];
-let JPY_OPT=[{d:1,r:0.98},{d:7,r:0.98},{d:14,r:0.98},{d:30,r:1.08},{d:60,r:1.16},{d:90,r:1.2},{d:120,r:1.24},{d:150,r:1.29},{d:180,r:1.33},{d:360,r:1.57}];
+let JPY_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:0.33},{d:30,r:0.41},{d:60,r:0.40},{d:90,r:0.41},{d:120,r:0.42},{d:150,r:0.44},{d:180,r:0.46},{d:360,r:0.46}];
+let JPY_OPT=[{d:1,r:0.98},{d:7,r:0.98},{d:14,r:1.10},{d:30,r:1.17},{d:60,r:1.21},{d:90,r:1.24},{d:120,r:1.29},{d:150,r:1.33},{d:180,r:1.37},{d:360,r:1.59}];
 let CCY_DEP={'USD':USD_DEP,'AUD':AUD_DEP,'EUR':EUR_DEP,'GBP':GBP_DEP,'NZD':NZD_DEP,'SGD':SGD_DEP,'JPY':JPY_DEP,'IDR':IDR_DEP};
 
 let CCY_OPT={'USD':USD_OPT,'AUD':AUD_OPT,'EUR':EUR_OPT,'GBP':GBP_OPT,'NZD':NZD_OPT,'SGD':SGD_OPT,'JPY':JPY_OPT,'IDR':IDR_OPT};
@@ -744,6 +744,20 @@ function autoAdvance(e, nextId){
   if(rt && rt.tagName === 'INPUT') return; // user already chose a specific field — respect it
   const next = document.getElementById(nextId);
   if(next){ next.focus(); next.select(); }
+}
+
+// Volatility is always a single digit before the decimal (2-9%), so as soon
+// as the 2nd raw digit is typed with no decimal point yet, auto-insert one
+// after the 1st digit — "35" becomes "3.5" the moment the 2nd digit lands.
+// Also normalizes a typed comma to a period (some mobile keyboards only
+// offer comma for decimals).
+function onVolInput(el){
+  let v = el.value.replace(',', '.');
+  if(!v.includes('.') && /^\d{2}$/.test(v)){
+    v = v[0] + '.' + v.slice(1);
+  }
+  el.value = v;
+  calc();
 }
 
 function fmtSpotLive(el){
