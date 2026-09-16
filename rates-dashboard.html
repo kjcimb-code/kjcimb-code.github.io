@@ -752,10 +752,12 @@ async function saveRates(){
   document.getElementById('parseNotice').innerHTML =
     '<div class="notice warn"><span class="ic">…</span><div>Menyimpan ke Supabase...</div></div>';
   try {
+    const nowIso = new Date().toISOString();
     const { error } = await sbClient.from('strike_calc_rates').update({
       deposit_rates: toRateJson(newDeposit),
       option_rates: toRateJson(newOption),
-      updated_at: new Date().toISOString(),
+      deposit_rates_updated_at: nowIso,
+      updated_at: nowIso,
       updated_by: currentUser ? currentUser.username : null
     }).eq('id', RATES_ROW_ID);
     if (error) throw error;
@@ -805,7 +807,7 @@ async function loadCurrentRates(){
     savedDeposit = data.deposit_rates || {};
     savedOption  = data.option_rates  || {};
     renderCurrentRates();
-    setMeta('ratesMeta', (data.updated_at ? fmtDateStr(new Date(data.updated_at)) : nowStr()) + (data.updated_by ? ' oleh '+data.updated_by : ''));
+    setMeta('ratesMeta', (data.deposit_rates_updated_at ? fmtDateStr(new Date(data.deposit_rates_updated_at)) : (data.updated_at ? fmtDateStr(new Date(data.updated_at)) : nowStr())) + (data.updated_by ? ' oleh '+data.updated_by : ''));
     // also seed the holiday tab from the same row
     if (Array.isArray(data.holidays) && data.holidays.length) {
       holidays = data.holidays;
@@ -1088,10 +1090,12 @@ async function saveVol() {
   setMeta('volMeta', 'Menyimpan...');
   const adj = getAdjRules();
   try {
+    const nowIso = new Date().toISOString();
     const { error } = await sbClient.from('strike_calc_rates').update({
       volatility: parsedVols,
       vol_adjustments: {tenorDays:adj.tenorDays,tenorVolAdd:adj.tenorVolAdd,notionalUSD:adj.notionalUSD,notionalVolAdd:adj.notionalVolAdd},
-      updated_at: new Date().toISOString(),
+      volatility_updated_at: nowIso,
+      updated_at: nowIso,
       updated_by: currentUser ? currentUser.username : null
     }).eq('id', RATES_ROW_ID);
     if(error) throw error;
@@ -1099,6 +1103,8 @@ async function saveVol() {
     setMeta('volMetaTop', nowStr());
     document.getElementById('btnSaveVol').style.background = 'linear-gradient(135deg,rgba(52,211,153,.92),rgba(6,95,70,.94))';
     setTimeout(() => { document.getElementById('btnSaveVol').style.background = ''; }, 2000);
+    document.getElementById('volRawInput').value = '';
+    parseVolInput(); // clears the preview table and disables the Save button again
   } catch(e) {
     setMeta('volMeta', '✗ Error: ' + e.message);
   }
@@ -1107,15 +1113,16 @@ async function saveVol() {
 async function loadVolData() {
   if(sbClient) {
     try {
-      const { data } = await sbClient.from('strike_calc_rates').select('volatility,vol_adjustments,updated_at,updated_by').eq('id', RATES_ROW_ID).single();
+      const { data } = await sbClient.from('strike_calc_rates').select('volatility,vol_adjustments,volatility_updated_at,updated_at,updated_by').eq('id', RATES_ROW_ID).single();
       if(data && data.volatility && Object.keys(data.volatility).length > 0) {
         parsedVols = data.volatility;
         // Populate textarea
         const lines = Object.entries(parsedVols).map(([k,v]) => k + ' = ' + v.toFixed(2)).join('\n');
         document.getElementById('volRawInput').value = lines;
         parseVolInput();
-        if(data.updated_at) {
-          const d = new Date(data.updated_at);
+        const volTs = data.volatility_updated_at || data.updated_at;
+        if(volTs) {
+          const d = new Date(volTs);
           setMeta('volMeta', 'Last saved: ' + d.toLocaleDateString('id-ID') + ' ' + d.toLocaleTimeString('id-ID') + (data.updated_by?' by '+data.updated_by:''));
           setMeta('volMetaTop', fmtDateStr(d) + (data.updated_by?' oleh '+data.updated_by:''));
         }
@@ -1191,6 +1198,8 @@ async function saveSpot() {
     setMeta('spotMetaTop', nowStr());
     document.getElementById('btnSaveSpot').style.background = 'linear-gradient(135deg,rgba(52,211,153,.92),rgba(6,95,70,.94))';
     setTimeout(() => { document.getElementById('btnSaveSpot').style.background = ''; }, 2000);
+    document.getElementById('spotRawInput').value = '';
+    parseSpotInput(); // clears the preview table and disables the Save button again
   } catch(e) {
     setMeta('spotMeta', '✗ Error: ' + e.message);
   }

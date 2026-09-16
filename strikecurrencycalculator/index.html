@@ -628,10 +628,11 @@ let HOLIDAYS=new Set(['2026-01-01','2026-01-16','2026-02-16','2026-02-17','2026-
 // manually typed their own value.
 let liveVols = {};
 let volManuallyEdited = false;
-// Timestamp of the last successful Supabase row fetch, shared by the
-// Deposit-rates indicator and the Volatility freshness indicator (both
-// live in the same table row).
-let ratesUpdatedAt = null;
+// Two SEPARATE timestamps — Deposit/Option Rate and Volatility are saved
+// independently in Rates Dashboard, so their "last updated" must be
+// independent too (one can be fresh while the other is stale).
+let depositRatesUpdatedAt = null;
+let volatilityUpdatedAt = null;
 // Vol Adjustment Rules (same source as Rates Dashboard's Volatility tab):
 // two independent rules — Notional >= X USD-equiv, or Tenor >= Y days —
 // each with its own vol add-on. If only one fires, use its add-on. If
@@ -784,13 +785,14 @@ function applyVolAutoFill(){
   }
 }
 
-// Traffic-light freshness for any Supabase-row-derived indicator:
-// green = fetched live AND the row was updated today; orange = fetched
-// live but the row is from a previous day (stale but not broken); red =
-// fetch never succeeded (still on hardcoded fallback).
-function getFreshnessInfo(){
-  if(!ratesUpdatedAt) return {color:'#EF4444'};
-  const updated = new Date(ratesUpdatedAt);
+// Traffic-light freshness for a given Supabase timestamp: green = fetched
+// live AND updated today; orange = fetched live but from a previous day
+// (stale but not broken); red = never successfully fetched (hardcoded
+// fallback). Takes the specific timestamp to judge, since Deposit Rates
+// and Volatility now track their own independent "last updated".
+function getFreshnessInfo(ts){
+  if(!ts) return {color:'#EF4444'};
+  const updated = new Date(ts);
   const now = new Date();
   const sameDay = updated.getFullYear()===now.getFullYear() && updated.getMonth()===now.getMonth() && updated.getDate()===now.getDate();
   return {color: sameDay ? '#22C55E' : '#F59E0B'};
@@ -800,17 +802,17 @@ function dotSpan(color){
   return '<span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:'+color+';margin-right:4px;vertical-align:middle"></span>';
 }
 
-// Updates the Volatility "Last updated" hint using the same row timestamp
-// as the Deposit rates indicator (they share one Supabase row).
+// Updates the Volatility "Last updated" hint using its OWN timestamp —
+// independent of the Deposit Rates indicator now.
 function updateVolFreshness(){
   const el = document.getElementById('volFreshness');
   if(!el) return;
-  if(!ratesUpdatedAt){ el.innerHTML = dotSpan('#EF4444') + 'Last updated: —'; return; }
-  const d = new Date(ratesUpdatedAt);
+  if(!volatilityUpdatedAt){ el.innerHTML = dotSpan('#EF4444') + 'Last updated: —'; return; }
+  const d = new Date(volatilityUpdatedAt);
   const MONTHS_EN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const pad=n=>String(n).padStart(2,'0');
   const ts = pad(d.getDate())+' '+MONTHS_EN[d.getMonth()]+' '+d.getFullYear()+', '+pad(d.getHours())+':'+pad(d.getMinutes());
-  el.innerHTML = dotSpan(getFreshnessInfo().color) + 'Last updated: ' + ts;
+  el.innerHTML = dotSpan(getFreshnessInfo(volatilityUpdatedAt).color) + 'Last updated: ' + ts;
 }
 
 // Auto-advances focus to the next field in the Spot -> Points -> Volatility
@@ -1305,6 +1307,11 @@ function calc(){
       // If only one condition is met, use that rule's add-on. If both are
       // met, use whichever add-on is larger — never both summed.
       const notionalUSDEquiv = toUSDEquiv(depositCCY, N);
+      if(notionalUSDEquiv === null && depositCCY !== 'USD'){
+        const isBaseVsUsd = RANK[depositCCY] < RANK['USD'];
+        const neededPair = isBaseVsUsd ? (depositCCY+'/USD') : ('USD/'+depositCCY);
+        console.warn('[VolAdj] Cannot check notional threshold — live spot rate for', neededPair, 'not found in Supabase spot_rates. (Note: this is the '+depositCCY+'-to-USD pair, not necessarily the pair being priced.) Currently loaded pairs:', Object.keys(liveSpotRates));
+      }
       const notionalEffectiveThreshold = adjRules.notionalUSD * (1 + (adjRules.notionalMarginPct||0)/100);
       const tenorAdjHit = depDays >= adjRules.tenorDays;
       const notionalAdjHit = notionalUSDEquiv !== null && notionalUSDEquiv >= notionalEffectiveThreshold;
@@ -1563,22 +1570,26 @@ applyPair();
       adjRules.tenorVolAdd    = a.tenorVolAdd!=null    ? a.tenorVolAdd    : (a.volAdd!=null?a.volAdd:adjRules.tenorVolAdd);
       adjRules.notionalVolAdd = a.notionalVolAdd!=null ? a.notionalVolAdd : (a.volAdd!=null?a.volAdd:adjRules.notionalVolAdd);
     }
-    ratesUpdatedAt = data.updated_at || null;
+    // Deposit Rates and Volatility now each track their OWN "last updated"
+    // timestamp (falls back to the old shared "updated_at" column for rows
+    // saved before this split, or if the SQL migration hasn't run yet).
+    depositRatesUpdatedAt = data.deposit_rates_updated_at || data.updated_at || null;
+    volatilityUpdatedAt = data.volatility_updated_at || data.updated_at || null;
     applyVolAutoFill();
     updateVolFreshness();
 
     // Show timestamp — English month + 24h colon time, matching the
     // fallback string's format ("16 Sep 2026") instead of Indonesian
-    // locale output ("03 Sep 2026, 02.15"). Green dot if the row was
-    // updated today, orange if it's a fetch that succeeded but the row
-    // is stale (from a previous day).
-    if(data.updated_at){
-      const d=new Date(data.updated_at);
+    // locale output ("03 Sep 2026, 02.15"). Green dot if Deposit Rates
+    // specifically was updated today, orange if it's a fetch that
+    // succeeded but Deposit Rates itself is stale (from a previous day).
+    if(depositRatesUpdatedAt){
+      const d=new Date(depositRatesUpdatedAt);
       const MONTHS_EN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
       const pad=n=>String(n).padStart(2,'0');
       const dateOnly=pad(d.getDate())+' '+MONTHS_EN[d.getMonth()]+' '+d.getFullYear();
       const ts=dateOnly+', '+pad(d.getHours())+':'+pad(d.getMinutes());
-      const dot=dotSpan(getFreshnessInfo().color);
+      const dot=dotSpan(getFreshnessInfo(depositRatesUpdatedAt).color);
       const el=document.getElementById('ratesTimestamp');
       if(el) el.innerHTML=dot+'Deposit Rates ref: '+ts;
       const elHdr=document.getElementById('ratesTimestampHdr');
