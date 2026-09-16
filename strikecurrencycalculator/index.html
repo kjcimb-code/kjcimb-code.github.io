@@ -288,7 +288,7 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
   </div>
   <div class="hdr-bottom">
     <div class="hdr-title">Strike Currency Calculator</div>
-    <div class="hdr-sub">Implied return is indicative &nbsp;·&nbsp; Deposit rates ref: <span id="ratesTimestampHdr">3 Sep 2026</span> &nbsp;·&nbsp; Please use the official calculator for more accurate results.</div>
+    <div class="hdr-sub">Implied return is indicative &nbsp;·&nbsp; Deposit rates ref: <span id="ratesTimestampHdr">16 Sep 2026</span> &nbsp;·&nbsp; Please use the official calculator for more accurate results.</div>
   </div>
 </div>
 
@@ -395,7 +395,7 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
             <button id="btnPlus" onclick="setSign(1)" style="border:none;background:#F8FAFC;color:var(--slate);font-weight:700;font-size:14px;padding:0 14px;cursor:pointer;min-width:44px">+</button>
           </div>
           <div class="field-wrap" style="width:110px">
-            <input type="text" id="iPoints" value="50" inputmode="decimal" enterkeyhint="next" oninput="this.value=this.value.replace(',','.');onPointsChange()" onblur="autoAdvance(event,'iVol')" style="text-align:center;font-family:var(--mono);font-weight:600;font-size:15px" placeholder="50">
+            <input type="text" id="iPoints" value="50" inputmode="decimal" enterkeyhint="next" oninput="this.value=this.value.replace(/[^0-9.,]/g,'').replace(',','.');onPointsChange()" onblur="autoAdvance(event,'iVol')" style="text-align:center;font-family:var(--mono);font-weight:600;font-size:15px" placeholder="50">
             <div class="field-suf" style="font-size:10px">pts</div>
           </div>
           <div class="field-wrap" style="flex:1">
@@ -410,11 +410,12 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
           <input type="text" id="iVol" inputmode="decimal" enterkeyhint="next" placeholder="e.g. 3.5" oninput="onVolInput(this)" onblur="autoAdvance(event,'iTenor')" style="font-size:13px">
           <div class="field-suf">%</div>
         </div>
+        <div class="field-hint" id="volFreshness">Last updated: —</div>
       </div>
       <div class="field">
         <label class="field-label" style="font-size:10px">Deposit Tenor</label>
         <div class="field-wrap">
-          <input type="number" id="iTenor" inputmode="numeric" enterkeyhint="done" placeholder="e.g. 14" min="1" max="365" oninput="calc()" style="font-size:13px">
+          <input type="text" id="iTenor" inputmode="numeric" enterkeyhint="done" placeholder="e.g. 14" oninput="this.value=this.value.replace(/[^0-9]/g,'');calc()" style="font-size:13px">
           <div class="field-suf">days</div>
         </div>
 <div class="tenor-warn" id="tenorWarn">⚠️ Tenor terlalu pendek — Fixing Date harus setidaknya 1 hari setelah Start TD.</div>
@@ -515,6 +516,8 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
         <div class="yield-sub" id="oYieldSub"></div>
         <div class="yield-bar"><div class="yield-bar-fill" id="oYieldBar" style="width:0%"></div></div>
       </div>
+
+      <div id="volAdjNotice" style="display:none;background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:8px 12px;font-size:11.5px;color:#92400E;margin-bottom:14px;line-height:1.5"></div>
 
       <div style="margin-bottom:16px">
         <div class="res-row">
@@ -620,6 +623,39 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
 
 
 let HOLIDAYS=new Set(['2026-01-01','2026-01-16','2026-02-16','2026-02-17','2026-03-18','2026-03-19','2026-03-20','2026-03-21','2026-03-23','2026-03-24','2026-04-03','2026-05-01','2026-05-14','2026-05-15','2026-05-27','2026-05-28','2026-05-31','2026-06-01','2026-06-16','2026-08-17','2026-08-25','2026-12-24']);
+// Volatility from Supabase (same source as Rates Dashboard's Volatility tab),
+// keyed by pair name e.g. "AUD/USD". Auto-fills iVol unless the user has
+// manually typed their own value.
+let liveVols = {};
+let volManuallyEdited = false;
+// Timestamp of the last successful Supabase row fetch, shared by the
+// Deposit-rates indicator and the Volatility freshness indicator (both
+// live in the same table row).
+let ratesUpdatedAt = null;
+// Vol Adjustment Rules (same source as Rates Dashboard's Volatility tab):
+// two independent rules — Notional >= X USD-equiv, or Tenor >= Y days —
+// each with its own vol add-on. If only one fires, use its add-on. If
+// both fire, use whichever add-on is larger (never both summed).
+let adjRules = {tenorDays:30, tenorVolAdd:0.5, notionalUSD:250000, notionalVolAdd:0.5, notionalMarginPct:2};
+
+// Converts a notional in any supported currency to its USD equivalent,
+// using the same PAIR_SPOTS table (live-updated from Supabase where
+// available) that drives the rest of the calculator's cross-rates.
+// Spot rates used ONLY for the notional -> USD-equivalent threshold check
+// (Vol Adjustment Rules). Deliberately kept separate from PAIR_SPOTS (which
+// still has a hardcoded fallback for its cosmetic placeholder-hint use) —
+// a stale hardcoded rate here could wrongly decide whether a deal crosses
+// the 250k USD threshold, so this must come from Supabase or not at all.
+let liveSpotRates = {};
+
+function toUSDEquiv(ccy, amount){
+  if(ccy==='USD') return amount;
+  const isBase = RANK[ccy] < RANK['USD'];
+  const pairName = isBase ? (ccy+'/USD') : ('USD/'+ccy);
+  const rate = liveSpotRates[pairName];
+  if(!rate) return null; // no live rate for this pair -> can't determine, rule simply won't fire
+  return isBase ? amount*rate : amount/rate;
+}
 // Currency (Y) IDR — deposit interest (PUT mode)
 let IDR_DEP=[{d:1,r:5.40},{d:7,r:5.57},{d:14,r:5.58},{d:30,r:6.28},{d:60,r:6.41},{d:90,r:6.55},{d:120,r:6.57},{d:150,r:6.59},{d:180,r:6.60},{d:360,r:6.61}];
 // Currency (Y) USD — deposit interest (CALL mode)
@@ -734,6 +770,49 @@ function swapCCY(){
 
 
 
+// Auto-fills Volatility from the live Supabase data for the currently
+// selected pair, unless the user has already typed their own value —
+// their manual entry always wins once they've touched the field.
+function applyVolAutoFill(){
+  if(volManuallyEdited) return;
+  const pi = getPairInfo(depositCCY, alternateCCY);
+  const v = liveVols[pi.name];
+  const el = document.getElementById('iVol');
+  if(el && v !== undefined && v !== null && !isNaN(v)){
+    el.value = Number(v).toFixed(2);
+    calc();
+  }
+}
+
+// Traffic-light freshness for any Supabase-row-derived indicator:
+// green = fetched live AND the row was updated today; orange = fetched
+// live but the row is from a previous day (stale but not broken); red =
+// fetch never succeeded (still on hardcoded fallback).
+function getFreshnessInfo(){
+  if(!ratesUpdatedAt) return {color:'#EF4444'};
+  const updated = new Date(ratesUpdatedAt);
+  const now = new Date();
+  const sameDay = updated.getFullYear()===now.getFullYear() && updated.getMonth()===now.getMonth() && updated.getDate()===now.getDate();
+  return {color: sameDay ? '#22C55E' : '#F59E0B'};
+}
+
+function dotSpan(color){
+  return '<span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:'+color+';margin-right:4px;vertical-align:middle"></span>';
+}
+
+// Updates the Volatility "Last updated" hint using the same row timestamp
+// as the Deposit rates indicator (they share one Supabase row).
+function updateVolFreshness(){
+  const el = document.getElementById('volFreshness');
+  if(!el) return;
+  if(!ratesUpdatedAt){ el.innerHTML = dotSpan('#EF4444') + 'Last updated: —'; return; }
+  const d = new Date(ratesUpdatedAt);
+  const MONTHS_EN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const pad=n=>String(n).padStart(2,'0');
+  const ts = pad(d.getDate())+' '+MONTHS_EN[d.getMonth()]+' '+d.getFullYear()+', '+pad(d.getHours())+':'+pad(d.getMinutes());
+  el.innerHTML = dotSpan(getFreshnessInfo().color) + 'Last updated: ' + ts;
+}
+
 // Auto-advances focus to the next field in the Spot -> Points -> Volatility
 // -> Tenor entry sequence, but only when the blur wasn't caused by the user
 // deliberately clicking (or tabbing to) a different specific field further
@@ -752,11 +831,12 @@ function autoAdvance(e, nextId){
 // Also normalizes a typed comma to a period (some mobile keyboards only
 // offer comma for decimals).
 function onVolInput(el){
-  let v = el.value.replace(',', '.');
+  let v = el.value.replace(/[^0-9.,]/g, '').replace(',', '.');
   if(!v.includes('.') && /^\d{2}$/.test(v)){
     v = v[0] + '.' + v.slice(1);
   }
   el.value = v;
+  volManuallyEdited = true;
   calc();
 }
 
@@ -882,6 +962,9 @@ function applyPair(){
   if(el('iStrike')){el('iStrike').value='';el('iStrike').placeholder='Strike Price';}
   if(el('iPoints')){el('iPoints').value=50;}
   if(el('iVol')){el('iVol').placeholder=VOL_HINTS_PAIR[pi.name]||'e.g. 3.5';el('iVol').value='';}
+  // New pair -> old manual volatility no longer applies; try auto-fill again.
+  volManuallyEdited = false;
+  applyVolAutoFill();
   if(el('convAltLabel')){el('convAltLabel').textContent=alternateCCY;}
   // Set nominal default based on deposit CCY
   const notEl=el('iNotional');
@@ -1212,7 +1295,41 @@ function calc(){
     document.getElementById('revSec').style.display=ok?'block':'none';
     if(ok){
       
-      const rd=rdRate/100,rf=rfRate/100,v=vol/100,T_opt=optDays/365,T_dep=depDays/365;
+      // Vol Adjustment Rules: tenor >= adjRules.tenorDays OR notional (USD
+      // equivalent, converted via live spot rates for non-USD deposits) >=
+      // adjRules.notionalUSD each add their own vol bump. The notional side
+      // has a safety margin on top of the raw threshold (e.g. 2% -> a
+      // 250,000 threshold effectively needs 255,000 before it fires), so a
+      // spot-rate-driven USD-equivalent that lands right on the line
+      // doesn't flip the adjustment on/off from small rate fluctuations.
+      // If only one condition is met, use that rule's add-on. If both are
+      // met, use whichever add-on is larger — never both summed.
+      const notionalUSDEquiv = toUSDEquiv(depositCCY, N);
+      const notionalEffectiveThreshold = adjRules.notionalUSD * (1 + (adjRules.notionalMarginPct||0)/100);
+      const tenorAdjHit = depDays >= adjRules.tenorDays;
+      const notionalAdjHit = notionalUSDEquiv !== null && notionalUSDEquiv >= notionalEffectiveThreshold;
+      let volDelta = 0;
+      if(tenorAdjHit && notionalAdjHit) volDelta = Math.max(adjRules.tenorVolAdd, adjRules.notionalVolAdd);
+      else if(tenorAdjHit) volDelta = adjRules.tenorVolAdd;
+      else if(notionalAdjHit) volDelta = adjRules.notionalVolAdd;
+      const adjVol = vol + volDelta;
+
+      const volNoticeEl = document.getElementById('volAdjNotice');
+      if(volNoticeEl){
+        if(volDelta > 0){
+          const reasons = [];
+          if(tenorAdjHit) reasons.push('tenor '+depDays+'d ≥ '+adjRules.tenorDays+'d (+'+adjRules.tenorVolAdd+'%)');
+          if(notionalAdjHit) reasons.push('notional ≥ '+notionalEffectiveThreshold.toLocaleString('en-US')+' USD eq. (+'+adjRules.notionalVolAdd+'%, threshold '+adjRules.notionalUSD.toLocaleString('en-US')+' +'+adjRules.notionalMarginPct+'% margin)');
+          let msg = '⚡ Vol disesuaikan +'+volDelta+'% (dari '+vol.toFixed(2)+'% jadi '+adjVol.toFixed(2)+'%) — '+reasons.join(' & ');
+          if(tenorAdjHit && notionalAdjHit) msg += ' · dipakai yang terbesar, tidak dijumlah';
+          volNoticeEl.innerHTML = msg;
+          volNoticeEl.style.display = 'block';
+        } else {
+          volNoticeEl.style.display = 'none';
+        }
+      }
+
+      const rd=rdRate/100,rf=rfRate/100,v=adjVol/100,T_opt=optDays/365,T_dep=depDays/365;
       const optPrice=isPUT?gkPUT(S,K,rd,rf,v,T_opt):gkCALL(S,K,rd,rf,v,T_opt);
       const putPrice=optPrice; // alias for display
       // PUT: everything in IDR. CALL: everything in USD.
@@ -1356,16 +1473,19 @@ function updateSplit(){
 }
 rebuildAltDropdown();
 applyPair();
-// Fallback rates indicator — orange dot, date only (no time). Keeps both
-// the header subtitle and footer indicator in sync from one source string.
-// Live data (below) overrides this with a green dot + date + time.
+// Fallback rates indicator — red dot, date only (no time). This is the
+// "never successfully fetched live data" state. Keeps both the header
+// subtitle and footer indicator in sync from one source string. The live
+// fetch below overrides this with green (fresh, same day) or orange
+// (fetched OK but the row is from a previous day).
 (function(){
-  const fallbackText='3 Sep 2026';
-  const orangeDot='<span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#F59E0B;margin-right:4px;vertical-align:middle"></span>';
+  const fallbackText='16 Sep 2026';
+  const redDot=dotSpan('#EF4444');
   const el=document.getElementById('ratesTimestamp');
-  if(el) el.innerHTML=orangeDot+'Deposit Rates ref: '+fallbackText;
+  if(el) el.innerHTML=redDot+'Deposit Rates ref: '+fallbackText;
   const elHdr=document.getElementById('ratesTimestampHdr');
-  if(elHdr) elHdr.innerHTML=orangeDot+fallbackText;
+  if(elHdr) elHdr.innerHTML=redDot+fallbackText;
+  updateVolFreshness();
 })();
 
 // ─────────────────────────────────────────────────────────────────
@@ -1416,17 +1536,49 @@ applyPair();
       HOLIDAYS=new Set(data.holidays.map(h=>h.date));
     }
 
+    // Volatility — same source as Rates Dashboard's Volatility tab, keyed
+    // by pair name (e.g. "AUD/USD"). Auto-fills iVol unless overridden.
+    if(data.volatility && typeof data.volatility==='object'){
+      liveVols = data.volatility;
+    }
+    // Spot rates — kept in TWO places on purpose:
+    // 1) liveSpotRates: pure live data, used only for the notional -> USD
+    //    threshold check, so that check never silently uses a stale
+    //    hardcoded number.
+    // 2) PAIR_SPOTS: merged with live data too, but keeps its hardcoded
+    //    fallback for the cosmetic Spot Rate field placeholder hint,
+    //    which isn't used in any real calculation.
+    if(data.spot_rates && typeof data.spot_rates==='object'){
+      liveSpotRates = data.spot_rates;
+      Object.assign(PAIR_SPOTS, data.spot_rates);
+    }
+    // Vol Adjustment Rules — tenor/notional thresholds each with their own
+    // add-on. Falls back to the old shared "volAdd" field for rows saved
+    // before tenor/notional were split into separate rules.
+    if(data.vol_adjustments){
+      const a=data.vol_adjustments;
+      if(a.tenorDays)      adjRules.tenorDays=a.tenorDays;
+      if(a.notionalUSD)    adjRules.notionalUSD=a.notionalUSD;
+      if(a.notionalMarginPct!=null) adjRules.notionalMarginPct=a.notionalMarginPct;
+      adjRules.tenorVolAdd    = a.tenorVolAdd!=null    ? a.tenorVolAdd    : (a.volAdd!=null?a.volAdd:adjRules.tenorVolAdd);
+      adjRules.notionalVolAdd = a.notionalVolAdd!=null ? a.notionalVolAdd : (a.volAdd!=null?a.volAdd:adjRules.notionalVolAdd);
+    }
+    ratesUpdatedAt = data.updated_at || null;
+    applyVolAutoFill();
+    updateVolFreshness();
+
     // Show timestamp — English month + 24h colon time, matching the
-    // fallback string's format ("3 Sep 2026") instead of Indonesian
-    // locale output ("03 Sep 2026, 02.15"). Header and footer both get
-    // the green dot + date + time now that we're on live data.
+    // fallback string's format ("16 Sep 2026") instead of Indonesian
+    // locale output ("03 Sep 2026, 02.15"). Green dot if the row was
+    // updated today, orange if it's a fetch that succeeded but the row
+    // is stale (from a previous day).
     if(data.updated_at){
       const d=new Date(data.updated_at);
       const MONTHS_EN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
       const pad=n=>String(n).padStart(2,'0');
       const dateOnly=pad(d.getDate())+' '+MONTHS_EN[d.getMonth()]+' '+d.getFullYear();
       const ts=dateOnly+', '+pad(d.getHours())+':'+pad(d.getMinutes());
-      const dot='<span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#22C55E;margin-right:4px;vertical-align:middle"></span>';
+      const dot=dotSpan(getFreshnessInfo().color);
       const el=document.getElementById('ratesTimestamp');
       if(el) el.innerHTML=dot+'Deposit Rates ref: '+ts;
       const elHdr=document.getElementById('ratesTimestampHdr');
