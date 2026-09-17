@@ -120,6 +120,7 @@ tr.new-ccy td:first-child{color:var(--amber)}
   mask-image:linear-gradient(to right,#000 calc(100% - 24px),transparent 100%)}
 .table-scroll.at-end{-webkit-mask-image:none;mask-image:none}
 .table-scroll table{min-width:620px}
+.table-scroll table.table-narrow{min-width:0}
 .cell-input{width:64px;text-align:right;border:1px solid var(--line);border-radius:7px;padding:4px 6px;
   background:var(--ink-3);color:var(--text-0);font-family:var(--mono);font-size:12px}
 .cell-input:focus{outline:none;border-color:var(--maroon-1)}
@@ -450,12 +451,23 @@ Isra Mihraj Nabi Muhammad
   <div class="panel" id="panel-vol">
 
     <div class="card">
+      <div class="card-title"><span class="title-badge">📊</span>Volatility saat ini</div>
+      <div class="card-sub">Volatility yang sedang aktif dipakai fitur optimizer.</div>
+      <div class="updated-box" id="volMetaTop">🕒 Last updated: —</div>
+      <div class="table-scroll">
+        <table id="currentTableVol" class="table-narrow">
+          <thead><tr><th>Pair</th><th>Vol p.a.</th></tr></thead>
+          <tbody id="currentRowsVol"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
       <div class="card-title"><span class="title-badge">📊</span>Base Volatility — Optimizer</div>
       <div class="card-sub">
         Paste data vol. Format bebas: <code style="background:var(--ink-3);padding:1px 5px;border-radius:4px;color:var(--text-0)">AUDUSD = 4.50</code> atau <code style="background:var(--ink-3);padding:1px 5px;border-radius:4px;color:var(--text-0)">AUDUSD 4.50</code><br>
         Baris dimulai <code style="background:var(--ink-3);padding:1px 5px;border-radius:4px;color:var(--text-0)">Note:</code> diabaikan. Hanya untuk optimizer.
       </div>
-      <div class="updated-box" id="volMetaTop">🕒 Last updated: —</div>
       <textarea id="volRawInput" rows="12" placeholder="AUDUSD = 4.50&#10;NZDUSD = 6.00&#10;EURUSD = 3.75&#10;GBPUSD = 3.25&#10;USDSGD = 2.25&#10;USDJPY = 4.75&#10;USDIDR = 3.00&#10;JPYIDR = 3.50&#10;AUDIDR = 3.50&#10;SGDIDR = 2.00"
         oninput="parseVolInput()"></textarea>
       <div id="volPreview" style="margin-top:12px"></div>
@@ -533,12 +545,23 @@ Isra Mihraj Nabi Muhammad
   <div class="panel" id="panel-spot">
 
     <div class="card">
+      <div class="card-title"><span class="title-badge">💹</span>Spot Rate saat ini</div>
+      <div class="card-sub">Spot rate yang sedang aktif dipakai sebagai referensi.</div>
+      <div class="updated-box" id="spotMetaTop">🕒 Last updated: —</div>
+      <div class="table-scroll">
+        <table id="currentTableSpot" class="table-narrow">
+          <thead><tr><th>Pair</th><th>Spot</th></tr></thead>
+          <tbody id="currentRowsSpot"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
       <div class="card-title"><span class="title-badge">💹</span>Spot Rate</div>
       <div class="card-sub">
         Paste data spot. Format bebas: <code style="background:var(--ink-3);padding:1px 5px;border-radius:4px;color:var(--text-0)">AUDUSD = 0.7166</code> atau <code style="background:var(--ink-3);padding:1px 5px;border-radius:4px;color:var(--text-0)">AUDUSD 0.7166</code><br>
         Baris dimulai <code style="background:var(--ink-3);padding:1px 5px;border-radius:4px;color:var(--text-0)">Note:</code> diabaikan. Dipakai sebagai referensi spot untuk Yield Optimizer &amp; kalkulator lain.
       </div>
-      <div class="updated-box" id="spotMetaTop">🕒 Last updated: —</div>
       <textarea id="spotRawInput" rows="12" placeholder="AUDUSD = 0.7166&#10;NZDUSD = 0.5918&#10;EURUSD = 1.1590&#10;GBPUSD = 1.3544&#10;USDSGD = 1.2729&#10;USDJPY = 159.81&#10;USDIDR = 17749&#10;JPYIDR = 111.06&#10;AUDIDR = 12719&#10;SGDIDR = 13943"
         oninput="parseSpotInput()"></textarea>
       <div id="spotPreview" style="margin-top:12px"></div>
@@ -627,6 +650,30 @@ let parsedDeposit = null, parsedOption = null;
 function clearPaste(){
   document.getElementById('pasteBox').value = '';
   dismissPreview();
+}
+
+// Persistent "currently active" tables for Volatility and Spot Rate —
+// separate from the paste scratch box, which always clears after use.
+let savedVols = {};
+let savedSpots = {};
+
+function renderCurrentVol(){
+  const tbody = document.getElementById('currentRowsVol');
+  if(!tbody) return;
+  const codes = Object.keys(savedVols).sort();
+  tbody.innerHTML = codes.map(pair =>
+    `<tr><td>${pair}</td><td>${Number(savedVols[pair]).toFixed(2)}%</td></tr>`
+  ).join('') || '<tr><td colspan="2" style="color:var(--text-2);font-family:var(--sans)">Belum ada data.</td></tr>';
+}
+
+function renderCurrentSpot(){
+  const tbody = document.getElementById('currentRowsSpot');
+  if(!tbody) return;
+  const codes = Object.keys(savedSpots).sort();
+  tbody.innerHTML = codes.map(pair => {
+    const dec = pair.includes('IDR') ? 0 : (pair.includes('JPY') ? 2 : 4);
+    return `<tr><td>${pair}</td><td>${Number(savedSpots[pair]).toFixed(dec)}</td></tr>`;
+  }).join('') || '<tr><td colspan="2" style="color:var(--text-2);font-family:var(--sans)">Belum ada data.</td></tr>';
 }
 
 function clearVolPaste(){
@@ -1111,6 +1158,8 @@ async function saveVol() {
       updated_by: currentUser ? currentUser.username : null
     }).eq('id', RATES_ROW_ID);
     if(error) throw error;
+    savedVols = {...parsedVols};
+    renderCurrentVol();
     setMeta('volMeta', '✓ Tersimpan — ' + new Date().toLocaleTimeString('id-ID'));
     setMeta('volMetaTop', nowStr());
     document.getElementById('btnSaveVol').style.background = 'linear-gradient(135deg,rgba(52,211,153,.92),rgba(6,95,70,.94))';
@@ -1127,6 +1176,8 @@ async function loadVolData() {
     try {
       const { data } = await sbClient.from('strike_calc_rates').select('volatility,vol_adjustments,volatility_updated_at,updated_at,updated_by').eq('id', RATES_ROW_ID).single();
       if(data && data.volatility && Object.keys(data.volatility).length > 0) {
+        savedVols = data.volatility;
+        renderCurrentVol();
         // Note: deliberately NOT repopulating volRawInput/preview here — the
         // paste box always starts empty, ready for new data, rather than
         // showing what's already saved (which would look like a stale
@@ -1205,6 +1256,8 @@ async function saveSpot() {
       updated_by: currentUser ? currentUser.username : null
     }).eq('id', RATES_ROW_ID);
     if(error) throw error;
+    savedSpots = {...parsedSpots};
+    renderCurrentSpot();
     setMeta('spotMeta', '✓ Tersimpan — ' + new Date().toLocaleTimeString('id-ID'));
     setMeta('spotMetaTop', nowStr());
     document.getElementById('btnSaveSpot').style.background = 'linear-gradient(135deg,rgba(52,211,153,.92),rgba(6,95,70,.94))';
@@ -1221,6 +1274,8 @@ async function loadSpotData() {
     try {
       const { data } = await sbClient.from('strike_calc_rates').select('spot_rates,updated_at,updated_by').eq('id', RATES_ROW_ID).single();
       if(data && data.spot_rates && Object.keys(data.spot_rates).length > 0) {
+        savedSpots = data.spot_rates;
+        renderCurrentSpot();
         // Deliberately NOT repopulating spotRawInput/preview here — see the
         // matching note in loadVolData().
         if(data.updated_at) {
