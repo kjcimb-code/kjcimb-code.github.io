@@ -919,6 +919,17 @@ function onVolInput(el){
     v = v[0] + '.' + v.slice(1);
   }
   el.value = v;
+  // Clearing the field is treated as "give me the live value back" — reset
+  // the override and let Supabase's auto-fill take over again, rather than
+  // leaving it permanently overridden-but-empty.
+  if(v === ''){
+    volManuallyEdited = false;
+    volBaseValue = null;
+    applyVolAutoFill();
+    updateVolFreshness();
+    calc();
+    return;
+  }
   volManuallyEdited = true;
   // Track what's being typed as the new base live (for correct results
   // while typing), but don't re-render the field itself yet — that would
@@ -1602,7 +1613,7 @@ applyPair();
     const sb=_sb.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
     console.log('[Rates] Fetching from Supabase...');
     const {data,error}=await sb.from('strike_calc_rates').select('*').eq('id',1).single();
-    if(error||!data){ console.warn('[Rates] Fetch error:',JSON.stringify(error)); console.info('[Rates] Using fallback hardcoded data'); return; }
+    if(error||!data){ console.warn('[Rates] Fetch error:',JSON.stringify(error)); console.log('[Rates] Using fallback hardcoded data'); return; }
     console.log('[Rates] Data received, deposit_rates keys:',Object.keys(data.deposit_rates||{}));
     console.log('[Rates] updated_at from Supabase:', data.updated_at, '· updated_by:', data.updated_by||'(unknown)');
     console.log('[Rates] Sample check — IDR 7d deposit rate:', (data.deposit_rates&&data.deposit_rates.IDR&&data.deposit_rates.IDR[1]), '%  ·  IDR 7d option rate:', (data.option_rates&&data.option_rates.IDR&&data.option_rates.IDR[1]), '%');
