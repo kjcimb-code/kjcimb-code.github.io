@@ -522,6 +522,7 @@ Isra Mihraj Nabi Muhammad
     </div>
 
     <div class="card" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <button class="btn btn-ghost" onclick="clearVolPaste()">🧹 Bersihkan</button>
       <button id="btnSaveVol" class="btn btn-primary" onclick="saveVol()" disabled>💾 Save Volatility</button>
       <span id="volMeta" style="font-family:var(--mono);font-size:11px;color:var(--text-2)"></span>
     </div>
@@ -544,6 +545,7 @@ Isra Mihraj Nabi Muhammad
     </div>
 
     <div class="card" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <button class="btn btn-ghost" onclick="clearSpotPaste()">🧹 Bersihkan</button>
       <button id="btnSaveSpot" class="btn btn-primary" onclick="saveSpot()" disabled>💾 Save Spot Rate</button>
       <span id="spotMeta" style="font-family:var(--mono);font-size:11px;color:var(--text-2)"></span>
     </div>
@@ -625,6 +627,16 @@ let parsedDeposit = null, parsedOption = null;
 function clearPaste(){
   document.getElementById('pasteBox').value = '';
   dismissPreview();
+}
+
+function clearVolPaste(){
+  document.getElementById('volRawInput').value = '';
+  parseVolInput(); // clears the preview table and disables the Save button
+}
+
+function clearSpotPaste(){
+  document.getElementById('spotRawInput').value = '';
+  parseSpotInput(); // clears the preview table and disables the Save button
 }
 
 const TENORS = ['1','7','14','30','60','90','120','150','180','360'];
@@ -1115,11 +1127,10 @@ async function loadVolData() {
     try {
       const { data } = await sbClient.from('strike_calc_rates').select('volatility,vol_adjustments,volatility_updated_at,updated_at,updated_by').eq('id', RATES_ROW_ID).single();
       if(data && data.volatility && Object.keys(data.volatility).length > 0) {
-        parsedVols = data.volatility;
-        // Populate textarea
-        const lines = Object.entries(parsedVols).map(([k,v]) => k + ' = ' + v.toFixed(2)).join('\n');
-        document.getElementById('volRawInput').value = lines;
-        parseVolInput();
+        // Note: deliberately NOT repopulating volRawInput/preview here — the
+        // paste box always starts empty, ready for new data, rather than
+        // showing what's already saved (which would look like a stale
+        // "leftover paste" the user never asked to have there).
         const volTs = data.volatility_updated_at || data.updated_at;
         if(volTs) {
           const d = new Date(volTs);
@@ -1210,10 +1221,8 @@ async function loadSpotData() {
     try {
       const { data } = await sbClient.from('strike_calc_rates').select('spot_rates,updated_at,updated_by').eq('id', RATES_ROW_ID).single();
       if(data && data.spot_rates && Object.keys(data.spot_rates).length > 0) {
-        parsedSpots = data.spot_rates;
-        const lines = Object.entries(parsedSpots).map(([k,v]) => k + ' = ' + v).join('\n');
-        document.getElementById('spotRawInput').value = lines;
-        parseSpotInput();
+        // Deliberately NOT repopulating spotRawInput/preview here — see the
+        // matching note in loadVolData().
         if(data.updated_at) {
           const d = new Date(data.updated_at);
           setMeta('spotMeta', 'Last saved: ' + d.toLocaleDateString('id-ID') + ' ' + d.toLocaleTimeString('id-ID') + (data.updated_by?' by '+data.updated_by:''));
