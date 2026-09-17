@@ -650,6 +650,60 @@ let adjRules = {tenorDays:30, tenorVolAdd:0.5, notionalUSD:250000, notionalVolAd
 // the 250k USD threshold, so this must come from Supabase or not at all.
 let liveSpotRates = {};
 
+// Pure computation (no DOM) for the Vol Adjustment Rules — shared by the
+// always-on Volatility hint (reactive to Notional/Tenor alone) and the
+// full-results notice (which needs Spot/Strike/Vol filled in too).
+function computeVolAdjustment(depCcy, notional, depDaysVal){
+  const notionalEffectiveThreshold = adjRules.notionalUSD * (1 + (adjRules.notionalMarginPct||0)/100);
+  let notionalUSDEquiv = null, notionalAdjHit = false;
+  if(notional > 0){
+    notionalUSDEquiv = toUSDEquiv(depCcy, notional);
+    if(notionalUSDEquiv === null && depCcy !== 'USD'){
+      const isBaseVsUsd = RANK[depCcy] < RANK['USD'];
+      const neededPair = isBaseVsUsd ? (depCcy+'/USD') : ('USD/'+depCcy);
+      console.warn('[VolAdj] Cannot check notional threshold — live spot rate for', neededPair, 'not found in Supabase spot_rates. (Note: this is the '+depCcy+'-to-USD pair, not necessarily the pair being priced.) Currently loaded pairs:', Object.keys(liveSpotRates));
+    }
+    notionalAdjHit = notionalUSDEquiv !== null && notionalUSDEquiv >= notionalEffectiveThreshold;
+  }
+  const tenorAdjHit = depDaysVal !== null && depDaysVal >= adjRules.tenorDays;
+  let volDelta = 0;
+  if(tenorAdjHit && notionalAdjHit) volDelta = Math.max(adjRules.tenorVolAdd, adjRules.notionalVolAdd);
+  else if(tenorAdjHit) volDelta = adjRules.tenorVolAdd;
+  else if(notionalAdjHit) volDelta = adjRules.notionalVolAdd;
+  return {volDelta, tenorAdjHit, notionalAdjHit, notionalEffectiveThreshold, notionalUSDEquiv};
+}
+
+// Updates the short "+X.X% because ..." hint under the Volatility field.
+// Reacts to Notional and/or Tenor alone — does NOT require Spot/Strike/Vol
+// to be filled in, since the underlying rule only needs those two inputs.
+function updateVolAdjustmentHint(){
+  const volAdjHintEl = document.getElementById('volAdjHint');
+  if(!volAdjHintEl) return;
+  const N = getNum('iNotional');
+  const tenorRaw = parseInt(document.getElementById('iTenor').value) || 0;
+  let depDaysVal = null;
+  if(tenorRaw > 0){
+    let today=new Date();today.setHours(0,0,0,0);while(!isBD(today))today.setDate(today.getDate()+1);
+    const valDate=addBD(today,2);
+    const matDate=addCalSnap(valDate,tenorRaw);
+    depDaysVal = daysBetween(valDate,matDate);
+  }
+  const {volDelta, tenorAdjHit, notionalAdjHit, notionalEffectiveThreshold} = computeVolAdjustment(depositCCY, N, depDaysVal);
+  if(volDelta > 0){
+    const vol = parseFloat(document.getElementById('iVol').value)||0;
+    const adjVol = vol + volDelta;
+    const notionalK = Math.round(notionalEffectiveThreshold/1000)+'k';
+    const hintReasons = [];
+    if(notionalAdjHit) hintReasons.push('notional ≥ '+notionalK+' USD equivalent');
+    if(tenorAdjHit) hintReasons.push('tenor ≥ '+adjRules.tenorDays+' days');
+    const beforeAfter = vol>0 ? ' ('+vol.toFixed(2)+'% → '+adjVol.toFixed(2)+'%)' : '';
+    volAdjHintEl.textContent = '+'+volDelta+'%'+beforeAfter+' because '+hintReasons.join(' & ');
+    volAdjHintEl.style.display = 'block';
+  } else {
+    volAdjHintEl.style.display = 'none';
+  }
+}
+
 function toUSDEquiv(ccy, amount){
   if(ccy==='USD') return amount;
   const isBase = RANK[ccy] < RANK['USD'];
@@ -808,6 +862,10 @@ function dotSpan(color){
 function updateVolFreshness(){
   const el = document.getElementById('volFreshness');
   if(!el) return;
+  // Once the user types their own value, the live-data freshness dot is
+  // no longer relevant to what's actually in the field — replace it with
+  // a plain "overridden" note instead of a possibly-misleading colored dot.
+  if(volManuallyEdited){ el.innerHTML = '✏️ Overridden by user'; return; }
   if(!volatilityUpdatedAt){ el.innerHTML = dotSpan('#EF4444') + 'Last updated: —'; return; }
   const d = new Date(volatilityUpdatedAt);
   const MONTHS_EN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -840,6 +898,7 @@ function onVolInput(el){
   }
   el.value = v;
   volManuallyEdited = true;
+  updateVolFreshness();
   calc();
 }
 
@@ -968,6 +1027,7 @@ function applyPair(){
   // New pair -> old manual volatility no longer applies; try auto-fill again.
   volManuallyEdited = false;
   applyVolAutoFill();
+  updateVolFreshness();
   if(el('convAltLabel')){el('convAltLabel').textContent=alternateCCY;}
   // Set nominal default based on deposit CCY
   const notEl=el('iNotional');
@@ -1204,6 +1264,9 @@ function calc(){
   const K=getNum('iStrike');
   const vol=parseFloat(document.getElementById('iVol').value)||0;
   const tenor=parseInt(document.getElementById('iTenor').value)||0;
+  // Reacts to Notional and/or Tenor alone, independent of whether the rest
+  // of the form (Spot/Strike/Vol) is filled in yet.
+  updateVolAdjustmentHint();
   document.getElementById('oConverted').textContent=(N>0&&K>0)?(isPUT?fN(N/K,2):fN(N*K,2)):'—';
   let today=new Date();today.setHours(0,0,0,0);while(!isBD(today))today.setDate(today.getDate()+1);
   document.getElementById('dTx').textContent=fmtD(today);
@@ -1296,9 +1359,6 @@ function calc(){
     document.getElementById('resMain').style.display=ok?'block':'none';
     const _pdf=document.getElementById('pdfBtnWrap');if(_pdf)_pdf.style.display=ok?'block':'none';
     document.getElementById('revSec').style.display=ok?'block':'none';
-    if(!ok){
-      const _vah=document.getElementById('volAdjHint'); if(_vah) _vah.style.display='none';
-    }
     if(ok){
       
       // Vol Adjustment Rules: tenor >= adjRules.tenorDays OR notional (USD
@@ -1310,23 +1370,10 @@ function calc(){
       // doesn't flip the adjustment on/off from small rate fluctuations.
       // If only one condition is met, use that rule's add-on. If both are
       // met, use whichever add-on is larger — never both summed.
-      const notionalUSDEquiv = toUSDEquiv(depositCCY, N);
-      if(notionalUSDEquiv === null && depositCCY !== 'USD'){
-        const isBaseVsUsd = RANK[depositCCY] < RANK['USD'];
-        const neededPair = isBaseVsUsd ? (depositCCY+'/USD') : ('USD/'+depositCCY);
-        console.warn('[VolAdj] Cannot check notional threshold — live spot rate for', neededPair, 'not found in Supabase spot_rates. (Note: this is the '+depositCCY+'-to-USD pair, not necessarily the pair being priced.) Currently loaded pairs:', Object.keys(liveSpotRates));
-      }
-      const notionalEffectiveThreshold = adjRules.notionalUSD * (1 + (adjRules.notionalMarginPct||0)/100);
-      const tenorAdjHit = depDays >= adjRules.tenorDays;
-      const notionalAdjHit = notionalUSDEquiv !== null && notionalUSDEquiv >= notionalEffectiveThreshold;
-      let volDelta = 0;
-      if(tenorAdjHit && notionalAdjHit) volDelta = Math.max(adjRules.tenorVolAdd, adjRules.notionalVolAdd);
-      else if(tenorAdjHit) volDelta = adjRules.tenorVolAdd;
-      else if(notionalAdjHit) volDelta = adjRules.notionalVolAdd;
+      const {volDelta, tenorAdjHit, notionalAdjHit, notionalEffectiveThreshold} = computeVolAdjustment(depositCCY, N, depDays);
       const adjVol = vol + volDelta;
 
       const volNoticeEl = document.getElementById('volAdjNotice');
-      const volAdjHintEl = document.getElementById('volAdjHint');
       if(volNoticeEl){
         if(volDelta > 0){
           const reasons = [];
@@ -1336,17 +1383,8 @@ function calc(){
           if(tenorAdjHit && notionalAdjHit) msg += ' · dipakai yang terbesar, tidak dijumlah';
           volNoticeEl.innerHTML = msg;
           volNoticeEl.style.display = 'block';
-          if(volAdjHintEl){
-            const notionalK = Math.round(notionalEffectiveThreshold/1000)+'k';
-            const hintReasons = [];
-            if(notionalAdjHit) hintReasons.push('notional ≥ '+notionalK+' USD equivalent');
-            if(tenorAdjHit) hintReasons.push('tenor ≥ '+adjRules.tenorDays+' days');
-            volAdjHintEl.textContent = '+'+volDelta+'% because '+hintReasons.join(' & ');
-            volAdjHintEl.style.display = 'block';
-          }
         } else {
           volNoticeEl.style.display = 'none';
-          if(volAdjHintEl) volAdjHintEl.style.display = 'none';
         }
       }
 
