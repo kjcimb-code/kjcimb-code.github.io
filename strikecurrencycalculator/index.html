@@ -365,7 +365,7 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
       <label class="field-label" id="lNotional">Nominal (Base Currency)</label>
       <div class="field-wrap">
         <div class="field-pre" id="lNotionalPre">IDR</div>
-        <input type="text" id="iNotional" value="1,000,000,000" inputmode="decimal" oninput="calc()" onblur="fmtNotional(this,true)" style="letter-spacing:.02em">
+        <input type="text" id="iNotional" value="1,000,000,000" inputmode="decimal" oninput="calc();renderVolField()" onblur="fmtNotional(this,true)" style="letter-spacing:.02em">
       </div>
     </div>
     <div class="field">
@@ -407,7 +407,7 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
       <div class="field">
         <label class="field-label" style="font-size:10px">Volatility</label>
         <div class="field-wrap">
-          <input type="text" id="iVol" inputmode="decimal" enterkeyhint="next" placeholder="e.g. 3.5" oninput="onVolInput(this)" onblur="autoAdvance(event,'iTenor')" style="font-size:13px">
+          <input type="text" id="iVol" inputmode="decimal" enterkeyhint="next" placeholder="e.g. 3.5" oninput="onVolInput(this)" onblur="onVolBlur(event)" style="font-size:13px">
           <div class="field-suf">%</div>
         </div>
         <div class="field-hint" id="volFreshness">Last updated: —</div>
@@ -416,7 +416,7 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
       <div class="field">
         <label class="field-label" style="font-size:10px">Deposit Tenor</label>
         <div class="field-wrap">
-          <input type="text" id="iTenor" inputmode="numeric" enterkeyhint="done" placeholder="e.g. 14" oninput="this.value=this.value.replace(/[^0-9]/g,'');calc()" style="font-size:13px">
+          <input type="text" id="iTenor" inputmode="numeric" enterkeyhint="done" placeholder="e.g. 14" oninput="this.value=this.value.replace(/[^0-9]/g,'');calc();renderVolField()" style="font-size:13px">
           <div class="field-suf">days</div>
         </div>
 <div class="tenor-warn" id="tenorWarn">⚠️ Tenor terlalu pendek — Fixing Date harus setidaknya 1 hari setelah Start TD.</div>
@@ -629,6 +629,12 @@ let HOLIDAYS=new Set(['2026-01-01','2026-01-16','2026-02-16','2026-02-17','2026-
 // manually typed their own value.
 let liveVols = {};
 let volManuallyEdited = false;
+// The TRUE base volatility (from Supabase or typed by the user), kept
+// separate from what's shown in the field once Vol Adjustment Rules are
+// applied — the field displays base+adjustment, but calc() must always
+// re-derive the adjustment from this base, never from the already-adjusted
+// displayed number (which would double-apply the bump on every recompute).
+let volBaseValue = null;
 // Two SEPARATE timestamps — Deposit/Option Rate and Volatility are saved
 // independently in Rates Dashboard, so their "last updated" must be
 // independent too (one can be fresh while the other is stale).
@@ -676,32 +682,48 @@ function computeVolAdjustment(depCcy, notional, depDaysVal){
 // Updates the short "+X.X% because ..." hint under the Volatility field.
 // Reacts to Notional and/or Tenor alone — does NOT require Spot/Strike/Vol
 // to be filled in, since the underlying rule only needs those two inputs.
+// Computes depDays from the raw Tenor input alone (independent of calc()'s
+// own flow), for use by both the hint and the field-rendering functions.
+function computeDepDaysFromTenorInput(){
+  const tenorRaw = parseInt(document.getElementById('iTenor').value) || 0;
+  if(tenorRaw <= 0) return null;
+  let today=new Date();today.setHours(0,0,0,0);while(!isBD(today))today.setDate(today.getDate()+1);
+  const valDate=addBD(today,2);
+  const matDate=addCalSnap(valDate,tenorRaw);
+  return daysBetween(valDate,matDate);
+}
+
 function updateVolAdjustmentHint(){
   const volAdjHintEl = document.getElementById('volAdjHint');
   if(!volAdjHintEl) return;
   const N = getNum('iNotional');
-  const tenorRaw = parseInt(document.getElementById('iTenor').value) || 0;
-  let depDaysVal = null;
-  if(tenorRaw > 0){
-    let today=new Date();today.setHours(0,0,0,0);while(!isBD(today))today.setDate(today.getDate()+1);
-    const valDate=addBD(today,2);
-    const matDate=addCalSnap(valDate,tenorRaw);
-    depDaysVal = daysBetween(valDate,matDate);
-  }
+  const depDaysVal = computeDepDaysFromTenorInput();
   const {volDelta, tenorAdjHit, notionalAdjHit, notionalEffectiveThreshold} = computeVolAdjustment(depositCCY, N, depDaysVal);
-  if(volDelta > 0){
-    const vol = parseFloat(document.getElementById('iVol').value)||0;
-    const adjVol = vol + volDelta;
+  if(volDelta > 0 && volBaseValue !== null && !isNaN(volBaseValue)){
+    const adjVol = volBaseValue + volDelta;
     const notionalK = Math.round(notionalEffectiveThreshold/1000)+'k';
     const hintReasons = [];
     if(notionalAdjHit) hintReasons.push('notional ≥ '+notionalK+' USD equivalent');
     if(tenorAdjHit) hintReasons.push('tenor ≥ '+adjRules.tenorDays+' days');
-    const beforeAfter = vol>0 ? ' ('+vol.toFixed(2)+'% → '+adjVol.toFixed(2)+'%)' : '';
-    volAdjHintEl.textContent = '+'+volDelta+'%'+beforeAfter+' because '+hintReasons.join(' & ');
+    volAdjHintEl.textContent = '+'+volDelta+'% ('+volBaseValue.toFixed(2)+'% → '+adjVol.toFixed(2)+'%) because '+hintReasons.join(' & ');
     volAdjHintEl.style.display = 'block';
   } else {
     volAdjHintEl.style.display = 'none';
   }
+}
+
+// Renders the Volatility field's DISPLAYED value as base + adjustment
+// (e.g. base 4.75% with a +0.5% rule active shows "5.25" in the box).
+// Always recomputes from volBaseValue — never from the field's own current
+// text — so repeated calls (e.g. when Notional/Tenor change) never
+// compound the adjustment on top of an already-adjusted number.
+function renderVolField(){
+  if(volBaseValue === null || isNaN(volBaseValue)) return;
+  const N = getNum('iNotional');
+  const depDaysVal = computeDepDaysFromTenorInput();
+  const {volDelta} = computeVolAdjustment(depositCCY, N, depDaysVal);
+  const el = document.getElementById('iVol');
+  if(el) el.value = (volBaseValue + volDelta).toFixed(2);
 }
 
 function toUSDEquiv(ccy, amount){
@@ -833,9 +855,9 @@ function applyVolAutoFill(){
   if(volManuallyEdited) return;
   const pi = getPairInfo(depositCCY, alternateCCY);
   const v = liveVols[pi.name];
-  const el = document.getElementById('iVol');
-  if(el && v !== undefined && v !== null && !isNaN(v)){
-    el.value = Number(v).toFixed(2);
+  if(v !== undefined && v !== null && !isNaN(v)){
+    volBaseValue = Number(v);
+    renderVolField();
     calc();
   }
 }
@@ -850,7 +872,7 @@ function getFreshnessInfo(ts){
   const updated = new Date(ts);
   const now = new Date();
   const sameDay = updated.getFullYear()===now.getFullYear() && updated.getMonth()===now.getMonth() && updated.getDate()===now.getDate();
-  return {color: sameDay ? '#22C55E' : '#F59E0B'};
+  return {color: sameDay ? '#22C55E' : '#EAB308'};
 }
 
 function dotSpan(color){
@@ -898,8 +920,19 @@ function onVolInput(el){
   }
   el.value = v;
   volManuallyEdited = true;
+  // Track what's being typed as the new base live (for correct results
+  // while typing), but don't re-render the field itself yet — that would
+  // fight the user mid-keystroke. The field snaps to base+adjustment once
+  // they're done, in onVolBlur.
+  const parsed = parseFloat(v);
+  volBaseValue = isNaN(parsed) ? null : parsed;
   updateVolFreshness();
   calc();
+}
+
+function onVolBlur(e){
+  renderVolField();
+  autoAdvance(e, 'iTenor');
 }
 
 function fmtSpotLive(el){
@@ -1024,8 +1057,10 @@ function applyPair(){
   if(el('iStrike')){el('iStrike').value='';el('iStrike').placeholder='Strike Price';}
   if(el('iPoints')){el('iPoints').value=50;}
   if(el('iVol')){el('iVol').placeholder=VOL_HINTS_PAIR[pi.name]||'e.g. 3.5';el('iVol').value='';}
-  // New pair -> old manual volatility no longer applies; try auto-fill again.
+  // New pair -> old manual volatility (and its stored base) no longer
+  // applies; clear it and try auto-fill again for the new pair.
   volManuallyEdited = false;
+  volBaseValue = null;
   applyVolAutoFill();
   updateVolFreshness();
   if(el('convAltLabel')){el('convAltLabel').textContent=alternateCCY;}
@@ -1262,7 +1297,12 @@ function calc(){
   const N=getNum('iNotional');
   const S=getNum('iSpot');
   const K=getNum('iStrike');
-  const vol=parseFloat(document.getElementById('iVol').value)||0;
+  // Always read the TRUE base from volBaseValue when it's been set — the
+  // field itself may currently be DISPLAYING an already-adjusted number
+  // (base + Vol Adjustment Rules), and re-reading that as if it were the
+  // base would double-apply the bump on every recompute.
+  const fieldVolRaw = parseFloat(document.getElementById('iVol').value)||0;
+  const vol=(volBaseValue!==null && !isNaN(volBaseValue)) ? volBaseValue : fieldVolRaw;
   const tenor=parseInt(document.getElementById('iTenor').value)||0;
   // Reacts to Notional and/or Tenor alone, independent of whether the rest
   // of the form (Spot/Strike/Vol) is filled in yet.
