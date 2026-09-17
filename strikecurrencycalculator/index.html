@@ -518,8 +518,6 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
         <div class="yield-bar"><div class="yield-bar-fill" id="oYieldBar" style="width:0%"></div></div>
       </div>
 
-      <div id="volAdjNotice" style="display:none;background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:8px 12px;font-size:11.5px;color:#92400E;margin-bottom:14px;line-height:1.5"></div>
-
       <div style="margin-bottom:16px">
         <div class="res-row">
           <span class="res-lbl" id="lPriceLabel">PUT Option Price (GK)</span>
@@ -1421,23 +1419,8 @@ function calc(){
       // doesn't flip the adjustment on/off from small rate fluctuations.
       // If only one condition is met, use that rule's add-on. If both are
       // met, use whichever add-on is larger — never both summed.
-      const {volDelta, tenorAdjHit, notionalAdjHit, notionalEffectiveThreshold} = computeVolAdjustment(depositCCY, N, depDays);
+      const {volDelta} = computeVolAdjustment(depositCCY, N, depDays);
       const adjVol = vol + volDelta;
-
-      const volNoticeEl = document.getElementById('volAdjNotice');
-      if(volNoticeEl){
-        if(volDelta > 0){
-          const reasons = [];
-          if(tenorAdjHit) reasons.push('tenor '+depDays+'d ≥ '+adjRules.tenorDays+'d (+'+adjRules.tenorVolAdd+'%)');
-          if(notionalAdjHit) reasons.push('notional ≥ '+notionalEffectiveThreshold.toLocaleString('en-US')+' USD eq. (+'+adjRules.notionalVolAdd+'%, threshold '+adjRules.notionalUSD.toLocaleString('en-US')+' +'+adjRules.notionalMarginPct+'% margin)');
-          let msg = '⚡ Vol disesuaikan +'+volDelta+'% (dari '+vol.toFixed(2)+'% jadi '+adjVol.toFixed(2)+'%) — '+reasons.join(' & ');
-          if(tenorAdjHit && notionalAdjHit) msg += ' · dipakai yang terbesar, tidak dijumlah';
-          volNoticeEl.innerHTML = msg;
-          volNoticeEl.style.display = 'block';
-        } else {
-          volNoticeEl.style.display = 'none';
-        }
-      }
 
       const rd=rdRate/100,rf=rfRate/100,v=adjVol/100,T_opt=optDays/365,T_dep=depDays/365;
       const optPrice=isPUT?gkPUT(S,K,rd,rf,v,T_opt):gkCALL(S,K,rd,rf,v,T_opt);
