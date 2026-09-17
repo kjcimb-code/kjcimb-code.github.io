@@ -1359,16 +1359,31 @@ function calc(){
     const fixDate=subBD(matDate,2);
     // Validation: fixing date must be at least 1 day AFTER value date
     if(fixDate<=valDate || daysBetween(valDate,fixDate)<1){
+      document.getElementById('tenorWarn').textContent='⚠️ Tenor terlalu pendek — Fixing Date harus setidaknya 1 hari setelah Start TD.';
       if(!document.getElementById('tenorWarn').classList.contains('visible')){
         document.getElementById('tenorWarn').classList.add('visible');
       }
+      document.getElementById('resEmpty').style.display='block';
+      document.getElementById('resMain').style.display='none';
       return;
-    } else {
-      document.getElementById('tenorWarn').classList.remove('visible');
     }
     // Option tenor = calendar days from today to fixing (for GK formula)
     const optDays=daysBetween(today,fixDate);
     const depDays=daysBetween(valDate,matDate);
+    // Validation: deposit/option rate tables only go up to 360 days —
+    // beyond that, interp() silently clamps to the 360d rate, which is an
+    // approximation the user should be warned about rather than getting a
+    // possibly-misleading number with no indication anything's off.
+    const MAX_TENOR_DAYS = 360;
+    if(depDays > MAX_TENOR_DAYS || optDays > MAX_TENOR_DAYS){
+      document.getElementById('tenorWarn').textContent='⚠️ Tenor melebihi '+MAX_TENOR_DAYS+' hari — di luar jangkauan tabel Deposit & Option Rate (maksimal 360 hari / 1 tahun).';
+      document.getElementById('tenorWarn').classList.add('visible');
+      document.getElementById('resEmpty').style.display='block';
+      document.getElementById('resMain').style.display='none';
+      return;
+    } else {
+      document.getElementById('tenorWarn').classList.remove('visible');
+    }
     const totalDays=daysBetween(today,matDate);
     document.getElementById('iTenor').value=depDays;
     document.getElementById('dFix').textContent=fmtD(fixDate);
