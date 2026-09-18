@@ -950,8 +950,15 @@ function fmtSpotLive(el){
     // IDR pair: format as integer with commas live
     const raw=el.value.replace(/[^0-9]/g,'');
     el.value=raw?parseInt(raw).toLocaleString('en-US'):'';
+  } else {
+    // Non-IDR pair: needs a real decimal point. Some mobile keyboards
+    // (notably iOS with certain regional/locale settings) only offer a
+    // comma for decimals — convert it here, live, before anything else
+    // reads this field. Otherwise "1,2710" would later get misread by the
+    // thousands-separator-stripping logic as "12710", wildly outside any
+    // sane range for a pair like USD/SGD.
+    el.value = el.value.replace(',', '.');
   }
-  // Other pairs: let user type freely (decimals needed)
 }
 
 function checkSpotDecimals(){
@@ -1182,12 +1189,16 @@ function fmtNotional(el, force){
 }
 function fmtSpot(el, force){
   // Only reformat on blur (force=true) to avoid interrupting typing
-  let v=el.value.replace(/,/g,'');
+  const pi=getPairInfo(depositCCY,alternateCCY);
+  // Convert any stray comma-as-decimal to a period BEFORE stripping commas,
+  // so a leftover "1,2710" (e.g. from a paste or programmatic set that
+  // bypassed fmtSpotLive's live conversion) isn't misread as "12710" once
+  // the thousands-separator stripping below runs.
+  let v=(pi.dec===0?el.value:el.value.replace(',','.')).replace(/,/g,'');
   if(v===''||v==='-'||v==='.') return;
   const n=parseFloat(v);
   if(isNaN(n)||n<=0) return;
   if(!force) return; // don't reformat while typing
-  const pi=getPairInfo(depositCCY,alternateCCY);
   if(pi.dec===0){
     el.value=Math.round(n).toLocaleString('en-US');
   } else {
