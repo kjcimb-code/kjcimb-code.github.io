@@ -694,6 +694,13 @@ function computeDepDaysFromTenorInput(){
 function updateVolAdjustmentHint(){
   const volAdjHintEl = document.getElementById('volAdjHint');
   if(!volAdjHintEl) return;
+  // Vol Adjustment Rules only apply to the automatic, Supabase-sourced
+  // value. Once the user overrides it manually, their number is final —
+  // no automatic bump gets added on top, and there's nothing to explain.
+  if(volManuallyEdited){
+    volAdjHintEl.style.display = 'none';
+    return;
+  }
   const N = getNum('iNotional');
   const depDaysVal = computeDepDaysFromTenorInput();
   const {volDelta, tenorAdjHit, notionalAdjHit, notionalEffectiveThreshold} = computeVolAdjustment(depositCCY, N, depDaysVal);
@@ -717,11 +724,18 @@ function updateVolAdjustmentHint(){
 // compound the adjustment on top of an already-adjusted number.
 function renderVolField(){
   if(volBaseValue === null || isNaN(volBaseValue)) return;
+  const el = document.getElementById('iVol');
+  if(!el) return;
+  // Once manually overridden, show exactly what the user typed — no
+  // automatic Vol Adjustment Rules bump on top of it.
+  if(volManuallyEdited){
+    el.value = volBaseValue.toFixed(2);
+    return;
+  }
   const N = getNum('iNotional');
   const depDaysVal = computeDepDaysFromTenorInput();
   const {volDelta} = computeVolAdjustment(depositCCY, N, depDaysVal);
-  const el = document.getElementById('iVol');
-  if(el) el.value = (volBaseValue + volDelta).toFixed(2);
+  el.value = (volBaseValue + volDelta).toFixed(2);
 }
 
 function toUSDEquiv(ccy, amount){
@@ -1444,8 +1458,10 @@ function calc(){
       // spot-rate-driven USD-equivalent that lands right on the line
       // doesn't flip the adjustment on/off from small rate fluctuations.
       // If only one condition is met, use that rule's add-on. If both are
-      // met, use whichever add-on is larger — never both summed.
-      const {volDelta} = computeVolAdjustment(depositCCY, N, depDays);
+      // met, use whichever add-on is larger — never both summed. This
+      // entire rule is skipped once the user manually overrides Volatility —
+      // their typed number is used exactly as-is, with no automatic bump.
+      const volDelta = volManuallyEdited ? 0 : computeVolAdjustment(depositCCY, N, depDays).volDelta;
       const adjVol = vol + volDelta;
 
       const rd=rdRate/100,rf=rfRate/100,v=adjVol/100,T_opt=optDays/365,T_dep=depDays/365;
