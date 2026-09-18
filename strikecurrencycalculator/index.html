@@ -1742,6 +1742,7 @@ function generatePDF(){
   var N=document.getElementById('iNotional').value||'—';
   var ccy=depositCCY||'IDR';
   var altCcy=alternateCCY||'USD';
+  var pi=getPairInfo(depositCCY,alternateCCY);
   var isPUT=isPUT_g;
   var S=document.getElementById('iSpot').value||'—';
   var K=document.getElementById('iStrike').value||'—';
@@ -1750,11 +1751,15 @@ function generatePDF(){
   var dVal=document.getElementById('dVal').textContent||'—';
   var dFix=document.getElementById('dFix').textContent||'—';
   var dMat=document.getElementById('dMat').textContent||'—';
+  var optDaysTxt=document.getElementById('dOptDays').textContent||'—';
   var dep=(document.getElementById('dDepDays').textContent||'').replace(/\D+/g,'')||'—';
+  var totalDaysTxt=document.getElementById('dTotalDays').textContent||'—';
   var custPct=document.getElementById('sCustPct').textContent||'—';
   var custIDR=document.getElementById('sCustIDR').textContent||'—';
   var custNetPct=document.getElementById('sCustNetPct').textContent||'—';
   var custNetIDR=(document.getElementById('sCustNetIDR').textContent||'').split('(')[0].trim()||'—';
+  var bankPct=document.getElementById('sBankPct').textContent||'—';
+  var bankIDR=document.getElementById('sBankIDR').textContent||'—';
   var modeStr=MODE==='PUT'?'PUT':'CALL';
   var convVal=(_N>0&&_K>0)?(MODE==='PUT'?fN(_N/_K,2):fI(_N*_K)):'—';
 
@@ -1817,10 +1822,13 @@ function generatePDF(){
 
   // ── INFO ──
   +'<table class="info" style="width:100%;border-collapse:collapse;margin-bottom:12px">'
-  +'<tr><td class="lb">Nominal Base Currency</td><td class="vl">IDR '+N+'</td></tr>'
-  +'<tr><td class="lb">If Converted &mdash; '+ccy+'</td><td class="vl">'+ccy+' '+convVal+'</td></tr>'
-  +'<tr><td class="lb">'+(isPUT?'Spot Offer Rate':'Spot Bid Rate')+' ('+ccy+'/IDR)</td><td class="vl">'+S+'</td></tr>'
+  +'<tr><td class="lb">Nominal Base Currency</td><td class="vl">'+ccy+' '+N+'</td></tr>'
+  +'<tr><td class="lb">If Converted &mdash; '+altCcy+'</td><td class="vl">'+altCcy+' '+convVal+'</td></tr>'
+  +'<tr><td class="lb">'+(isPUT?'Spot Offer Rate':'Spot Bid Rate')+' ('+pi.name+')</td><td class="vl">'+S+'</td></tr>'
   +'<tr><td class="lb">Strike Price</td><td class="vl">'+K+' <span style="font-size:10px;color:#666">('+pts+')</span></td></tr>'
+  +'<tr><td class="lb">Option Tenor</td><td class="vl">'+optDaysTxt+'</td></tr>'
+  +'<tr><td class="lb">Deposit Tenor</td><td class="vl">'+dep+' hari</td></tr>'
+  +'<tr><td class="lb">Total Days</td><td class="vl">'+totalDaysTxt+'</td></tr>'
   +'</table>'
 
   // ── TIMELINE ──
@@ -1842,7 +1850,11 @@ function generatePDF(){
   +'<td class="gross"><div class="y-label">Gross Yield p.a.</div><div class="y-pct r">'+custPct+'</div><div class="y-nom">'+custIDR+'</div><div class="y-sub">Sebelum PPh 20%</div></td>'
   +'<td class="net"><div class="y-label">Net Yield p.a.</div><div class="y-pct g">'+custNetPct+'</div><div class="y-nom">'+custNetIDR+'</div><div class="y-sub">Setelah PPh 20%</div></td>'
   +'</tr></table>'
-  +'<div class="disc">Bersifat indikatif &middot; Bukan komitmen transaksi &middot; Tarif dapat berubah sewaktu-waktu &middot; '+ccy+'/IDR</div>'
+  +'<div class="section" style="margin-top:10px">Bank Spread (Option Premium)</div>'
+  +'<table class="info" style="width:100%;border-collapse:collapse;margin-bottom:4px">'
+  +'<tr><td class="lb">Bank Allocation</td><td class="vl">'+bankPct+' &nbsp;&middot;&nbsp; '+bankIDR+'</td></tr>'
+  +'</table>'
+  +'<div class="disc">Bersifat indikatif &middot; Bukan komitmen transaksi &middot; Tarif dapat berubah sewaktu-waktu &middot; '+pi.name+'</div>'
 
   // ── PAGE 2 ──
   +'<div class="page-break r2">'
@@ -1884,16 +1896,29 @@ function generatePDF(){
   +'</div>'
   +'</body></html>';
 
-  // Use hidden iframe - NEVER touches main page DOM/CSS
+  // Use hidden iframe - NEVER touches main page DOM/CSS.
+  // IMPORTANT: don't remove the iframe on a short fixed timeout — window.print()
+  // returns immediately while the browser's native print/save-as-PDF dialog is
+  // still open and asynchronous. A user picking "Save as PDF" (choosing a
+  // location, waiting for the render) routinely takes longer than a few
+  // seconds; removing the iframe's document mid-dialog produces a blank/
+  // empty PDF. Instead, clean up on 'afterprint' (fires once the dialog is
+  // actually closed), with a generous fallback timeout as a safety net only.
   var iframe=document.createElement('iframe');
   iframe.style.cssText='position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;border:none;opacity:0';
   document.body.appendChild(iframe);
   var doc=iframe.contentDocument||iframe.contentWindow.document;
   doc.open();doc.write(html);doc.close();
+  var cleaned=false;
+  function cleanupPdfIframe(){
+    if(cleaned) return; cleaned=true;
+    if(iframe.parentNode) document.body.removeChild(iframe);
+  }
   iframe.onload=function(){
     iframe.contentWindow.focus();
+    try{ iframe.contentWindow.addEventListener('afterprint', cleanupPdfIframe); }catch(e){}
     iframe.contentWindow.print();
-    setTimeout(function(){document.body.removeChild(iframe);},3000);
+    setTimeout(cleanupPdfIframe, 60000); // safety net if 'afterprint' never fires
   };
 }
 </script>
