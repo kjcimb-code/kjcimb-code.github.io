@@ -390,7 +390,7 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
           <tbody id="optTableBody"></tbody>
         </table>
       </div>
-      <div style="font-size:10px;color:var(--slate);margin-top:10px;font-family:var(--mono)">Yield % p.a. &middot; kolom = strike offset dari ATM (pips)</div>
+      <div style="font-size:10px;color:var(--slate);margin-top:10px;font-family:var(--mono)">Yield % p.a. &middot; kolom = jarak ITM dari ATM (OTM tidak ditampilkan)</div>
       <div style="font-size:10px;color:var(--slate);margin-top:6px" id="optDatesLine"></div>
 
     </div>
@@ -595,8 +595,8 @@ function getNum(id){
 // ─── OPTIMIZER-SPECIFIC LOGIC ───────────────────────────────────────────
 let activeTenor = 30;
 let lastOptimizerFlatResults = [];
-const STRIKES = [-100, -50, -25, 0, 25, 50]; // pips offset from ATM spot
-const STRIKE_LABELS = ['-100', '-50', '-25', 'ATM', '+25', '+50'];
+const ITM_MAGNITUDES = [100, 50, 25, 0]; // pips ITM from spot, deepest ITM first, ATM last — OTM is intentionally excluded
+const ITM_LABELS = ['ITM 100', 'ITM 50', 'ITM 25', 'ATM'];
 
 function selectOptCCY(ccy){
   depositCCY = ccy;
@@ -748,21 +748,26 @@ function runOptimizer(){
     const vol = liveVols[pi.name];
     const hasVol = vol!==undefined && vol!==null && !isNaN(vol);
     if(hasVol) anyLiveVol = true;
-    const yields = STRIKES.map(pips => hasVol ? calcOptimizerYield(depositCCY, altCcy, optDays, depDays, pips, volDelta) : null);
+    // ITM-to-ATM only (no OTM): for a PUT row ITM is the negative-pips
+    // side, for a CALL row ITM is the positive-pips side — the actual
+    // signed pips used in the GK formula flips per row's mode, while the
+    // on-screen column labels ("ITM 100" ... "ATM") stay the same either way.
+    const signedPips = ITM_MAGNITUDES.map(mag => pi.mode==='PUT' ? -mag : mag);
+    const yields = signedPips.map(pips => hasVol ? calcOptimizerYield(depositCCY, altCcy, optDays, depDays, pips, volDelta) : null);
     const validYields = yields.filter(v=>v!==null);
     const maxY = validYields.length ? Math.max(...validYields) : null;
     const maxIdx = maxY!==null ? yields.indexOf(maxY) : -1;
     if(maxY!==null && maxY>globalBest.yield){
-      globalBest = {yield:maxY, pair:pi.name, mode:pi.mode, strikeLbl:STRIKE_LABELS[maxIdx], vol:vol+volDelta};
+      globalBest = {yield:maxY, pair:pi.name, mode:pi.mode, strikeLbl:ITM_LABELS[maxIdx], vol:vol+volDelta};
     }
     if(hasVol){
       yields.forEach((y,i)=>{
         if(y===null) return;
-        const K = pi.spot + STRIKES[i]*pi.pip;
-        flatCombos.push({pi, altCcy, strikePips:STRIKES[i], strikeLbl:STRIKE_LABELS[i], K, yield:y});
+        const K = pi.spot + signedPips[i]*pi.pip;
+        flatCombos.push({pi, altCcy, strikePips:signedPips[i], itmLabel:ITM_LABELS[i], K, yield:y});
       });
     }
-    rows.push({pi, yields, maxY, maxIdx, hasVol, rawVol:vol});
+    rows.push({pi, yields, maxIdx, hasVol, rawVol:vol});
   });
   lastOptimizerFlatResults = flatCombos.slice().sort((a,b)=>b.yield-a.yield);
 
@@ -775,19 +780,22 @@ function runOptimizer(){
   resEmpty.style.display = 'none';
   resMain.style.display = 'block';
 
-  rows.sort((a,b)=>(b.maxY??-1)-(a.maxY??-1));
+  rows.sort((a,b)=>{
+    const am=Math.max(...a.yields.filter(v=>v!==null),-1), bm=Math.max(...b.yields.filter(v=>v!==null),-1);
+    return bm-am;
+  });
 
   const bestBanner = document.getElementById('optBestBanner');
   if(globalBest.yield>=0){
     document.getElementById('optBestValue').textContent = globalBest.yield.toFixed(2)+'% p.a.';
-    document.getElementById('optBestSub').textContent = globalBest.pair+' ('+globalBest.mode+') · Strike '+globalBest.strikeLbl+' pips · Vol '+globalBest.vol.toFixed(2)+'%';
+    document.getElementById('optBestSub').textContent = globalBest.pair+' ('+globalBest.mode+') · '+globalBest.strikeLbl+' · Vol '+globalBest.vol.toFixed(2)+'%';
     bestBanner.style.display = 'block';
   } else {
     bestBanner.style.display = 'none';
   }
 
   document.getElementById('optTableHead').innerHTML =
-    '<th>Pair</th>' + STRIKE_LABELS.map(l=>'<th>'+l+'</th>').join('');
+    '<th>Pair</th>' + ITM_LABELS.map(l=>'<th>'+l+'</th>').join('');
 
   document.getElementById('optTableBody').innerHTML = rows.map(({pi,yields,maxIdx,hasVol,rawVol})=>{
     const volLine = hasVol ? '<br><span style="font-size:9px;color:var(--slate)">vol '+(rawVol+volDelta).toFixed(2)+'%</span>' : '';
@@ -813,13 +821,20 @@ function sendToWhatsApp(){
     alert('Belum ada hasil untuk dikirim — pastikan data volatility sudah termuat dan tenor valid.');
     return;
   }
+  // The on-screen table always shows the full gross yield (100% of
+  // notional). What goes out to the customer over WhatsApp is only the
+  // portion actually offered to them — 80% of that gross figure — while
+  // still being labelled "gross" since 80% is the offered share, not a
+  // tax/bank deduction taken out of a gross number.
+  const WHATSAPP_CUSTOMER_SHARE = 0.8;
   const top3 = lastOptimizerFlatResults.slice(0,3);
   const fmtSpotNum = (val, dec) => dec===0 ? Math.round(val).toLocaleString('en-US') : val.toFixed(dec);
   const blocks = top3.map(({pi, altCcy, strikePips, K, yield:y})=>{
     const spotStr = fmtSpotNum(pi.spot, pi.dec);
     const strikeStr = fmtSpotNum(K, pi.dec);
     const pipsStr = strikePips===0 ? 'ATM' : (strikePips>0?'+':'')+strikePips;
-    return pi.name+'\nBase '+depositCCY+'\nAlt '+altCcy+'\nSpot Rate '+spotStr+'\nStrike Price '+strikeStr+' ('+pipsStr+')\nImplied Rate '+y.toFixed(2)+'% pa gross';
+    const customerY = y * WHATSAPP_CUSTOMER_SHARE;
+    return pi.name+'\nBase '+depositCCY+'\nAlt '+altCcy+'\nSpot Rate '+spotStr+'\nStrike Price '+strikeStr+' ('+pipsStr+')\nImplied Rate '+customerY.toFixed(2)+'% pa gross';
   });
   const message = 'Dear Pak/Bu\n\n'+blocks.join('\n\n')+'\n\nThank you';
   window.open('https://wa.me/?text='+encodeURIComponent(message), '_blank');
