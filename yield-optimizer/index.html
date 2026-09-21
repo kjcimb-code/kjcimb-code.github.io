@@ -35,6 +35,7 @@
 .ccy-dropdown-menu{display:none;position:absolute;top:100%;left:0;right:0;
   background:#fff;border:1.5px solid #790008;border-top:none;
   border-bottom-left-radius:8px;border-bottom-right-radius:8px;
+  max-height:260px;overflow-y:auto;
   z-index:999;box-shadow:0 6px 16px rgba(0,0,0,.12)}
 .ccy-dropdown-menu.show{display:block}
 .ccy-dropdown-item{padding:9px 12px;font-family:var(--mono);font-weight:600;font-size:13px;
@@ -215,6 +216,7 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
 .ccy-dropdown-menu{display:none;position:absolute;top:100%;left:0;right:0;
   background:#fff;border:1.5px solid #790008;border-top:none;
   border-bottom-left-radius:8px;border-bottom-right-radius:8px;
+  max-height:260px;overflow-y:auto;
   z-index:9999!important;box-shadow:0 8px 24px rgba(0,0,0,.15)}
 .ccy-dropdown-menu.show{display:block}
 .ccy-dropdown-item{padding:9px 12px;font-family:var(--mono);font-weight:600;font-size:13px;
@@ -265,10 +267,11 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
   box-shadow:0 2px 8px rgba(121,0,8,.3)}
 
 /* OPTIMIZER RESULTS TABLE */
-#optTable th{padding:7px 8px;background:#F8FAFC;color:var(--slate);font-weight:700;font-size:10px;text-align:center;border-bottom:2px solid var(--border)}
-#optTable th:first-child{text-align:left;padding-left:10px}
-#optTable td{padding:8px;border-bottom:1px solid #F1F5F9;text-align:center;color:var(--navy);font-weight:600}
-#optTable td:first-child{text-align:left;padding-left:10px;font-size:11.5px;white-space:nowrap}
+#optTable{table-layout:fixed}
+#optTable th{padding:7px 4px;background:#F8FAFC;color:var(--slate);font-weight:700;font-size:9.5px;text-align:center;border-bottom:2px solid var(--border)}
+#optTable th:first-child{text-align:left;padding-left:10px;width:34%}
+#optTable td{padding:8px 4px;border-bottom:1px solid #F1F5F9;text-align:center;color:var(--navy);font-weight:600;font-size:12px}
+#optTable td:first-child{text-align:left;padding-left:10px;font-size:11px}
 #optTable td.opt-best{background:#ECFDF5;color:#065F46;font-weight:700;border-radius:4px}
 #optTable td.opt-none{color:#CBD5E1;font-style:italic;font-weight:400}
 .opt-mode-badge{font-size:8.5px;font-weight:700;padding:1px 5px;border-radius:4px;color:#fff;margin-left:4px;vertical-align:middle}
@@ -359,6 +362,7 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
         <button class="opt-tenor-btn" data-days="360" onclick="setOptTenor(360)">360d</button>
       </div>
       <div id="optTenorShiftNote" style="font-size:10.5px;color:var(--slate);margin-top:8px;font-family:var(--mono)"></div>
+      <div id="optVolAdjHint" style="display:none;background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:8px 12px;font-size:11.5px;color:#92400E;margin-top:10px;line-height:1.5"></div>
     </div>
 
   </div>
@@ -366,7 +370,7 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
 
 <!-- OPTIMIZER RESULTS -->
 <div class="sec">
-  <div class="sec-hdr out">
+  <div class="sec-hdr rs">
     <span class="sec-badge">Output</span>
     <span class="sec-name" id="optResultsTitle">Hasil Optimasi</span>
   </div>
@@ -376,8 +380,6 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
 
       <div id="optTenorWarn" class="tenor-warn" style="display:none;margin-bottom:12px"></div>
 
-      <div id="optVolAdjHint" style="display:none;background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:8px 12px;font-size:11.5px;color:#92400E;margin-bottom:14px;line-height:1.5"></div>
-
       <div id="optBestBanner" style="background:linear-gradient(135deg,#ECFDF5,#D1FAE5);border:1.5px solid #6EE7B7;border-radius:12px;padding:14px 16px;margin-bottom:14px;display:none">
         <div style="font-size:10px;font-weight:700;color:#065F46;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">&#127942; Terbaik</div>
         <div id="optBestValue" style="font-size:18px;font-weight:700;color:#065F46;font-family:var(--mono)">&mdash;</div>
@@ -385,14 +387,58 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
       </div>
 
       <div style="overflow-x:auto;margin:0 -4px">
-        <table style="width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px;min-width:420px" id="optTable">
+        <table style="width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px" id="optTable">
           <thead><tr id="optTableHead"></tr></thead>
           <tbody id="optTableBody"></tbody>
         </table>
       </div>
-      <div style="font-size:10px;color:var(--slate);margin-top:10px;font-family:var(--mono)">Yield % p.a. &middot; kolom = jarak ITM dari ATM (OTM tidak ditampilkan)</div>
-      <div style="font-size:10px;color:var(--slate);margin-top:6px" id="optDatesLine"></div>
 
+    </div>
+  </div>
+</div>
+
+<!-- DATES -->
+<div class="sec" id="optDatesSec" style="display:none">
+  <div class="sec-hdr dt">
+    <span class="sec-badge">Auto</span>
+    <span class="sec-name">Transaction Dates</span>
+  </div>
+  <div class="sec-body">
+    <div class="date-grid">
+      <div class="date-card">
+        <div class="date-lbl">Transaction Date</div>
+        <div class="date-val" id="optDTx">—</div>
+        <div class="date-sub">Today · T+0</div>
+      </div>
+      <div class="date-card">
+        <div class="date-lbl">Value Date (Start TD)</div>
+        <div class="date-val" id="optDVal">—</div>
+        <div class="date-sub">T+2 business days</div>
+      </div>
+      <div class="date-card active">
+        <div class="date-lbl">Fixing Date</div>
+        <div class="date-val" id="optDFix">—</div>
+        <div class="date-sub">Bloomberg BFIX 13:00 WIB</div>
+      </div>
+      <div class="date-card">
+        <div class="date-lbl">Maturity Date</div>
+        <div class="date-val" id="optDMat">—</div>
+        <div class="date-sub">Fixing Date + 2 BD</div>
+      </div>
+    </div>
+    <div style="margin-top:12px">
+      <div class="rate-row bold-row">
+        <div><div class="rate-lbl" style="font-weight:600;color:var(--navy)">Option Tenor</div><div class="rate-note">Transaction Date → Fixing Date</div></div>
+        <div class="rate-val red" id="optDOptDays">—</div>
+      </div>
+      <div class="rate-row bold-row">
+        <div><div class="rate-lbl" style="font-weight:600;color:var(--navy)">Deposit Tenor</div><div class="rate-note">Value Date → Maturity Date</div></div>
+        <div class="rate-val red" id="optDDepDays">—</div>
+      </div>
+      <div class="rate-row bold-row">
+        <div><div class="rate-lbl" style="font-weight:600;color:var(--navy)">Total Days</div><div class="rate-note">Transaction Date → Maturity Date</div></div>
+        <div class="rate-val red" id="optDTotalDays">—</div>
+      </div>
     </div>
   </div>
 </div>
@@ -401,9 +447,9 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
   <a href="/strikecurrencycalculator" style="flex:1;display:flex;padding:14px;background:#790008;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:.02em;align-items:center;justify-content:center;gap:8px;box-shadow:0 2px 8px rgba(121,0,8,.35);text-decoration:none">
     &#128176; SC Calculator
   </a>
-  <button onclick="sendToWhatsApp()" style="flex:1;display:flex;padding:14px;background:#25D366;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:.02em;align-items:center;justify-content:center;gap:8px;box-shadow:0 2px 8px rgba(37,211,102,.35)">
+  <button id="waSendBtn" onclick="sendToWhatsApp()" style="flex:1;display:flex;padding:14px;background:#25D366;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:.02em;align-items:center;justify-content:center;gap:8px;box-shadow:0 2px 8px rgba(37,211,102,.35)">
     <svg width="17" height="17" viewBox="0 0 24 24" fill="#fff" xmlns="http://www.w3.org/2000/svg"><path d="M12.04 2c-5.52 0-10 4.48-10 10 0 1.77.46 3.45 1.27 4.9L2 22l5.25-1.38a9.96 9.96 0 0 0 4.79 1.22h.01c5.52 0 10-4.48 10-10s-4.49-9.84-10.01-9.84zm0 18.15c-1.5 0-2.97-.4-4.25-1.16l-.3-.18-3.12.82.83-3.04-.2-.31a8.15 8.15 0 0 1-1.25-4.34c0-4.5 3.66-8.16 8.16-8.16 2.18 0 4.23.85 5.77 2.39a8.1 8.1 0 0 1 2.39 5.77c.03 4.5-3.63 8.16-8.13 8.16z"/></svg>
-    Send to WhatsApp
+    <span id="waSendBtnLabel">Copy for WhatsApp</span>
   </button>
 </div>
 
@@ -669,7 +715,7 @@ function runOptimizer(){
     document.getElementById('optTableHead').innerHTML = '';
     document.getElementById('optTableBody').innerHTML = '';
     document.getElementById('optVolAdjHint').style.display = 'none';
-    document.getElementById('optDatesLine').textContent = '';
+    document.getElementById('optDatesSec').style.display = 'none';
     document.getElementById('optTenorShiftNote').textContent = '';
     lastOptimizerFlatResults = [];
   }
@@ -775,6 +821,7 @@ function runOptimizer(){
     resEmpty.textContent = 'Menunggu data volatility live dari Supabase…';
     resEmpty.style.display = 'block';
     resMain.style.display = 'none';
+    document.getElementById('optDatesSec').style.display = 'none';
     return;
   }
   resEmpty.style.display = 'none';
@@ -808,8 +855,14 @@ function runOptimizer(){
   }).join('');
 
   const fmtDateShort = d => d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
-  document.getElementById('optDatesLine').textContent =
-    'Value Date '+fmtDateShort(valDate)+' → Maturity '+fmtDateShort(matDate)+' ('+depDays+' hari)';
+  document.getElementById('optDTx').textContent = fmtDateShort(today);
+  document.getElementById('optDVal').textContent = fmtDateShort(valDate);
+  document.getElementById('optDFix').textContent = fmtDateShort(fixDate);
+  document.getElementById('optDMat').textContent = fmtDateShort(matDate);
+  document.getElementById('optDOptDays').textContent = optDays+' hari';
+  document.getElementById('optDDepDays').textContent = depDays+' hari';
+  document.getElementById('optDTotalDays').textContent = daysBetween(today, matDate)+' hari';
+  document.getElementById('optDatesSec').style.display = 'block';
 }
 
 // Builds the "Dear Pak/Bu ..." message from the TRUE top 3 (pair, strike)
@@ -837,7 +890,33 @@ function sendToWhatsApp(){
     return pi.name+'\nBase '+depositCCY+'\nAlt '+altCcy+'\nSpot Rate '+spotStr+'\nStrike Price '+strikeStr+' ('+pipsStr+')\nImplied Rate '+customerY.toFixed(2)+'% pa gross';
   });
   const message = 'Dear Pak/Bu\n\n'+blocks.join('\n\n')+'\n\nThank you';
-  window.open('https://wa.me/?text='+encodeURIComponent(message), '_blank');
+  const label = document.getElementById('waSendBtnLabel');
+  const restoreLabel = label.textContent;
+  const showCopied = () => {
+    label.textContent = 'Copied!';
+    setTimeout(() => { label.textContent = restoreLabel; }, 1800);
+  };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(message).then(showCopied).catch(() => {
+      // Clipboard API blocked (e.g. insecure context) — fall back silently.
+      fallbackCopy(message); showCopied();
+    });
+  } else {
+    fallbackCopy(message); showCopied();
+  }
+}
+
+// Fallback for browsers/contexts where navigator.clipboard is unavailable
+// (e.g. non-HTTPS): a temporary hidden textarea + document.execCommand.
+function fallbackCopy(text){
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.focus(); ta.select();
+  try{ document.execCommand('copy'); }catch(e){}
+  document.body.removeChild(ta);
 }
 
 runOptimizer();
