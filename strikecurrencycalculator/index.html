@@ -71,6 +71,7 @@ input[type=range]{width:100%;accent-color:#790008}
   --white:#FFFFFF;--green:#065F46;--green-l:#ECFDF5;
   --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
 }
+html{background:var(--bg);color-scheme:light}
 body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);min-height:100vh;color-scheme:light}
 .app{max-width:680px;margin:0 auto;padding:0 0 24px}
 
@@ -405,10 +406,12 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
       </div>
     <div class="field-row" style="gap:6px">
       <div class="field">
-        <label class="field-label" style="font-size:10px">Volatility</label>
+        <label class="field-label" style="font-size:10px">Volatility (p.a)</label>
         <div class="field-wrap">
+          <div class="field-pre">%</div>
           <input type="text" id="iVol" inputmode="decimal" enterkeyhint="next" placeholder="e.g. 3.5" oninput="onVolInput(this)" onblur="onVolBlur(event)" style="font-size:13px">
-          <div class="field-suf">%</div>
+          <button type="button" onclick="refreshVolFromSupabase()" title="Tarik ulang dari Supabase" style="border:none;background:#DBEAFE;color:#1D4ED8;font-size:15px;width:26px;height:26px;border-radius:7px;align-self:center;margin:0 4px 0 6px;flex-shrink:0;cursor:pointer;padding:0;line-height:1;display:flex;align-items:center;justify-content:center">↻</button>
+          <button type="button" onclick="clearVolField()" title="Kosongkan" style="border:none;background:#FEE2E2;color:#DC2626;font-size:13px;font-weight:700;width:26px;height:26px;border-radius:7px;align-self:center;margin:0 6px 0 0;flex-shrink:0;cursor:pointer;padding:0;line-height:1;display:flex;align-items:center;justify-content:center">✕</button>
         </div>
         <div class="field-hint" id="volFreshness">Last updated: —</div>
         <div class="field-hint" id="volAdjHint" style="display:none;color:#B45309;font-weight:600"></div>
@@ -633,6 +636,25 @@ let volManuallyEdited = false;
 // re-derive the adjustment from this base, never from the already-adjusted
 // displayed number (which would double-apply the bump on every recompute).
 let volBaseValue = null;
+// If the Volatility field is emptied (delete or ✕) and stays empty with no
+// typing for this long, it auto-reverts to the live Supabase value — so an
+// abandoned "I was about to override this" moment doesn't leave the field
+// permanently blank. Typing anything cancels the pending revert.
+const VOL_AUTO_REVERT_MS = 10000;
+let volEmptyRevertTimer = null;
+
+function cancelVolAutoRevert(){
+  if(volEmptyRevertTimer){ clearTimeout(volEmptyRevertTimer); volEmptyRevertTimer = null; }
+}
+
+function scheduleVolAutoRevert(){
+  cancelVolAutoRevert();
+  volEmptyRevertTimer = setTimeout(() => {
+    volEmptyRevertTimer = null;
+    const el = document.getElementById('iVol');
+    if(el && el.value === ''){ refreshVolFromSupabase(); }
+  }, VOL_AUTO_REVERT_MS);
+}
 // Two SEPARATE timestamps — Deposit/Option Rate and Volatility are saved
 // independently in Rates Dashboard, so their "last updated" must be
 // independent too (one can be fresh while the other is stale).
@@ -874,6 +896,41 @@ function applyVolAutoFill(){
   }
 }
 
+// ✕ button: empties the field for a clean slate, without any auto-refill
+// magic — the user can then type a genuinely new number without fighting
+// the old auto-filled value coming back.
+function clearVolField(){
+  const el = document.getElementById('iVol');
+  if(el) el.value = '';
+  volManuallyEdited = true;
+  volBaseValue = null;
+  updateVolFreshness();
+  updateVolAdjustmentHint();
+  calc();
+  if(el) el.focus();
+  scheduleVolAutoRevert();
+}
+
+// ↻ button: explicitly re-pulls the live Volatility value from Supabase
+// for the current pair, overriding any manual edit. This is the ONLY way
+// to get back to the live value now — clearing the field on its own no
+// longer does this automatically (that caused a refill loop).
+function refreshVolFromSupabase(){
+  cancelVolAutoRevert();
+  const pi = getPairInfo(depositCCY, alternateCCY);
+  const v = liveVols[pi.name];
+  if(v === undefined || v === null || isNaN(v)){
+    console.warn('[Vol] No live volatility available for pair', pi.name, '— nothing to pull.');
+    return;
+  }
+  volManuallyEdited = false;
+  volBaseValue = Number(v);
+  renderVolField();
+  updateVolFreshness();
+  updateVolAdjustmentHint();
+  calc();
+}
+
 // Traffic-light freshness for a given Supabase timestamp: green = fetched
 // live AND updated today; orange = fetched live but from a previous day
 // (stale but not broken); red = never successfully fetched (hardcoded
@@ -931,16 +988,15 @@ function onVolInput(el){
     v = v[0] + '.' + v.slice(1);
   }
   el.value = v;
-  // Clearing the field is treated as "give me the live value back" — reset
-  // the override and let Supabase's auto-fill take over again, rather than
-  // leaving it permanently overridden-but-empty.
+  // Note: emptying the field via backspace/delete no longer auto-refills
+  // immediately (that caused a frustrating loop when the user was trying
+  // to clear the old value to type a genuinely new one). Instead: if it
+  // stays empty for VOL_AUTO_REVERT_MS with no further typing, it reverts
+  // to the live value on its own; typing anything cancels that timer.
   if(v === ''){
-    volManuallyEdited = false;
-    volBaseValue = null;
-    applyVolAutoFill();
-    updateVolFreshness();
-    calc();
-    return;
+    scheduleVolAutoRevert();
+  } else {
+    cancelVolAutoRevert();
   }
   volManuallyEdited = true;
   // Track what's being typed as the new base live (for correct results
@@ -1088,7 +1144,10 @@ function applyPair(){
   if(el('iPoints')){el('iPoints').value=50;}
   if(el('iVol')){el('iVol').placeholder=VOL_HINTS_PAIR[pi.name]||'e.g. 3.5';el('iVol').value='';}
   // New pair -> old manual volatility (and its stored base) no longer
-  // applies; clear it and try auto-fill again for the new pair.
+  // applies; clear it and try auto-fill again for the new pair. Also
+  // cancel any pending auto-revert timer from the OLD pair — it would
+  // otherwise fire later and pull the wrong pair's live value.
+  cancelVolAutoRevert();
   volManuallyEdited = false;
   volBaseValue = null;
   applyVolAutoFill();
