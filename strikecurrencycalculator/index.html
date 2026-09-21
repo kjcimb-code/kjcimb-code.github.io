@@ -410,8 +410,8 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
         <div class="field-wrap">
           <div class="field-pre">%</div>
           <input type="text" id="iVol" inputmode="decimal" enterkeyhint="next" placeholder="e.g. 3.5" oninput="onVolInput(this)" onblur="onVolBlur(event)" style="font-size:13px">
-          <button type="button" onclick="refreshVolFromSupabase()" title="Tarik ulang dari Supabase" style="border:none;background:#DBEAFE;color:#1D4ED8;font-size:15px;width:26px;height:26px;border-radius:7px;align-self:center;margin:0 4px 0 6px;flex-shrink:0;cursor:pointer;padding:0;line-height:1;display:flex;align-items:center;justify-content:center">↻</button>
-          <button type="button" onclick="clearVolField()" title="Kosongkan" style="border:none;background:#FEE2E2;color:#DC2626;font-size:13px;font-weight:700;width:26px;height:26px;border-radius:7px;align-self:center;margin:0 6px 0 0;flex-shrink:0;cursor:pointer;padding:0;line-height:1;display:flex;align-items:center;justify-content:center">✕</button>
+          <button type="button" onclick="refreshVolFromSupabase()" title="Tarik ulang dari Supabase" style="border:none;background:#DBEAFE;color:#1D4ED8;font-size:16px;width:38px;height:28px;border-radius:7px;align-self:center;margin:0 4px 0 6px;flex-shrink:0;cursor:pointer;padding:0;line-height:1;display:flex;align-items:center;justify-content:center">↻</button>
+          <button type="button" onclick="clearVolField()" title="Kosongkan" style="border:none;background:#FEE2E2;color:#DC2626;font-size:18px;font-weight:700;width:38px;height:28px;border-radius:7px;align-self:center;margin:0 6px 0 0;flex-shrink:0;cursor:pointer;padding:0;line-height:1;display:flex;align-items:center;justify-content:center">✕</button>
         </div>
         <div class="field-hint" id="volFreshness">Last updated: —</div>
         <div class="field-hint" id="volAdjHint" style="display:none;color:#B45309;font-weight:600"></div>
@@ -607,10 +607,13 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
   </div>
 </div>
 
-<div id="pdfBtnWrap" style="margin:16px 12px 0;display:none">
-  <button onclick="generatePDF()" style="width:100%;padding:14px;background:#D97706;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:.02em;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 2px 8px rgba(217,119,6,.35)">
-    📄 Generate Indication Sheet for Customer
+<div id="pdfBtnWrap" style="margin:16px 12px 0;display:none;gap:10px">
+  <button onclick="generatePDF()" style="flex:1;padding:14px;background:#D97706;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:.02em;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 2px 8px rgba(217,119,6,.35)">
+    📄 Generate PDF
   </button>
+  <a href="/yield-optimizer" style="flex:1;padding:14px;background:#1D4ED8;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:.02em;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 2px 8px rgba(29,78,216,.35);text-decoration:none">
+    📈 Yield Optimizer
+  </a>
 </div>
 <div style="margin:16px 12px 0;background:#0F172A;border-radius:12px;padding:14px 18px;text-align:center">
   <div style="font-size:12px;font-weight:600;font-style:italic;color:rgba(255,255,255,.9);letter-spacing:.01em;margin-bottom:5px">Proprietary to Treasury EBB Sales</div>
@@ -1505,7 +1508,7 @@ function calc(){
     const ok=N>0&&S>0&&K>0&&vol>0;
     document.getElementById('resEmpty').style.display=ok?'none':'block';
     document.getElementById('resMain').style.display=ok?'block':'none';
-    const _pdf=document.getElementById('pdfBtnWrap');if(_pdf)_pdf.style.display=ok?'block':'none';
+    const _pdf=document.getElementById('pdfBtnWrap');if(_pdf)_pdf.style.display=ok?'flex':'none';
     document.getElementById('revSec').style.display=ok?'block':'none';
     if(ok){
       
