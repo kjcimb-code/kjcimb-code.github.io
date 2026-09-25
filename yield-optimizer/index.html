@@ -35,7 +35,7 @@
 .ccy-dropdown-menu{display:none;position:absolute;top:100%;left:0;right:0;
   background:#fff;border:1.5px solid #790008;border-top:none;
   border-bottom-left-radius:8px;border-bottom-right-radius:8px;
-  max-height:260px;overflow-y:auto;
+  max-height:300px;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;overscroll-behavior:contain;padding-bottom:6px;
   z-index:999;box-shadow:0 6px 16px rgba(0,0,0,.12)}
 .ccy-dropdown-menu.show{display:block}
 .ccy-dropdown-item{padding:9px 12px;font-family:var(--mono);font-weight:600;font-size:13px;
@@ -216,7 +216,7 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
 .ccy-dropdown-menu{display:none;position:absolute;top:100%;left:0;right:0;
   background:#fff;border:1.5px solid #790008;border-top:none;
   border-bottom-left-radius:8px;border-bottom-right-radius:8px;
-  max-height:260px;overflow-y:auto;
+  max-height:300px;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;overscroll-behavior:contain;padding-bottom:6px;
   z-index:9999!important;box-shadow:0 8px 24px rgba(0,0,0,.15)}
 .ccy-dropdown-menu.show{display:block}
 .ccy-dropdown-item{padding:9px 12px;font-family:var(--mono);font-weight:600;font-size:13px;
@@ -362,7 +362,7 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
         <button class="opt-tenor-btn" data-days="360" onclick="setOptTenor(360)">360d</button>
       </div>
       <div id="optTenorShiftNote" style="font-size:10.5px;color:var(--slate);margin-top:8px;font-family:var(--mono)"></div>
-      <div id="optVolAdjHint" style="display:none;background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:8px 12px;font-size:11.5px;color:#92400E;margin-top:10px;line-height:1.5"></div>
+      <div id="optVolAdjHint" style="display:none;background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:8px 12px;font-size:11.5px;font-weight:600;color:#92400E;margin-top:10px;line-height:1.5"></div>
     </div>
 
   </div>
@@ -574,9 +574,32 @@ function toggleCCYDropdown(id){
   const btn=document.getElementById(id+'_btn');
   const isOpen=menu.classList.contains('show');
   // Close all dropdowns first
-  document.querySelectorAll('.ccy-dropdown-menu').forEach(m=>m.classList.remove('show'));
+  document.querySelectorAll('.ccy-dropdown-menu').forEach(m=>{
+    m.classList.remove('show');
+    m.style.position=''; m.style.left=''; m.style.top=''; m.style.width=''; m.style.maxHeight='';
+  });
   document.querySelectorAll('.ccy-dropdown-btn').forEach(b=>b.classList.remove('open'));
-  if(!isOpen){menu.classList.add('show');btn.classList.add('open');}
+  if(!isOpen){
+    menu.classList.add('show');
+    btn.classList.add('open');
+    // Pin the menu with position:fixed, sized from a fresh measurement of
+    // the button's CURRENT on-screen spot and the TRUE visible viewport
+    // (visualViewport, when available, is the one API that correctly
+    // accounts for a phone's on-screen keyboard and browser chrome --
+    // window.innerHeight/vh/dvh can all under- or over-report that).
+    // This is recalculated every time the menu opens, so it's always
+    // correct for wherever the page happens to be scrolled to right now.
+    const btnRect = btn.getBoundingClientRect();
+    const vv = window.visualViewport;
+    const viewportH = vv ? vv.height : window.innerHeight;
+    const viewportTopOffset = vv ? vv.offsetTop : 0;
+    const spaceBelow = (viewportTopOffset + viewportH) - btnRect.bottom - 10; // 10px safety margin
+    menu.style.position = 'fixed';
+    menu.style.left = btnRect.left + 'px';
+    menu.style.top = btnRect.bottom + 'px';
+    menu.style.width = btnRect.width + 'px';
+    menu.style.maxHeight = Math.max(150, spaceBelow) + 'px';
+  }
 }
 function getFreshnessInfo(ts){
   if(!ts) return {color:'#EF4444'};
@@ -641,6 +664,8 @@ function getNum(id){
 // ─── OPTIMIZER-SPECIFIC LOGIC ───────────────────────────────────────────
 let activeTenor = 30;
 let lastOptimizerFlatResults = [];
+let lastOptimizerMatDate = null;
+let lastOptimizerDepDays = null;
 const ITM_MAGNITUDES = [100, 50, 25, 0]; // pips ITM from spot, deepest ITM first, ATM last — OTM is intentionally excluded
 const ITM_LABELS = ['ITM 100', 'ITM 50', 'ITM 25', 'ATM'];
 
@@ -718,6 +743,8 @@ function runOptimizer(){
     document.getElementById('optDatesSec').style.display = 'none';
     document.getElementById('optTenorShiftNote').textContent = '';
     lastOptimizerFlatResults = [];
+    lastOptimizerMatDate = null;
+    lastOptimizerDepDays = null;
   }
 
   // Rigorous date engine — computed ONCE for the selected tenor tab, then
@@ -816,6 +843,8 @@ function runOptimizer(){
     rows.push({pi, yields, maxIdx, hasVol, rawVol:vol});
   });
   lastOptimizerFlatResults = flatCombos.slice().sort((a,b)=>b.yield-a.yield);
+  lastOptimizerMatDate = matDate;
+  lastOptimizerDepDays = depDays;
 
   if(!anyLiveVol){
     resEmpty.textContent = 'Menunggu data volatility live dari Supabase…';
@@ -882,6 +911,14 @@ function sendToWhatsApp(){
   const WHATSAPP_CUSTOMER_SHARE = 0.8;
   const top3 = lastOptimizerFlatResults.slice(0,3);
   const fmtSpotNum = (val, dec) => dec===0 ? Math.round(val).toLocaleString('en-US') : val.toFixed(dec);
+  const fmtDateID = d => {
+    const MONTHS=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
+    return d.getDate()+' '+MONTHS[d.getMonth()]+' '+d.getFullYear();
+  };
+  const todayStr = fmtDateID(new Date());
+  const maturityLine = lastOptimizerMatDate
+    ? 'Maturity '+fmtDateID(lastOptimizerMatDate)+', tenor '+lastOptimizerDepDays+' days'
+    : '';
   const blocks = top3.map(({pi, altCcy, strikePips, K, yield:y})=>{
     const spotStr = fmtSpotNum(pi.spot, pi.dec);
     const strikeStr = fmtSpotNum(K, pi.dec);
@@ -889,7 +926,10 @@ function sendToWhatsApp(){
     const customerY = y * WHATSAPP_CUSTOMER_SHARE;
     return pi.name+'\nBase '+depositCCY+'\nAlt '+altCcy+'\nSpot Rate '+spotStr+'\nStrike Price '+strikeStr+' ('+pipsStr+')\nImplied Rate '+customerY.toFixed(2)+'% pa gross';
   });
-  const message = 'Dear Pak/Bu\n\n'+blocks.join('\n\n')+'\n\nThank you';
+  const message = 'Dear Pak/Bu\n\n'
+    + 'Berikut best offer untuk strike currency hari ini ('+todayStr+') :\n'
+    + maturityLine + '\n\n'
+    + blocks.join('\n\n')+'\n\nThank you';
   const label = document.getElementById('waSendBtnLabel');
   const restoreLabel = label.textContent;
   const showCopied = () => {
