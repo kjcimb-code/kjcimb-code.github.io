@@ -311,7 +311,7 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
   <div class="hdr-bottom">
     <div class="hdr-title">Yield Optimizer</div>
     <div class="hdr-sub">Scans all currency pairs for the highest indicative yield</div>
-    <div class="hdr-sub" style="margin-top:2px">Deposit rates ref: <span id="depRatesRefHdr">16 Sep 2026</span> &nbsp;·&nbsp; Volatility ref: <span id="volRefHdr">16 Sep 2026</span> &nbsp;·&nbsp; Spot rate ref: <span id="spotRefHdr">16 Sep 2026</span></div>
+    <div class="hdr-sub" style="margin-top:2px">Deposit rates ref: <span id="depRatesRefHdr">27 Oct 2026</span> &nbsp;·&nbsp; Volatility ref: <span id="volRefHdr">27 Oct 2026</span> &nbsp;·&nbsp; Spot rate ref: <span id="spotRefHdr">16 Sep 2026</span></div>
   </div>
 </div>
 
@@ -454,8 +454,7 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
 </div>
 
 <div style="margin:16px 12px 0;background:#0F172A;border-radius:12px;padding:14px 18px;text-align:center">
-  <div style="font-size:12px;font-weight:600;font-style:italic;color:rgba(255,255,255,.9);letter-spacing:.01em;margin-bottom:5px">Proprietary to Treasury EBB Sales</div>
-  <div style="font-size:10px;font-family:var(--mono);color:rgba(255,255,255,.4)">Kevin Jonathan &nbsp;&middot;&nbsp; <a href="mailto:kevin.jonathan@cimbniaga.co.id" style="color:rgba(255,255,255,.4);text-decoration:none">kevin.jonathan@cimbniaga.co.id</a></div>
+  <div style="font-size:12px;font-weight:600;font-style:italic;color:rgba(255,255,255,.9);letter-spacing:.01em">Proprietary to Treasury Sales and Distribution</div>
 </div>
 
 
@@ -521,28 +520,28 @@ function toUSDEquiv(ccy, amount){
   return isBase ? amount*rate : amount/rate;
 }
 // Currency (Y) IDR — deposit interest (PUT mode)
-let IDR_DEP=[{d:1,r:5.40},{d:7,r:5.57},{d:14,r:5.58},{d:30,r:6.28},{d:60,r:6.41},{d:90,r:6.55},{d:120,r:6.57},{d:150,r:6.59},{d:180,r:6.60},{d:360,r:6.61}];
+let IDR_DEP=[{d:1,r:5},{d:7,r:5.18},{d:14,r:5.18},{d:30,r:5.88},{d:60,r:6.07},{d:90,r:6.26},{d:120,r:6.3},{d:150,r:6.33},{d:180,r:6.37},{d:360,r:6.52}];
 // Currency (Y) USD — deposit interest (CALL mode)
-let USD_DEP=[{d:1,r:3.53},{d:7,r:3.55},{d:14,r:3.57},{d:30,r:4.12},{d:60,r:4.24},{d:90,r:4.30},{d:120,r:4.36},{d:150,r:4.40},{d:180,r:4.43},{d:360,r:4.47}];
+let USD_DEP=[{d:1,r:3.64},{d:7,r:3.66},{d:14,r:3.68},{d:30,r:4.22},{d:60,r:4.36},{d:90,r:4.48},{d:120,r:4.52},{d:150,r:4.55},{d:180,r:4.58},{d:360,r:4.97}];
 // DEPO RATE OPTION IDR1 — GK model rd
-let IDR_OPT=[{d:1,r:5.69},{d:7,r:5.95},{d:14,r:5.97},{d:30,r:6.02},{d:60,r:6.02},{d:90,r:6.05},{d:120,r:0.0},{d:150,r:0.0},{d:180,r:6.20},{d:360,r:6.28}];
+let IDR_OPT=[{d:1,r:5.12},{d:7,r:5.47},{d:14,r:5.55},{d:30,r:5.58},{d:60,r:5.58},{d:90,r:5.68},{d:120,r:0.0},{d:150,r:0.0},{d:180,r:5.9},{d:360,r:6.15}];
 // DEPO RATE OPTION USD1 — GK model rf
-let USD_OPT=[{d:1,r:3.62},{d:7,r:3.86},{d:14,r:3.88},{d:30,r:3.89},{d:60,r:3.93},{d:90,r:3.98},{d:120,r:4.05},{d:150,r:4.10},{d:180,r:4.13},{d:360,r:4.40}];
-let AUD_OPT=[{d:1,r:4.35},{d:7,r:4.35},{d:14,r:4.37},{d:30,r:4.47},{d:60,r:4.55},{d:90,r:4.61},{d:120,r:4.65},{d:150,r:4.69},{d:180,r:4.73},{d:360,r:4.95}];
-let EUR_OPT=[{d:1,r:2.45},{d:7,r:2.44},{d:14,r:2.44},{d:30,r:2.44},{d:60,r:2.47},{d:90,r:2.51},{d:120,r:2.58},{d:150,r:2.64},{d:180,r:2.69},{d:360,r:2.99}];
-let GBP_OPT=[{d:1,r:3.73},{d:7,r:3.78},{d:14,r:3.79},{d:30,r:3.79},{d:60,r:3.84},{d:90,r:3.91},{d:120,r:4.00},{d:150,r:4.07},{d:180,r:4.13},{d:360,r:4.50}];
-let NZD_OPT=[{d:1,r:2.92},{d:7,r:2.75},{d:14,r:2.75},{d:30,r:2.75},{d:60,r:2.81},{d:90,r:2.87},{d:120,r:2.94},{d:150,r:2.99},{d:180,r:3.04},{d:360,r:3.39}];
-let SGD_OPT=[{d:1,r:1.07},{d:7,r:0.0},{d:14,r:0.0},{d:30,r:1.49},{d:60,r:1.51},{d:90,r:1.54},{d:120,r:0.0},{d:150,r:0.0},{d:180,r:1.60},{d:360,r:1.73}];
+let USD_OPT=[{d:1,r:3.92},{d:7,r:3.96},{d:14,r:3.94},{d:30,r:3.94},{d:60,r:4.01},{d:90,r:4.06},{d:120,r:4.11},{d:150,r:4.16},{d:180,r:4.21},{d:360,r:4.46}];
+let AUD_OPT=[{d:1,r:4.6},{d:7,r:4.6},{d:14,r:4.68},{d:30,r:4.73},{d:60,r:4.77},{d:90,r:4.8},{d:120,r:4.82},{d:150,r:4.85},{d:180,r:4.87},{d:360,r:4.96}];
+let EUR_OPT=[{d:1,r:2.48},{d:7,r:2.44},{d:14,r:2.45},{d:30,r:2.45},{d:60,r:2.47},{d:90,r:2.54},{d:120,r:2.58},{d:150,r:2.63},{d:180,r:2.68},{d:360,r:2.9}];
+let GBP_OPT=[{d:1,r:3.73},{d:7,r:3.73},{d:14,r:3.81},{d:30,r:3.9},{d:60,r:3.97},{d:90,r:4.02},{d:120,r:4.09},{d:150,r:4.16},{d:180,r:4.22},{d:360,r:4.56}];
+let NZD_OPT=[{d:1,r:2.55},{d:7,r:2.98},{d:14,r:2.98},{d:30,r:2.99},{d:60,r:3.05},{d:90,r:3.09},{d:120,r:3.14},{d:150,r:3.2},{d:180,r:3.26},{d:360,r:3.56}];
+let SGD_OPT=[{d:1,r:1.28},{d:7,r:0.0},{d:14,r:0.0},{d:30,r:1.44},{d:60,r:1.47},{d:90,r:1.5},{d:120,r:0.0},{d:150,r:0.0},{d:180,r:1.57},{d:360,r:1.68}];
 
 
-let AUD_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:1.24},{d:30,r:3.41},{d:60,r:3.40},{d:90,r:3.41},{d:120,r:3.42},{d:150,r:3.44},{d:180,r:3.46},{d:360,r:3.41}];
-let EUR_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:0.79},{d:30,r:1.91},{d:60,r:1.90},{d:90,r:1.91},{d:120,r:1.92},{d:150,r:1.94},{d:180,r:1.96},{d:360,r:1.96}];
-let GBP_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:1.32},{d:30,r:3.66},{d:60,r:3.65},{d:90,r:3.66},{d:120,r:3.67},{d:150,r:3.69},{d:180,r:3.71},{d:360,r:3.71}];
-let NZD_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:0.94},{d:30,r:2.41},{d:60,r:2.40},{d:90,r:2.41},{d:120,r:2.42},{d:150,r:2.44},{d:180,r:2.46},{d:360,r:2.50}];
-let SGD_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:0.68},{d:30,r:1.56},{d:60,r:1.60},{d:90,r:1.66},{d:120,r:1.69},{d:150,r:1.72},{d:180,r:1.76},{d:360,r:1.75}];
+let AUD_DEP=[{d:1,r:0.27},{d:7,r:0.27},{d:14,r:1.28},{d:30,r:3.62},{d:60,r:3.62},{d:90,r:3.62},{d:120,r:3.55},{d:150,r:3.48},{d:180,r:3.42},{d:360,r:3.17}];
+let EUR_DEP=[{d:1,r:0.27},{d:7,r:0.27},{d:14,r:0.82},{d:30,r:2.12},{d:60,r:2.12},{d:90,r:2.12},{d:120,r:2.13},{d:150,r:2.15},{d:180,r:2.17},{d:360,r:2.17}];
+let GBP_DEP=[{d:1,r:0.27},{d:7,r:0.27},{d:14,r:1.28},{d:30,r:3.62},{d:60,r:3.62},{d:90,r:3.62},{d:120,r:3.63},{d:150,r:3.65},{d:180,r:3.67},{d:360,r:3.67}];
+let NZD_DEP=[{d:1,r:0.27},{d:7,r:0.27},{d:14,r:0.9},{d:30,r:2.37},{d:60,r:2.37},{d:90,r:2.37},{d:120,r:2.38},{d:150,r:2.4},{d:180,r:2.42},{d:360,r:2.67}];
+let SGD_DEP=[{d:1,r:0.27},{d:7,r:0.27},{d:14,r:0.67},{d:30,r:1.62},{d:60,r:1.62},{d:90,r:1.62},{d:120,r:1.72},{d:150,r:1.81},{d:180,r:1.92},{d:360,r:1.92}];
 
-let JPY_DEP=[{d:1,r:0.31},{d:7,r:0.31},{d:14,r:0.33},{d:30,r:0.41},{d:60,r:0.40},{d:90,r:0.41},{d:120,r:0.42},{d:150,r:0.44},{d:180,r:0.46},{d:360,r:0.46}];
-let JPY_OPT=[{d:1,r:0.98},{d:7,r:0.98},{d:14,r:1.12},{d:30,r:1.18},{d:60,r:1.22},{d:90,r:1.24},{d:120,r:1.29},{d:150,r:1.34},{d:180,r:1.37},{d:360,r:1.58}];
+let JPY_DEP=[{d:1,r:0.27},{d:7,r:0.27},{d:14,r:0.29},{d:30,r:0.37},{d:60,r:0.37},{d:90,r:0.37},{d:120,r:0.38},{d:150,r:0.4},{d:180,r:0.42},{d:360,r:0.42}];
+let JPY_OPT=[{d:1,r:1.23},{d:7,r:1.23},{d:14,r:1.23},{d:30,r:1.23},{d:60,r:1.26},{d:90,r:1.32},{d:120,r:1.36},{d:150,r:1.4},{d:180,r:1.44},{d:360,r:1.64}];
 let CCY_DEP={'USD':USD_DEP,'AUD':AUD_DEP,'EUR':EUR_DEP,'GBP':GBP_DEP,'NZD':NZD_DEP,'SGD':SGD_DEP,'JPY':JPY_DEP,'IDR':IDR_DEP};
 
 let CCY_OPT={'USD':USD_OPT,'AUD':AUD_OPT,'EUR':EUR_OPT,'GBP':GBP_OPT,'NZD':NZD_OPT,'SGD':SGD_OPT,'JPY':JPY_OPT,'IDR':IDR_OPT};
@@ -550,7 +549,7 @@ const HIERARCHY=['EUR','GBP','AUD','NZD','USD','SGD','JPY','IDR'];
 const RANK={EUR:0,GBP:1,AUD:2,NZD:3,USD:4,SGD:5,JPY:6,IDR:7};
 const ALL_CCY=['EUR','GBP','AUD','NZD','USD','SGD','JPY','IDR'];
 const PAIR_SPOTS={'EUR/GBP':0.8557,'EUR/AUD':1.6174,'EUR/NZD':1.9584,'EUR/USD':1.159,'EUR/SGD':1.4753,'EUR/JPY':185.22,'EUR/IDR':20571,'GBP/AUD':1.89,'GBP/NZD':2.2886,'GBP/USD':1.3544,'GBP/SGD':1.724,'GBP/JPY':216.45,'GBP/IDR':24039,'AUD/NZD':1.2109,'AUD/USD':0.7166,'AUD/SGD':0.9122,'AUD/JPY':114.52,'AUD/IDR':12719,'NZD/USD':0.5918,'NZD/SGD':0.7533,'NZD/JPY':94.57,'NZD/IDR':10504,'USD/SGD':1.2729,'USD/JPY':159.81,'USD/IDR':17749,'SGD/JPY':125.55,'SGD/IDR':13943,'JPY/IDR':111.06};
-const VOL_HINTS_PAIR={'AUD/USD':'e.g. 4.50','NZD/USD':'e.g. 6.00','EUR/USD':'e.g. 3.75','GBP/USD':'e.g. 3.25','USD/SGD':'e.g. 2.25','USD/JPY':'e.g. 4.75','USD/IDR':'e.g. 3.50','JPY/IDR':'e.g. 3.50','AUD/IDR':'e.g. 3.50','SGD/IDR':'e.g. 2.00'};
+const VOL_HINTS_PAIR={'AUD/USD':'e.g. 5.50','NZD/USD':'e.g. 6.50','EUR/USD':'e.g. 5.50','GBP/USD':'e.g. 4.50','USD/SGD':'e.g. 2.00','USD/JPY':'e.g. 5.75','USD/IDR':'e.g. 4.25','JPY/IDR':'e.g. 4.25','AUD/IDR':'e.g. 3.50','SGD/IDR':'e.g. 2.25'};
 let depositCCY='IDR',alternateCCY='USD';
 let isPUT_g=true;
 
@@ -966,11 +965,12 @@ runOptimizer();
 // fetch below overrides this with green (fresh, same day) or orange
 // (fetched OK but the row is from a previous day).
 (function(){
-  const fallbackText='16 Sep 2026';
   const redDot=dotSpan('#EF4444');
-  ['depRatesRefHdr','volRefHdr','spotRefHdr'].forEach(id=>{
+  // Fallback "as of" date per reference. Spot keeps its older date: PAIR_SPOTS wasn't refreshed with the rates.
+  const fallbackDates={depRatesRefHdr:'27 Oct 2026', volRefHdr:'27 Oct 2026', spotRefHdr:'16 Sep 2026'};
+  Object.keys(fallbackDates).forEach(id=>{
     const el=document.getElementById(id);
-    if(el) el.innerHTML=redDot+fallbackText;
+    if(el) el.innerHTML=redDot+fallbackDates[id];
   });
 })();
 
