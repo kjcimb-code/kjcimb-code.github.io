@@ -212,7 +212,7 @@
 
     <div class="card-body">
       <h1>Masuk ke akun</h1>
-      <p class="sub">Login untuk melihat dan mengatur jadwal tim.</p>
+      <p class="sub">Login untuk mengakses jadwal tim atau SC Rates.</p>
 
       <form id="loginForm">
         <div class="field">
@@ -252,8 +252,11 @@
     toggleBtn.textContent = isHidden ? '🙈' : '👁️';
   });
 
+  // EBB team -> schedule. SBP (rates-only accounts) -> rates dashboard, never the schedule.
   if (localStorage.getItem('ebb_user')) {
     window.location.href = 'schedule.html';
+  } else if (localStorage.getItem('sbp_user')) {
+    window.location.href = 'rates-dashboard.html';
   }
 
   // --- Supabase client (defensive: never let this crash the whole script) ---
@@ -287,28 +290,49 @@
     const password = document.getElementById('password').value;
 
     try {
+      // 1) EBB team members (full access: schedule + SC Rates)
       const { data, error } = await sbClient
         .from('users')
         .select('username, display_name, color, initial, is_admin, password')
         .eq('username', username)
         .single();
 
-      if (error || !data) {
-        throw new Error('Username tidak ditemukan.');
-      }
-      if (data.password !== password) {
-        throw new Error('Password salah.');
+      if (data && !error) {
+        if (data.password !== password) {
+          throw new Error('Password salah.');
+        }
+        const sessionUser = {
+          username: data.username,
+          display_name: data.display_name,
+          color: data.color,
+          initial: data.initial,
+          is_admin: data.is_admin
+        };
+        localStorage.removeItem('sbp_user');
+        localStorage.setItem('ebb_user', JSON.stringify(sessionUser));
+        window.location.href = 'schedule.html';
+        return;
       }
 
-      const sessionUser = {
-        username: data.username,
-        display_name: data.display_name,
-        color: data.color,
-        initial: data.initial,
-        is_admin: data.is_admin
-      };
-      localStorage.setItem('ebb_user', JSON.stringify(sessionUser));
-      window.location.href = 'schedule.html';
+      // 2) SBP / rates-only accounts. They get a DIFFERENT session key (sbp_user), so the
+      //    schedule page (which only trusts ebb_user) never sees a session for them.
+      const sbp = await sbClient
+        .from('dashboard_users')
+        .select('username, display_name, password')
+        .eq('username', username)
+        .single();
+      if (sbp.error || !sbp.data) {
+        throw new Error('Username tidak ditemukan.');
+      }
+      if (sbp.data.password !== password) {
+        throw new Error('Password salah.');
+      }
+      localStorage.removeItem('ebb_user');
+      localStorage.setItem('sbp_user', JSON.stringify({
+        username: sbp.data.username,
+        display_name: sbp.data.display_name
+      }));
+      window.location.href = 'rates-dashboard.html';
 
     } catch (err) {
       errorBox.textContent = err.message || 'Terjadi kesalahan. Coba lagi.';

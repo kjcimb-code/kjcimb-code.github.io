@@ -310,6 +310,9 @@ textarea,.cell-input,.vol-input,.markup-input input,.hol-add input,.hol-add sele
   </div>
 
 </div>
+<div style="display:flex;justify-content:flex-end;margin:10px 2px 10px">
+  <div id="userChip" title="Keluar" style="cursor:pointer;font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:.03em;color:rgba(255,255,255,.85);background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);border-radius:99px;padding:5px 13px;white-space:nowrap">👤 <span id="userChipName"></span> &nbsp;·&nbsp; Keluar</div>
+</div>
 <div class="tabs">
     <div class="tab active" data-tab="rates">💰 Deposit &amp; Option Rate</div>
   <div class="tab" data-tab="vol">📊 Volatility</div>
@@ -586,13 +589,17 @@ Isra Mihraj Nabi Muhammad
 
 <script>
 /* ---------- AUTH GATE ---------- */
-const rawUser = localStorage.getItem('ebb_user');
+// EBB team (ebb_user) and SBP rates-maintenance accounts (sbp_user) may both open this dashboard.
+const rawUser = localStorage.getItem('ebb_user') || localStorage.getItem('sbp_user');
 let currentUser = null;
 if (!rawUser) {
   window.location.href = 'login.html';
 } else {
   try { currentUser = JSON.parse(rawUser); } catch(e) { currentUser = null; }
-  if (!currentUser) { localStorage.removeItem('ebb_user'); window.location.href = 'login.html'; }
+  if (!currentUser) {
+    localStorage.removeItem('ebb_user'); localStorage.removeItem('sbp_user');
+    window.location.href = 'login.html';
+  }
 }
 
 /* ---------- SUPABASE CLIENT ---------- */
@@ -600,6 +607,18 @@ const SUPABASE_URL = 'https://xavhlnwodzhqxdhryowm.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhhdmhsbndvZHpocXhkaHJ5b3dtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxNTk5MzMsImV4cCI6MjEwMTczNTkzM30.fYJ0ZDRyImv9KT07-cW1qn9135jHFSnzybOJvnK1z70';
 const sbClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 const RATES_ROW_ID = 1;
+
+/* ---------- WHO'S LOGGED IN + LOGOUT ---------- */
+(function(){
+  var chip = document.getElementById('userChip');
+  if (!chip) return;
+  document.getElementById('userChipName').textContent = (currentUser && (currentUser.display_name || currentUser.username)) || '';
+  chip.addEventListener('click', function(){
+    localStorage.removeItem('ebb_user');
+    localStorage.removeItem('sbp_user');
+    window.location.href = 'login.html';
+  });
+})();
 const TENORS_LIVE = [1,7,14,30,60,90,120,150,180,360];
 
 /* ---------- TABS ---------- */
