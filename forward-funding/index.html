@@ -169,6 +169,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
 <!-- HEADER -->
 <div class="hdr">
   <div class="hdr-top">
+    <a href="index.html" aria-label="Home" style="display:inline-flex;line-height:0;cursor:pointer">
     <svg width="110" height="17" viewBox="0 0 1084 166" xmlns="http://www.w3.org/2000/svg">
       <rect width="165.25" height="165.25" fill="#fff"/>
       <path fill="#064E3B" d="M22.01 31.02C34.87 48.24 47.92 65.31 60.84 82.48 48.03 99.72 34.9 116.72 22.07 133.95c29.33.12 58.65 0 87.98.06 13.2-17.08 25.92-34.53 39.21-51.55l-.25.01C136.06 65.3 123.05 48.17 110.12 31 80.75 31.02 51.38 30.97 22.01 31.02z"/>
@@ -177,14 +178,15 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
       <path fill="#fff" d="M221.25 48.29C231.09 36.02 246.22 28.14 261.94 27.25c14.89-1.15 30.04 4.08 41.23 13.93-5.05 5.09-10.11 10.15-15.2 15.2-8.61-6.98-20.57-9.73-31.29-6.67-11.96 3.14-21.56 13.36-24.23 25.4-3.26 13.07 1.45 27.92 12.2 36.2 12.28 10.05 31.33 9.54 43.4-.61 5.06 5.07 10.23 10.05 15.16 15.26-9.99 8.68-22.98 13.9-36.24 14.06-16.71.46-33.45-6.89-44.36-19.56-7.63-8.69-12.49-19.79-13.58-31.31-1.53-14.52 2.94-29.57 12.22-40.86zM323.25 30.25c7.25 0 14.49.01 21.74-.01.02 35.59 0 71.17.01 106.76-7.25 0-14.5.01-21.75-.01.01-35.58 0-71.16 0-106.74zM371 30c7.05-.02 14.1.04 21.16-.03 12.57 22.61 24.82 45.42 37.55 67.95C442.05 75.24 454.57 52.67 466.91 30c7.11.02 14.22 0 21.34.01-.04 35.6.07 71.19-.06 106.79-7.24-.11-14.47.02-21.71-.07.05-21.07 0-42.13.03-63.19C454.04 94.82 442.16 116.47 429.47 137.62 417.35 116.19 404.9 94.95 392.73 73.55c.04 21.07.01 42.13.02 63.2-7.25 0-14.49-.01-21.74.01-.03-35.59 0-71.17-.01-106.76zM513.01 30.24c14.68.02 29.35 0 44.03.01 6.79.13 13.76 1.56 19.56 5.25 14.01 8.56 17.23 30.79 5.53 42.57-1.5 1.6-3.28 2.92-5.05 4.2 6.67 3.51 11.79 10.02 13.03 17.52 1.81 10.12-.5 21.74-8.35 28.88-6.26 5.99-15.16 8.15-23.6 8.26-15.05.16-30.11.03-45.16.07.01-35.59-.02-71.17.01-106.76zm21.74 19.51c-.01 7.75 0 15.5 0 23.25 6.4-.02 12.81.03 19.22-.01 3.73-.07 7.76-.85 10.49-3.6 3.88-4.12 3.98-11.07.53-15.49-2.65-3.19-7.03-4.18-11-4.16-6.42.01-12.83.01-19.24.01zm0 42.76c0 8.24-.01 16.49 0 24.74 7.07.01 14.14-.01 21.21.02 3.31.1 6.79-.83 9.27-3.12 4.94-4.76 5.03-13.63-.01-18.35-2.72-2.58-6.62-3.25-10.23-3.3-6.75-.01-13.5 0-20.24.01z"/>
       <path fill="#fff" d="M635.24 30.01c3.63.04 7.26-.13 10.89.05 1.66 1.29 2.59 3.31 3.92 4.93C669.97 62.2 689.73 89.53 709.76 116.66c-.02-28.89 0-57.77-.01-86.66 3.75 0 7.5 0 11.25.01 0 65.5 0 71 0 106.49l-11.36.02C688.6 107.58 667.57 78.63 646.5 49.71c0 28.93 0 57.86 0 86.78-3.78-.01-7.56.08-11.32-.08.17-35.46.03-70.93.06-106.4zM749 30c3.75 0 7.49 0 11.25.01 0 35.5-.01 70.99 0 106.48-3.75.03-7.5.01-10.99.02-.03-35.5 0-71 0-106.51zM777.57 137.22c12.97-35.51 25.95-71.02 39.01-106.49 5.2.05 10.39.01 15.59.02 12.37 35.25 24.72 70.52 37.13 105.75-4.42-.01-8.84.01-13.25-.01-3.29-9.43-6.63-18.85-10.02-28.25-14.69.01-29.37.01-44.05.01-3.28 9.65-6.43 19.36-9.72 28.97-4.9-.04-9.8.02-14.69-.01zm28.91-41.74c11.69.05 23.39.01 35.08.02-5.86-17.08-11.64-34.19-17.4-51.3-5.87 17.1-11.86 34.16-17.68 51.28zM894.27 48.18c8.88-9.14 20.76-15.71 33.57-16.89 15.79-1.59 31.51 4.27 44.28 13.26-2.49 3.23-5.11 6.35-7.58 9.59-4.25-6.05-11.78-8.31-18.57-10.14-11.81-3.25-25.21-1.49-35.18 5.84-8.99 6.8-15.03 17.13-17.42 28.08-1.35 11.32-.23 23.68 6.49 33.26 2.31 3.62 6.01 5.95 9.14 8.76 6.68 5.45 15.44 7.92 23.98 7.84 10.51.1 20.91-2.59 30.52-6.72.01-10.94.04-21.88-.03-32.82-8.33.01-16.66.01-24.99 0 0-3.32 0-6.64-.01-9.96 11.83-.07 23.66 0 35.5-.04.02 16.92 0 33.83.01 50.75-11.29 6.3-24.23 8.94-36.97 10.21-13.49.28-27.58-3.18-38.08-12-10.26-8.43-16.25-21.26-18.01-34.26-1.35-15.82 2.67-32.67 13.33-44.77zM992.04 137.11c13.03-35.43 26-70.88 38.93-106.35 5.2-.03 10.4.03 15.61-.05 11.95 33.65 23.63 67.4 35.54 101.07.56 1.51.87 3.09 1 4.71-4.17.02-8.34 0-12.51.02-3.39-9.4-6.69-18.84-10.03-28.25-14.74-.02-29.48-.01-44.21.03-3.16 9.67-6.44 19.3-9.62 28.96-4.9-.03-9.8.16-14.69-.14zm46.54-92.84c-5.8 17.11-11.85 34.13-17.6 51.26 11.65-.06 23.31-.02 34.96-.02-5.67-17.12-11.55-34.17-17.36-51.24z"/>
     </svg>
+    </a>
     <div class="hdr-right">
       <div class="hdr-div">Treasury &amp; Financial Institutions</div>
-      <div class="hdr-ebb">Treasury EBB Sales</div>
+      <div class="hdr-ebb">Treasury Sales and Distribution</div>
     </div>
   </div>
   <div class="hdr-bottom">
     <div class="hdr-title">Forward Funding Calculator</div>
-    <div class="hdr-sub" id="hdrRate">Implied return is indicative &nbsp;·&nbsp; Last updated: 10-Aug-2026 &nbsp;·&nbsp; Please ask swap trader for the latest swap points</div>
+    <div class="hdr-sub" id="hdrRate">Implied return is indicative &nbsp;·&nbsp; Last updated: 27-Oct-2026 &nbsp;·&nbsp; Please ask swap trader for the latest swap points</div>
   </div>
 </div>
 
@@ -250,13 +252,13 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
     <div class="date-grid">
       <div class="date-box">
         <label>Transaction Date</label>
-        <div class="dv">10-Aug-2026</div>
-        <div class="dd">Monday</div>
+        <div class="dv">27-Oct-2026</div>
+        <div class="dd">Tuesday</div>
       </div>
       <div class="date-box">
         <label>Value Date (TOM)</label>
-        <div class="dv">11-Aug-2026</div>
-        <div class="dd">Tuesday</div>
+        <div class="dv">28-Oct-2026</div>
+        <div class="dd">Wednesday</div>
       </div>
       <div class="date-box hl">
         <label>Maturity Date</label>
@@ -270,7 +272,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
       </div>
     </div>
     <div style="margin-top:12px;padding:8px 10px;background:#FEF3C7;border:1px solid #FDE68A;border-radius:8px;font-size:10.5px;color:#78350F;font-family:var(--mono)">
-      <b>2026 Holidays (excluded from value dates):</b> 17-Aug (Kemerdekaan RI) · 25-Aug (Maulid Nabi Muhammad SAW) · 25-Dec (Hari Raya Natal)
+      <b>Holidays (excluded from value dates):</b> 25-Dec-26 (Natal) · 1-Jan-27 (Tahun Baru) · 5-Jan-27 (Isra Mi&rsquo;raj) · 6-Feb-27 (Imlek) · 9-Mar-27 (Nyepi) · 10-Mar-27 (Idul Fitri) · 11-Mar-27 (Cuti Bersama) · 26-Mar-27 (Jumat Agung)
     </div>
     <div style="font-size:9px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--slate);font-weight:600;margin-bottom:6px;margin-top:16px">Bank (Cost)</div>
     <div class="swap-bar" style="margin-bottom:10px">
@@ -379,8 +381,6 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
   </div>
 </div>
 
-<div style="text-align:center;font-size:10.5px;font-style:italic;color:var(--slate);font-family:var(--mono);margin:14px 12px 0">Implied return is indicative &nbsp;·&nbsp; Last updated: 10-Aug-2026 &nbsp;·&nbsp; Please ask swap trader for the latest swap points</div>
-
 <!-- FOOTER -->
 <!-- INDIKASI SECTION -->
 <div id="secIndikasi" style="display:none">
@@ -391,7 +391,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
     </div>
     <div class="sec-body">
       <div style="font-size:10px;color:var(--slate);font-family:var(--mono);margin-bottom:12px;font-style:italic">
-        Best tenor per bucket · Spread: 0.25% · Last updated: 10-Aug-2026
+        Best tenor per bucket · Spread: 0.25% · Last updated: 27-Oct-2026
       </div>
 
       <!-- SPOT INPUTS -->
@@ -566,7 +566,6 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
 
 <!-- SPECIAL FF SECTION (static display, client placement rates) -->
 <div class="indikasi-wrap" id="specialFFWrap" style="display:none">
-
   <div class="ind-card">
     <div class="ind-card-hdr idr" style="background:#7F1D1D">
       <span>IDR &nbsp;·&nbsp; Fresh Fund</span>
@@ -576,18 +575,21 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
         <tr>
           <th rowspan="2" style="vertical-align:middle">Tenor</th>
           <th colspan="3" style="text-align:center">Max to Client</th>
+          <th rowspan="2" style="vertical-align:middle">Portfolio</th>
         </tr>
         <tr>
-          <th style="text-align:center">IDR 1 Bn - 2 Bn</th>
+          <th style="text-align:center">IDR 500 Mn - 2 Bn</th>
           <th style="text-align:center">&ge; IDR 2 Bn</th>
           <th style="text-align:center">&ge; IDR 10 Bn</th>
         </tr>
       </thead>
       <tbody>
-        <tr><td>1 mo</td><td class="r">4.80%</td><td class="r">5.30%</td><td class="r">5.55%</td></tr>
-        <tr><td>2 mo</td><td class="r">4.90%</td><td class="r">5.40%</td><td class="r">5.55%</td></tr>
-        <tr><td>3 mo</td><td class="r">5.05%</td><td class="r">5.55%</td><td class="r">5.70%</td></tr>
-        <tr><td>6 mo</td><td class="r">5.30%</td><td class="r">5.80%</td><td class="r">6.00%</td></tr>
+        <tr><td>1 mo</td><td class="r">4.45%</td><td class="r">4.75%</td><td class="r">5.00%</td><td>IDF-PTB-PP-FD</td></tr>
+        <tr><td>2 mo</td><td class="r">4.71%</td><td class="r">5.01%</td><td class="r">5.16%</td><td>IDF-PTB-PS-FD</td></tr>
+        <tr><td>3 mo</td><td class="r">5.01%</td><td class="r">5.26%</td><td class="r">5.41%</td><td>IDF-PTB-PR-FD</td></tr>
+        <tr><td>4 mo</td><td class="r">5.05%</td><td class="r">5.30%</td><td class="r">5.45%</td><td>IDF-PTB-PU-FD</td></tr>
+        <tr><td>5 mo</td><td class="r">5.07%</td><td class="r">5.32%</td><td class="r">5.57%</td><td>IDF-PTB-PV-FD</td></tr>
+        <tr><td>6 mo</td><td class="r">5.31%</td><td class="r">5.56%</td><td class="r">5.66%</td><td>IDF-PTB-PT-FD</td></tr>
       </tbody>
     </table></div>
   </div>
@@ -601,18 +603,21 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
         <tr>
           <th rowspan="2" style="vertical-align:middle">Tenor</th>
           <th colspan="3" style="text-align:center">Max to Client</th>
+          <th rowspan="2" style="vertical-align:middle">Portfolio</th>
         </tr>
         <tr>
-          <th style="text-align:center">IDR 1 Bn - 2 Bn</th>
+          <th style="text-align:center">IDR 500 Mn - 2 Bn</th>
           <th style="text-align:center">&ge; IDR 2 Bn</th>
           <th style="text-align:center">&ge; IDR 10 Bn</th>
         </tr>
       </thead>
       <tbody>
-        <tr><td>1 mo</td><td class="r">4.55%</td><td class="r">5.05%</td><td class="r">5.30%</td></tr>
-        <tr><td>2 mo</td><td class="r">4.65%</td><td class="r">5.15%</td><td class="r">5.30%</td></tr>
-        <tr><td>3 mo</td><td class="r">4.80%</td><td class="r">5.30%</td><td class="r">5.45%</td></tr>
-        <tr><td>6 mo</td><td class="r">5.05%</td><td class="r">5.55%</td><td class="r">5.75%</td></tr>
+        <tr><td>1 mo</td><td class="r">4.20%</td><td class="r">4.50%</td><td class="r">4.75%</td><td>IDF-PTB-PP-FD</td></tr>
+        <tr><td>2 mo</td><td class="r">4.46%</td><td class="r">4.76%</td><td class="r">4.91%</td><td>IDF-PTB-PS-FD</td></tr>
+        <tr><td>3 mo</td><td class="r">4.76%</td><td class="r">5.01%</td><td class="r">5.16%</td><td>IDF-PTB-PR-FD</td></tr>
+        <tr><td>4 mo</td><td class="r">4.80%</td><td class="r">5.05%</td><td class="r">5.20%</td><td>IDF-PTB-PU-FD</td></tr>
+        <tr><td>5 mo</td><td class="r">4.82%</td><td class="r">5.07%</td><td class="r">5.32%</td><td>IDF-PTB-PV-FD</td></tr>
+        <tr><td>6 mo</td><td class="r">5.06%</td><td class="r">5.31%</td><td class="r">5.41%</td><td>IDF-PTB-PT-FD</td></tr>
       </tbody>
     </table></div>
   </div>
@@ -626,6 +631,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
         <tr>
           <th rowspan="2" style="vertical-align:middle">Tenor</th>
           <th colspan="3" style="text-align:center">Max to Client</th>
+          <th rowspan="2" style="vertical-align:middle">Portfolio</th>
         </tr>
         <tr>
           <th style="text-align:center">USD 100k - 499k</th>
@@ -634,10 +640,12 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
         </tr>
       </thead>
       <tbody>
-        <tr><td>1 mo</td><td class="r">3.00%</td><td class="r">3.10%</td><td class="r">3.20%</td></tr>
-        <tr><td>2 mo</td><td class="r">3.10%</td><td class="r">3.20%</td><td class="r">3.30%</td></tr>
-        <tr><td>3 mo</td><td class="r">3.20%</td><td class="r">3.30%</td><td class="r">3.40%</td></tr>
-        <tr><td>6 mo</td><td class="r">3.30%</td><td class="r">3.40%</td><td class="r">3.50%</td></tr>
+        <tr><td>1 mo</td><td class="r">3.25%</td><td class="r">3.35%</td><td class="r">3.45%</td><td>IDF-PTB-PP-FD</td></tr>
+        <tr><td>2 mo</td><td class="r">3.35%</td><td class="r">3.45%</td><td class="r">3.55%</td><td>IDF-PTB-PS-FD</td></tr>
+        <tr><td>3 mo</td><td class="r">3.40%</td><td class="r">3.50%</td><td class="r">3.60%</td><td>IDF-PTB-PR-FD</td></tr>
+        <tr><td>4 mo</td><td class="r">3.50%</td><td class="r">3.60%</td><td class="r">3.70%</td><td>IDF-PTB-PU-FD</td></tr>
+        <tr><td>5 mo</td><td class="r">3.50%</td><td class="r">3.60%</td><td class="r">3.70%</td><td>IDF-PTB-PV-FD</td></tr>
+        <tr><td>6 mo</td><td class="r">3.55%</td><td class="r">3.65%</td><td class="r">3.75%</td><td>IDF-PTB-PT-FD</td></tr>
       </tbody>
     </table></div>
   </div>
@@ -651,6 +659,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
         <tr>
           <th rowspan="2" style="vertical-align:middle">Tenor</th>
           <th colspan="3" style="text-align:center">Max to Client</th>
+          <th rowspan="2" style="vertical-align:middle">Portfolio</th>
         </tr>
         <tr>
           <th style="text-align:center">USD 100k - 499k</th>
@@ -659,10 +668,12 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
         </tr>
       </thead>
       <tbody>
-        <tr><td>1 mo</td><td class="r">2.85%</td><td class="r">2.95%</td><td class="r">3.05%</td></tr>
-        <tr><td>2 mo</td><td class="r">2.95%</td><td class="r">3.05%</td><td class="r">3.15%</td></tr>
-        <tr><td>3 mo</td><td class="r">3.05%</td><td class="r">3.15%</td><td class="r">3.25%</td></tr>
-        <tr><td>6 mo</td><td class="r">3.15%</td><td class="r">3.25%</td><td class="r">3.35%</td></tr>
+        <tr><td>1 mo</td><td class="r">3.10%</td><td class="r">3.20%</td><td class="r">3.30%</td><td>IDF-PTB-PP-FD</td></tr>
+        <tr><td>2 mo</td><td class="r">3.20%</td><td class="r">3.30%</td><td class="r">3.40%</td><td>IDF-PTB-PS-FD</td></tr>
+        <tr><td>3 mo</td><td class="r">3.25%</td><td class="r">3.35%</td><td class="r">3.45%</td><td>IDF-PTB-PR-FD</td></tr>
+        <tr><td>4 mo</td><td class="r">3.35%</td><td class="r">3.45%</td><td class="r">3.55%</td><td>IDF-PTB-PU-FD</td></tr>
+        <tr><td>5 mo</td><td class="r">3.35%</td><td class="r">3.45%</td><td class="r">3.55%</td><td>IDF-PTB-PV-FD</td></tr>
+        <tr><td>6 mo</td><td class="r">3.40%</td><td class="r">3.50%</td><td class="r">3.60%</td><td>IDF-PTB-PT-FD</td></tr>
       </tbody>
     </table></div>
   </div>
@@ -671,8 +682,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
 </div>
 
 <div class="footer">
-  <div class="footer-main">CIMB Niaga &mdash; Treasury &amp; Financial Institutions</div>
-  <div class="footer-sub">Kevin Jonathan &nbsp;·&nbsp; <a href="mailto:kevin.jonathan@cimbniaga.co.id" style="color:rgba(255,255,255,.45);text-decoration:none">kevin.jonathan@cimbniaga.co.id</a> &nbsp;·&nbsp; <a href="https://wa.me/6281289933505" style="color:rgba(255,255,255,.45);text-decoration:none">+62 812-8993-3505</a></div>
+  <div class="footer-main" style="font-style:italic">Proprietary to Treasury Sales and Distribution</div>
 </div>
 
 </div>
@@ -685,167 +695,167 @@ let MODE='IDR'; // 'IDR' or 'USD'
 // ── IDR/JPY SWAP TABLE (pts in actual IDR terms, positive) ──────────────────
 const SWAPS_IDR={
   'short':[
-    {days:1,pts:0.013,lbl:'12-Aug-26',date:'2026-08-12'},
-    {days:2,pts:0.025,lbl:'13-Aug-26',date:'2026-08-13'},
-    {days:3,pts:0.038,lbl:'14-Aug-26',date:'2026-08-14'},
-    {days:7,pts:0.088,lbl:'18-Aug-26',date:'2026-08-18'},
-    {days:8,pts:0.107,lbl:'19-Aug-26',date:'2026-08-19'},
-    {days:9,pts:0.120,lbl:'20-Aug-26',date:'2026-08-20'},
-    {days:10,pts:0.134,lbl:'21-Aug-26',date:'2026-08-21'},
-    {days:13,pts:0.174,lbl:'24-Aug-26',date:'2026-08-24'},
-    {days:15,pts:0.208,lbl:'26-Aug-26',date:'2026-08-26'},
-    {days:16,pts:0.221,lbl:'27-Aug-26',date:'2026-08-27'},
-    {days:17,pts:0.235,lbl:'28-Aug-26',date:'2026-08-28'},
-    {days:20,pts:0.277,lbl:'31-Aug-26',date:'2026-08-31'},
-    {days:21,pts:0.291,lbl:'01-Sep-26',date:'2026-09-01'},
-    {days:22,pts:0.311,lbl:'02-Sep-26',date:'2026-09-02'},
-    {days:23,pts:0.325,lbl:'03-Sep-26',date:'2026-09-03'},
-    {days:24,pts:0.340,lbl:'04-Sep-26',date:'2026-09-04'},
-    {days:27,pts:0.382,lbl:'07-Sep-26',date:'2026-09-07'},
-    {days:28,pts:0.396,lbl:'08-Sep-26',date:'2026-09-08'},
-    {days:29,pts:0.410,lbl:'09-Sep-26',date:'2026-09-09'}
+    {days:1,pts:0.013,lbl:'29-Oct-26',date:'2026-10-29'},
+    {days:2,pts:0.026,lbl:'30-Oct-26',date:'2026-10-30'},
+    {days:5,pts:0.064,lbl:'02-Nov-26',date:'2026-11-02'},
+    {days:6,pts:0.077,lbl:'03-Nov-26',date:'2026-11-03'},
+    {days:7,pts:0.090,lbl:'04-Nov-26',date:'2026-11-04'},
+    {days:8,pts:0.109,lbl:'05-Nov-26',date:'2026-11-05'},
+    {days:9,pts:0.122,lbl:'06-Nov-26',date:'2026-11-06'},
+    {days:12,pts:0.163,lbl:'09-Nov-26',date:'2026-11-09'},
+    {days:13,pts:0.177,lbl:'10-Nov-26',date:'2026-11-10'},
+    {days:14,pts:0.190,lbl:'11-Nov-26',date:'2026-11-11'},
+    {days:15,pts:0.211,lbl:'12-Nov-26',date:'2026-11-12'},
+    {days:16,pts:0.225,lbl:'13-Nov-26',date:'2026-11-13'},
+    {days:19,pts:0.268,lbl:'16-Nov-26',date:'2026-11-16'},
+    {days:20,pts:0.282,lbl:'17-Nov-26',date:'2026-11-17'},
+    {days:21,pts:0.296,lbl:'18-Nov-26',date:'2026-11-18'},
+    {days:22,pts:0.317,lbl:'19-Nov-26',date:'2026-11-19'},
+    {days:23,pts:0.331,lbl:'20-Nov-26',date:'2026-11-20'},
+    {days:26,pts:0.374,lbl:'23-Nov-26',date:'2026-11-23'},
+    {days:27,pts:0.389,lbl:'24-Nov-26',date:'2026-11-24'},
+    {days:28,pts:0.403,lbl:'25-Nov-26',date:'2026-11-25'},
+    {days:29,pts:0.418,lbl:'26-Nov-26',date:'2026-11-26'}
   ],
   '1m':[
-    {days:31,pts:0.442,lbl:'11-Sep-26',date:'2026-09-11'},
-    {days:34,pts:0.485,lbl:'14-Sep-26',date:'2026-09-14'},
-    {days:35,pts:0.499,lbl:'15-Sep-26',date:'2026-09-15'},
-    {days:36,pts:0.514,lbl:'16-Sep-26',date:'2026-09-16'},
-    {days:37,pts:0.528,lbl:'17-Sep-26',date:'2026-09-17'},
-    {days:38,pts:0.542,lbl:'18-Sep-26',date:'2026-09-18'},
-    {days:41,pts:0.585,lbl:'21-Sep-26',date:'2026-09-21'},
-    {days:42,pts:0.599,lbl:'22-Sep-26',date:'2026-09-22'},
-    {days:43,pts:0.613,lbl:'23-Sep-26',date:'2026-09-23'},
-    {days:44,pts:0.628,lbl:'24-Sep-26',date:'2026-09-24'}
+    {days:33,pts:0.495,lbl:'30-Nov-26',date:'2026-11-30'},
+    {days:34,pts:0.510,lbl:'01-Dec-26',date:'2026-12-01'},
+    {days:35,pts:0.525,lbl:'02-Dec-26',date:'2026-12-02'},
+    {days:36,pts:0.540,lbl:'03-Dec-26',date:'2026-12-03'},
+    {days:37,pts:0.555,lbl:'04-Dec-26',date:'2026-12-04'},
+    {days:40,pts:0.600,lbl:'07-Dec-26',date:'2026-12-07'},
+    {days:41,pts:0.615,lbl:'08-Dec-26',date:'2026-12-08'},
+    {days:42,pts:0.630,lbl:'09-Dec-26',date:'2026-12-09'},
+    {days:43,pts:0.645,lbl:'10-Dec-26',date:'2026-12-10'},
+    {days:44,pts:0.660,lbl:'11-Dec-26',date:'2026-12-11'}
   ],
   '2m':[
-    {days:55,pts:0.810,lbl:'05-Oct-26',date:'2026-10-05'},
-    {days:56,pts:0.825,lbl:'06-Oct-26',date:'2026-10-06'},
-    {days:57,pts:0.840,lbl:'07-Oct-26',date:'2026-10-07'},
-    {days:58,pts:0.854,lbl:'08-Oct-26',date:'2026-10-08'},
-    {days:59,pts:0.869,lbl:'09-Oct-26',date:'2026-10-09'},
-    {days:62,pts:0.913,lbl:'12-Oct-26',date:'2026-10-12'},
-    {days:63,pts:0.928,lbl:'13-Oct-26',date:'2026-10-13'},
-    {days:64,pts:0.943,lbl:'14-Oct-26',date:'2026-10-14'},
-    {days:65,pts:0.958,lbl:'15-Oct-26',date:'2026-10-15'},
-    {days:66,pts:0.972,lbl:'16-Oct-26',date:'2026-10-16'}
+    {days:61,pts:0.963,lbl:'28-Dec-26',date:'2026-12-28'},
+    {days:62,pts:0.978,lbl:'29-Dec-26',date:'2026-12-29'},
+    {days:63,pts:0.994,lbl:'30-Dec-26',date:'2026-12-30'},
+    {days:64,pts:1.010,lbl:'31-Dec-26',date:'2026-12-31'},
+    {days:68,pts:1.073,lbl:'04-Jan-27',date:'2027-01-04'},
+    {days:70,pts:1.105,lbl:'06-Jan-27',date:'2027-01-06'},
+    {days:71,pts:1.120,lbl:'07-Jan-27',date:'2027-01-07'},
+    {days:72,pts:1.136,lbl:'08-Jan-27',date:'2027-01-08'}
   ],
   '3m':[
-    {days:86,pts:1.334,lbl:'05-Nov-26',date:'2026-11-05'},
-    {days:87,pts:1.349,lbl:'06-Nov-26',date:'2026-11-06'},
-    {days:90,pts:1.396,lbl:'09-Nov-26',date:'2026-11-09'},
-    {days:91,pts:1.411,lbl:'10-Nov-26',date:'2026-11-10'},
-    {days:92,pts:1.427,lbl:'11-Nov-26',date:'2026-11-11'},
-    {days:93,pts:1.442,lbl:'12-Nov-26',date:'2026-11-12'},
-    {days:94,pts:1.458,lbl:'13-Nov-26',date:'2026-11-13'},
-    {days:97,pts:1.504,lbl:'16-Nov-26',date:'2026-11-16'},
-    {days:98,pts:1.520,lbl:'17-Nov-26',date:'2026-11-17'},
-    {days:99,pts:1.535,lbl:'18-Nov-26',date:'2026-11-18'}
+    {days:92,pts:1.524,lbl:'28-Jan-27',date:'2027-01-28'},
+    {days:93,pts:1.541,lbl:'29-Jan-27',date:'2027-01-29'},
+    {days:96,pts:1.591,lbl:'01-Feb-27',date:'2027-02-01'},
+    {days:97,pts:1.607,lbl:'02-Feb-27',date:'2027-02-02'},
+    {days:98,pts:1.624,lbl:'03-Feb-27',date:'2027-02-03'},
+    {days:99,pts:1.640,lbl:'04-Feb-27',date:'2027-02-04'},
+    {days:100,pts:1.657,lbl:'05-Feb-27',date:'2027-02-05'},
+    {days:103,pts:1.707,lbl:'08-Feb-27',date:'2027-02-08'},
+    {days:104,pts:1.723,lbl:'09-Feb-27',date:'2027-02-09'},
+    {days:105,pts:1.740,lbl:'10-Feb-27',date:'2027-02-10'}
   ],
   '6m':[
-    {days:178,pts:2.898,lbl:'05-Feb-27',date:'2027-02-05'},
-    {days:181,pts:2.947,lbl:'08-Feb-27',date:'2027-02-08'},
-    {days:182,pts:2.963,lbl:'09-Feb-27',date:'2027-02-09'},
-    {days:183,pts:2.980,lbl:'10-Feb-27',date:'2027-02-10'},
-    {days:184,pts:2.996,lbl:'11-Feb-27',date:'2027-02-11'},
-    {days:185,pts:3.012,lbl:'12-Feb-27',date:'2027-02-12'},
-    {days:188,pts:3.061,lbl:'15-Feb-27',date:'2027-02-15'},
-    {days:189,pts:3.077,lbl:'16-Feb-27',date:'2027-02-16'},
-    {days:190,pts:3.094,lbl:'17-Feb-27',date:'2027-02-17'},
-    {days:191,pts:3.110,lbl:'18-Feb-27',date:'2027-02-18'}
+    {days:182,pts:3.159,lbl:'28-Apr-27',date:'2027-04-28'},
+    {days:183,pts:3.177,lbl:'29-Apr-27',date:'2027-04-29'},
+    {days:184,pts:3.194,lbl:'30-Apr-27',date:'2027-04-30'},
+    {days:187,pts:3.246,lbl:'03-May-27',date:'2027-05-03'},
+    {days:188,pts:3.263,lbl:'04-May-27',date:'2027-05-04'},
+    {days:189,pts:3.281,lbl:'05-May-27',date:'2027-05-05'},
+    {days:190,pts:3.298,lbl:'06-May-27',date:'2027-05-06'},
+    {days:191,pts:3.316,lbl:'07-May-27',date:'2027-05-07'},
+    {days:194,pts:3.368,lbl:'10-May-27',date:'2027-05-10'},
+    {days:195,pts:3.385,lbl:'11-May-27',date:'2027-05-11'}
   ],
 };
 
 const SWAPS_USD={
   'short':[
-    {days:1,pts:-1.15,lbl:'12-Aug-26',date:'2026-08-12'},
-    {days:2,pts:-2.30,lbl:'13-Aug-26',date:'2026-08-13'},
-    {days:3,pts:-3.45,lbl:'14-Aug-26',date:'2026-08-14'},
-    {days:7,pts:-8.05,lbl:'18-Aug-26',date:'2026-08-18'},
-    {days:8,pts:-9.20,lbl:'19-Aug-26',date:'2026-08-19'},
-    {days:9,pts:-10.23,lbl:'20-Aug-26',date:'2026-08-20'},
-    {days:10,pts:-11.37,lbl:'21-Aug-26',date:'2026-08-21'},
-    {days:13,pts:-14.78,lbl:'24-Aug-26',date:'2026-08-24'},
-    {days:15,pts:-17.06,lbl:'26-Aug-26',date:'2026-08-26'},
-    {days:16,pts:-18.19,lbl:'27-Aug-26',date:'2026-08-27'},
-    {days:17,pts:-19.33,lbl:'28-Aug-26',date:'2026-08-28'},
-    {days:20,pts:-22.74,lbl:'31-Aug-26',date:'2026-08-31'},
-    {days:21,pts:-23.69,lbl:'01-Sep-26',date:'2026-09-01'},
-    {days:22,pts:-24.82,lbl:'02-Sep-26',date:'2026-09-02'},
-    {days:23,pts:-25.95,lbl:'03-Sep-26',date:'2026-09-03'},
-    {days:24,pts:-27.08,lbl:'04-Sep-26',date:'2026-09-04'},
-    {days:27,pts:-30.46,lbl:'07-Sep-26',date:'2026-09-07'},
-    {days:28,pts:-31.96,lbl:'08-Sep-26',date:'2026-09-08'},
-    {days:29,pts:-32.72,lbl:'09-Sep-26',date:'2026-09-09'}
+    {days:1,pts:-1.28,lbl:'29-Oct-26',date:'2026-10-29'},
+    {days:2,pts:-2.56,lbl:'30-Oct-26',date:'2026-10-30'},
+    {days:5,pts:-6.39,lbl:'02-Nov-26',date:'2026-11-02'},
+    {days:6,pts:-7.67,lbl:'03-Nov-26',date:'2026-11-03'},
+    {days:7,pts:-8.95,lbl:'04-Nov-26',date:'2026-11-04'},
+    {days:8,pts:-10.23,lbl:'05-Nov-26',date:'2026-11-05'},
+    {days:9,pts:-11.39,lbl:'06-Nov-26',date:'2026-11-06'},
+    {days:12,pts:-15.19,lbl:'09-Nov-26',date:'2026-11-09'},
+    {days:13,pts:-16.45,lbl:'10-Nov-26',date:'2026-11-10'},
+    {days:14,pts:-17.72,lbl:'11-Nov-26',date:'2026-11-11'},
+    {days:15,pts:-18.98,lbl:'12-Nov-26',date:'2026-11-12'},
+    {days:16,pts:-20.25,lbl:'13-Nov-26',date:'2026-11-13'},
+    {days:19,pts:-24.05,lbl:'16-Nov-26',date:'2026-11-16'},
+    {days:20,pts:-25.31,lbl:'17-Nov-26',date:'2026-11-17'},
+    {days:21,pts:-26.39,lbl:'18-Nov-26',date:'2026-11-18'},
+    {days:22,pts:-27.65,lbl:'19-Nov-26',date:'2026-11-19'},
+    {days:23,pts:-28.91,lbl:'20-Nov-26',date:'2026-11-20'},
+    {days:26,pts:-32.68,lbl:'23-Nov-26',date:'2026-11-23'},
+    {days:27,pts:-33.94,lbl:'24-Nov-26',date:'2026-11-24'},
+    {days:28,pts:-35.56,lbl:'25-Nov-26',date:'2026-11-25'},
+    {days:29,pts:-36.45,lbl:'26-Nov-26',date:'2026-11-26'}
   ],
   '1m':[
-    {days:31,pts:-34.90,lbl:'11-Sep-26',date:'2026-09-11'},
-    {days:34,pts:-38.28,lbl:'14-Sep-26',date:'2026-09-14'},
-    {days:35,pts:-39.40,lbl:'15-Sep-26',date:'2026-09-15'},
-    {days:36,pts:-40.53,lbl:'16-Sep-26',date:'2026-09-16'},
-    {days:37,pts:-41.66,lbl:'17-Sep-26',date:'2026-09-17'},
-    {days:38,pts:-42.78,lbl:'18-Sep-26',date:'2026-09-18'},
-    {days:41,pts:-46.16,lbl:'21-Sep-26',date:'2026-09-21'},
-    {days:42,pts:-47.29,lbl:'22-Sep-26',date:'2026-09-22'},
-    {days:43,pts:-48.41,lbl:'23-Sep-26',date:'2026-09-23'},
-    {days:44,pts:-49.54,lbl:'24-Sep-26',date:'2026-09-24'}
+    {days:33,pts:-41.34,lbl:'30-Nov-26',date:'2026-11-30'},
+    {days:34,pts:-42.59,lbl:'01-Dec-26',date:'2026-12-01'},
+    {days:35,pts:-43.84,lbl:'02-Dec-26',date:'2026-12-02'},
+    {days:36,pts:-45.10,lbl:'03-Dec-26',date:'2026-12-03'},
+    {days:37,pts:-46.35,lbl:'04-Dec-26',date:'2026-12-04'},
+    {days:40,pts:-50.11,lbl:'07-Dec-26',date:'2026-12-07'},
+    {days:41,pts:-51.36,lbl:'08-Dec-26',date:'2026-12-08'},
+    {days:42,pts:-52.61,lbl:'09-Dec-26',date:'2026-12-09'},
+    {days:43,pts:-53.86,lbl:'10-Dec-26',date:'2026-12-10'},
+    {days:44,pts:-55.12,lbl:'11-Dec-26',date:'2026-12-11'}
   ],
   '2m':[
-    {days:55,pts:-60.73,lbl:'05-Oct-26',date:'2026-10-05'},
-    {days:56,pts:-61.83,lbl:'06-Oct-26',date:'2026-10-06'},
-    {days:57,pts:-62.94,lbl:'07-Oct-26',date:'2026-10-07'},
-    {days:58,pts:-64.04,lbl:'08-Oct-26',date:'2026-10-08'},
-    {days:59,pts:-65.15,lbl:'09-Oct-26',date:'2026-10-09'},
-    {days:62,pts:-68.46,lbl:'12-Oct-26',date:'2026-10-12'},
-    {days:63,pts:-69.56,lbl:'13-Oct-26',date:'2026-10-13'},
-    {days:64,pts:-70.67,lbl:'14-Oct-26',date:'2026-10-14'},
-    {days:65,pts:-71.77,lbl:'15-Oct-26',date:'2026-10-15'},
-    {days:66,pts:-72.88,lbl:'16-Oct-26',date:'2026-10-16'}
+    {days:61,pts:-75.09,lbl:'28-Dec-26',date:'2026-12-28'},
+    {days:62,pts:-76.32,lbl:'29-Dec-26',date:'2026-12-29'},
+    {days:63,pts:-77.56,lbl:'30-Dec-26',date:'2026-12-30'},
+    {days:64,pts:-78.79,lbl:'31-Dec-26',date:'2026-12-31'},
+    {days:68,pts:-83.71,lbl:'04-Jan-27',date:'2027-01-04'},
+    {days:70,pts:-86.17,lbl:'06-Jan-27',date:'2027-01-06'},
+    {days:71,pts:-87.40,lbl:'07-Jan-27',date:'2027-01-07'},
+    {days:72,pts:-88.64,lbl:'08-Jan-27',date:'2027-01-08'}
   ],
   '3m':[
-    {days:86,pts:-87.51,lbl:'05-Nov-26',date:'2026-11-05'},
-    {days:87,pts:-88.53,lbl:'06-Nov-26',date:'2026-11-06'},
-    {days:90,pts:-91.58,lbl:'09-Nov-26',date:'2026-11-09'},
-    {days:91,pts:-92.60,lbl:'10-Nov-26',date:'2026-11-10'},
-    {days:92,pts:-93.62,lbl:'11-Nov-26',date:'2026-11-11'},
-    {days:93,pts:-94.64,lbl:'12-Nov-26',date:'2026-11-12'},
-    {days:94,pts:-95.65,lbl:'13-Nov-26',date:'2026-11-13'},
-    {days:97,pts:-98.71,lbl:'16-Nov-26',date:'2026-11-16'},
-    {days:98,pts:-99.72,lbl:'17-Nov-26',date:'2026-11-17'},
-    {days:99,pts:-100.74,lbl:'18-Nov-26',date:'2026-11-18'}
+    {days:92,pts:-105.31,lbl:'28-Jan-27',date:'2027-01-28'},
+    {days:93,pts:-106.45,lbl:'29-Jan-27',date:'2027-01-29'},
+    {days:96,pts:-109.89,lbl:'01-Feb-27',date:'2027-02-01'},
+    {days:97,pts:-111.03,lbl:'02-Feb-27',date:'2027-02-02'},
+    {days:98,pts:-112.18,lbl:'03-Feb-27',date:'2027-02-03'},
+    {days:99,pts:-113.32,lbl:'04-Feb-27',date:'2027-02-04'},
+    {days:100,pts:-114.47,lbl:'05-Feb-27',date:'2027-02-05'},
+    {days:103,pts:-117.90,lbl:'08-Feb-27',date:'2027-02-08'},
+    {days:104,pts:-119.04,lbl:'09-Feb-27',date:'2027-02-09'},
+    {days:105,pts:-120.19,lbl:'10-Feb-27',date:'2027-02-10'}
   ],
   '6m':[
-    {days:178,pts:-181.13,lbl:'05-Feb-27',date:'2027-02-05'},
-    {days:181,pts:-184.18,lbl:'08-Feb-27',date:'2027-02-08'},
-    {days:182,pts:-185.20,lbl:'09-Feb-27',date:'2027-02-09'},
-    {days:183,pts:-186.22,lbl:'10-Feb-27',date:'2027-02-10'},
-    {days:184,pts:-187.24,lbl:'11-Feb-27',date:'2027-02-11'},
-    {days:185,pts:-188.25,lbl:'12-Feb-27',date:'2027-02-12'},
-    {days:188,pts:-191.31,lbl:'15-Feb-27',date:'2027-02-15'},
-    {days:189,pts:-192.32,lbl:'16-Feb-27',date:'2027-02-16'},
-    {days:190,pts:-193.34,lbl:'17-Feb-27',date:'2027-02-17'},
-    {days:191,pts:-194.36,lbl:'18-Feb-27',date:'2027-02-18'}
+    {days:182,pts:-208.33,lbl:'28-Apr-27',date:'2027-04-28'},
+    {days:183,pts:-209.47,lbl:'29-Apr-27',date:'2027-04-29'},
+    {days:184,pts:-210.62,lbl:'30-Apr-27',date:'2027-04-30'},
+    {days:187,pts:-214.05,lbl:'03-May-27',date:'2027-05-03'},
+    {days:188,pts:-215.20,lbl:'04-May-27',date:'2027-05-04'},
+    {days:189,pts:-216.34,lbl:'05-May-27',date:'2027-05-05'},
+    {days:190,pts:-217.48,lbl:'06-May-27',date:'2027-05-06'},
+    {days:191,pts:-218.63,lbl:'07-May-27',date:'2027-05-07'},
+    {days:194,pts:-222.06,lbl:'10-May-27',date:'2027-05-10'},
+    {days:195,pts:-223.21,lbl:'11-May-27',date:'2027-05-11'}
   ],
 };
 
 // ── EUR/JPY, AUD/JPY, GBP/JPY SWAP TABLES (pts in PIPS, same convention as USD/JPY) ──
 // Note: only 1M/2M/3M/6M points are available (no daily <1M curve yet for these pairs)
 const SWAPS_EUR={
-  '1m':[{days:33,pts:-14.00,lbl:'13-Sep-26',date:'2026-09-13'}],
-  '2m':[{days:62,pts:-29.00,lbl:'12-Oct-26',date:'2026-10-12'}],
-  '3m':[{days:92,pts:-45.00,lbl:'11-Nov-26',date:'2026-11-11'}],
-  '6m':[{days:181,pts:-84.00,lbl:'08-Feb-27',date:'2027-02-08'}],
+  '1m':[{days:34,pts:-14.00,lbl:'01-Dec-26',date:'2026-12-01'}],
+  '2m':[{days:61,pts:-25.00,lbl:'28-Dec-26',date:'2026-12-28'}],
+  '3m':[{days:92,pts:-37.00,lbl:'28-Jan-27',date:'2027-01-28'}],
+  '6m':[{days:182,pts:-73.00,lbl:'28-Apr-27',date:'2027-04-28'}],
 };
 const SWAPS_AUD={
-  '1m':[{days:33,pts:-27.00,lbl:'13-Sep-26',date:'2026-09-13'}],
-  '2m':[{days:62,pts:-51.00,lbl:'12-Oct-26',date:'2026-10-12'}],
-  '3m':[{days:92,pts:-77.00,lbl:'11-Nov-26',date:'2026-11-11'}],
-  '6m':[{days:184,pts:-152.00,lbl:'11-Feb-27',date:'2027-02-11'}],
+  '1m':[{days:33,pts:-27.00,lbl:'30-Nov-26',date:'2026-11-30'}],
+  '2m':[{days:62,pts:-51.00,lbl:'29-Dec-26',date:'2026-12-29'}],
+  '3m':[{days:92,pts:-75.00,lbl:'28-Jan-27',date:'2027-01-28'}],
+  '6m':[{days:182,pts:-143.00,lbl:'28-Apr-27',date:'2027-04-28'}],
 };
 const SWAPS_GBP={
-  '1m':[{days:33,pts:-47.00,lbl:'13-Sep-26',date:'2026-09-13'}],
-  '2m':[{days:62,pts:-89.00,lbl:'12-Oct-26',date:'2026-10-12'}],
-  '3m':[{days:92,pts:-133.00,lbl:'11-Nov-26',date:'2026-11-11'}],
-  '6m':[{days:184,pts:-246.00,lbl:'11-Feb-27',date:'2027-02-11'}],
+  '1m':[{days:33,pts:-43.00,lbl:'30-Nov-26',date:'2026-11-30'}],
+  '2m':[{days:62,pts:-84.00,lbl:'29-Dec-26',date:'2026-12-29'}],
+  '3m':[{days:92,pts:-123.00,lbl:'28-Jan-27',date:'2027-01-28'}],
+  '6m':[{days:182,pts:-245.00,lbl:'28-Apr-27',date:'2027-04-28'}],
 };
 const NO_SHORT_PAIRS=['EUR','AUD','GBP'];
 
@@ -1140,7 +1150,7 @@ function drawChart(spot){
   });
 
   // Scale
-  const CHART_RANGE={IDR:[3.9,5.5],USD:[2.2,2.9],EUR:[0.6,1.3],AUD:[2.5,3.2],GBP:[2.0,2.8]};
+  const CHART_RANGE={IDR:[3.9,5.9],USD:[2.4,3.1],EUR:[0.6,1.3],AUD:[2.5,3.2],GBP:[2.0,2.8]};
   const TICK_STEP={IDR:0.2,USD:0.1,EUR:0.1,AUD:0.1,GBP:0.1};
   const [minY,maxY]=CHART_RANGE[MODE]||[0,1];
   const tickStep=TICK_STEP[MODE]||0.2;
@@ -1226,7 +1236,7 @@ function buildIndikasi(){
   const spread=0.25;
   const NOT_IDR=1000000000;
   const NOT_USD=100000;
-  const TRX='10-Aug-2026'; const VAL='11-Aug-2026';
+  const TRX='27-Oct-2026'; const VAL='28-Oct-2026';
   const DAYS_N=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const buckets=['short','1m','2m','3m','6m'];
   const lbls=['&lt; 1 Month','1 Month','2 Month','3 Month','6 Month'];
