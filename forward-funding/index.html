@@ -169,7 +169,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
 <!-- HEADER -->
 <div class="hdr">
   <div class="hdr-top">
-    <a href="index.html" aria-label="Home" style="display:inline-flex;line-height:0;cursor:pointer">
+    <a href="/" aria-label="Home" style="display:inline-flex;line-height:0;cursor:pointer">
     <svg width="110" height="17" viewBox="0 0 1084 166" xmlns="http://www.w3.org/2000/svg">
       <rect width="165.25" height="165.25" fill="#fff"/>
       <path fill="#064E3B" d="M22.01 31.02C34.87 48.24 47.92 65.31 60.84 82.48 48.03 99.72 34.9 116.72 22.07 133.95c29.33.12 58.65 0 87.98.06 13.2-17.08 25.92-34.53 39.21-51.55l-.25.01C136.06 65.3 123.05 48.17 110.12 31 80.75 31.02 51.38 30.97 22.01 31.02z"/>
@@ -271,9 +271,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--navy);min-height:1
         <div class="dd">calendar days</div>
       </div>
     </div>
-    <div style="margin-top:12px;padding:8px 10px;background:#FEF3C7;border:1px solid #FDE68A;border-radius:8px;font-size:10.5px;color:#78350F;font-family:var(--mono)">
-      <b>Holidays (excluded from value dates):</b> 25-Dec-26 (Natal) · 1-Jan-27 (Tahun Baru) · 5-Jan-27 (Isra Mi&rsquo;raj) · 6-Feb-27 (Imlek) · 9-Mar-27 (Nyepi) · 10-Mar-27 (Idul Fitri) · 11-Mar-27 (Cuti Bersama) · 26-Mar-27 (Jumat Agung)
-    </div>
+    <div id="holidayNote" style="display:none;margin-top:12px;padding:8px 10px;background:#FEF3C7;border:1px solid #FDE68A;border-radius:8px;font-size:10.5px;color:#78350F;font-family:var(--mono)"></div>
     <div style="font-size:9px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--slate);font-weight:600;margin-bottom:6px;margin-top:16px">Bank (Cost)</div>
     <div class="swap-bar" style="margin-bottom:10px">
       <div class="swap-item"><label>Spot Rate</label><div class="sv" id="sSpot">—</div></div>
@@ -988,6 +986,36 @@ function pop(){
     o.textContent=DAYS_NAMES[d.getDay()]+', '+r.lbl+' ('+r.days+'d)';
     s.appendChild(o);
   });
+  updateHolidayNote();
+}
+
+// Indonesian holidays that fall on weekdays; shown only when one sits inside the displayed tenor window
+const HOLIDAY_LIST=[
+  {date:'2026-12-25',name:'Hari Raya Natal'},
+  {date:'2027-01-01',name:'Tahun Baru Masehi'},
+  {date:'2027-01-05',name:"Isra Mi\u2019raj"},
+  {date:'2027-02-06',name:'Tahun Baru Imlek'},
+  {date:'2027-03-09',name:'Hari Suci Nyepi'},
+  {date:'2027-03-10',name:'Hari Raya Idul Fitri'},
+  {date:'2027-03-11',name:'Cuti Bersama Lebaran'},
+  {date:'2027-03-26',name:'Jumat Agung'}
+];
+function updateHolidayNote(){
+  const el=document.getElementById('holidayNote'); if(!el) return;
+  const rows=getSwaps()[cur]||[];
+  if(!rows.length){el.style.display='none';return;}
+  const dates=rows.map(r=>r.date).sort();
+  const lo=dates[0], hi=dates[dates.length-1];
+  const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const hits=HOLIDAY_LIST.filter(h=>{
+    const dow=new Date(h.date+'T00:00:00').getDay();
+    return h.date>=lo && h.date<=hi && dow!==0 && dow!==6;
+  });
+  if(!hits.length){el.style.display='none';return;}
+  el.innerHTML='<b>Holiday in this tenor (skipped from value dates):</b> '+hits.map(h=>{
+    const d=h.date.split('-'); return parseInt(d[2],10)+'-'+MN[parseInt(d[1],10)-1]+'-'+d[0].slice(2)+' ('+h.name+')';
+  }).join(' \u00b7 ');
+  el.style.display='block';
 }
 
 function fmt(n,d=0){return n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d})}
