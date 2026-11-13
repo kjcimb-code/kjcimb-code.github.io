@@ -318,7 +318,6 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
 .disp-wrap{margin:0 0 10px}.disp-wrap .disp-toggle{margin:0 0 8px}
 .share-box{display:flex;align-items:center;gap:8px 10px;flex-wrap:wrap;background:#FFF7ED;border:1.5px solid #FED7AA;border-radius:10px;padding:10px 12px;font-size:12px;color:#9A3412}
 .share-box .sb-t{font-weight:600;flex:1 1 150px}.share-box .sb-in{display:flex;align-items:center;gap:4px;font:700 14px var(--mono);color:#790008}
-.share-box .sb-h{flex:1 1 100%;font-size:10.5px;color:#9A3412;line-height:1.45}
 .share-in{width:58px;text-align:center;border:1.5px solid #FDBA74;border-radius:8px;background:#fff;color:#790008;font:700 14px var(--mono);padding:6px 4px;outline:none}
 .share-in:focus{border-color:#790008}
 #tenTable{table-layout:fixed;width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px}
@@ -328,6 +327,12 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
 #tenTable td:first-child{text-align:left;padding-left:10px;font-size:11.5px}
 #tenTable tr.sk td{background:#F8FAFC;color:var(--slate);font-weight:500;font-size:10px}
 #tenTable td.opt-best{background:#ECFDF5;color:#065F46;font-weight:700;border-radius:4px}
+.pick-chips{display:flex;gap:6px}
+.pick-chip{flex:1;padding:9px 4px;border-radius:9px;border:1.5px solid var(--border);background:#fff;font:600 11px var(--mono);color:var(--slate);cursor:pointer}
+.pick-chip.on{background:#790008;border-color:#790008;color:#fff}
+#shareBar button:disabled{opacity:.4;cursor:not-allowed}
+#tenTable th.sel{background:#790008;color:#fff}
+#tenTable td:first-child small.vol{display:block;font-size:9px;color:var(--slate);font-weight:500;line-height:1.25}
 #tenTable td.opt-none{color:#CBD5E1;font-style:italic;font-weight:400}
 </style>
 </head>
@@ -540,14 +545,19 @@ body{font-family:var(--sans);background:var(--bg)!important;color:var(--navy);mi
   </div>
 </div>
 
+<div id="tenPick" style="display:none;margin:16px 12px 0;background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:12px 14px">
+  <div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:8px">Strike untuk PDF dan WhatsApp <span style="font-weight:400;color:#64748B">(pilih salah satu)</span></div>
+  <div id="tenPickChips" class="pick-chips"></div>
+</div>
 <div id="shareBar" style="margin:16px 12px 0;display:flex;gap:10px;flex-wrap:wrap">
-  <button type="button" onclick="makePdf()" style="flex:1 1 calc(50% - 5px);display:flex;padding:14px 8px;background:#D97706;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:.02em;align-items:center;justify-content:center;gap:8px">&#128196; Generate PDF</button>
+  <button type="button" id="pdfBtn" onclick="makePdf()" style="flex:1 1 calc(50% - 5px);display:flex;padding:14px 8px;background:#D97706;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:.02em;align-items:center;justify-content:center;gap:8px">&#128196; Generate PDF</button>
   <button id="waSendBtn" type="button" onclick="copyWhatsApp()" style="flex:1 1 calc(50% - 5px);display:flex;padding:14px 8px;background:#25D366;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:.02em;align-items:center;justify-content:center;gap:8px">
     <svg width="17" height="17" viewBox="0 0 24 24" fill="#fff" xmlns="http://www.w3.org/2000/svg"><path d="M12.04 2c-5.52 0-10 4.48-10 10 0 1.77.46 3.45 1.27 4.9L2 22l5.25-1.38a9.96 9.96 0 0 0 4.79 1.22h.01c5.52 0 10-4.48 10-10s-4.49-9.84-10.01-9.84zm0 18.15c-1.5 0-2.97-.4-4.25-1.16l-.3-.18-3.12.82.83-3.04-.2-.31a8.15 8.15 0 0 1-1.25-4.34c0-4.5 3.66-8.16 8.16-8.16 2.18 0 4.23.85 5.77 2.39a8.1 8.1 0 0 1 2.39 5.77c.03 4.5-3.63 8.16-8.13 8.16z"/></svg>
     <span id="waSendBtnLabel">Copy for WhatsApp</span>
   </button>
   <a href="/strikecurrencycalculator" style="flex:1 1 100%;display:flex;padding:14px;background:#790008;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:.02em;align-items:center;justify-content:center;gap:8px;text-decoration:none">&#128176; SC Calculator</a>
 </div>
+<div id="shareHint" style="display:none;margin:8px 14px 0;font-size:11px;color:#B45309;line-height:1.5"></div>
 <div id="waPrev" class="wa-prev" style="display:none;margin:12px 12px 0"></div>
 
 <div style="margin:16px 12px 0;background:#0F172A;border-radius:12px;padding:14px 18px;text-align:center">
@@ -703,11 +713,11 @@ function toggleCCYDropdown(id){
   }
 }
 function getFreshnessInfo(ts){
-  if(!ts) return {color:'#EF4444'};
-  const updated = new Date(ts);
-  const now = new Date();
-  const sameDay = updated.getFullYear()===now.getFullYear() && updated.getMonth()===now.getMonth() && updated.getDate()===now.getDate();
-  return {color: sameDay ? '#22C55E' : '#EAB308'};
+  // green = updated the same day (WIB), yellow = the day before (H+1), red = older than that, or no timestamp at all
+  const ms = ts ? new Date(ts).getTime() : NaN; if(isNaN(ms)) return {color:'#EF4444', days:null};
+  const a = wibParts(ms).date, b = wibParts(Date.now()).date;
+  const days = Math.round((Date.parse(b+'T00:00:00Z') - Date.parse(a+'T00:00:00Z')) / 86400000);
+  return {color: days<=0 ? '#22C55E' : days===1 ? '#EAB308' : '#EF4444', days};
 }
 
 function dotSpan(color){
@@ -1063,30 +1073,30 @@ function pdfWrap(str, bold, size, maxW){
   if (cur) lines.push(cur); return lines;
 }
 
-const TENOR_ROWS=[{lbl:'7d',days:7},{lbl:'14d',days:14},{lbl:'21d',days:21},{lbl:'1m',days:30},{lbl:'2m',days:60},{lbl:'3m',days:90},{lbl:'6m',days:180},{lbl:'12m',days:360}];   // 1m=30, 2m=60, 3m=90, 6m=180, 12m=360 days (the rate tables end at 360)
+const TENOR_ROWS=[{lbl:'7d',long:'7 hari',days:7},{lbl:'14d',long:'14 hari',days:14},{lbl:'21d',long:'21 hari',days:21},{lbl:'1m',long:'1 bulan',days:30},{lbl:'2m',long:'2 bulan',days:60},{lbl:'3m',long:'3 bulan',days:90},{lbl:'6m',long:'6 bulan',days:180},{lbl:'12m',long:'12 bulan',days:360}];   // lbl = on screen; long = in the PDF and WhatsApp for the customer. 1 bulan = 30 days, 2 = 60, 3 = 90, 6 = 180, 12 = 360 (the rate tables end at 360)
 let custShare=0.8;                                                             // share of the total implied yield offered to the customer: typed in the "Return nasabah (xx%)" box, 50%..90%, default 80% (like the calculator)
 const custReturn=(total,depRate)=>Math.max(depRate,total*custShare);         // never below the deposit rate: the same floor as the calculator's slider
 const SHARE_MIN=50, SHARE_MAX=90, sharePct=()=>String(+(custShare*100).toFixed(1));
-function syncShareInputs(except){ document.querySelectorAll('.share-in').forEach(i=>{ if(i!==except&&i!==document.activeElement) i.value=sharePct(); }); document.querySelectorAll('.share-lbl').forEach(e=>e.textContent=sharePct()); }
+function syncShareInputs(except){ document.querySelectorAll('.share-in').forEach(i=>{ if(i!==except&&i!==document.activeElement) i.value=sharePct(); }); }
 function onShareInput(el){
   let t=el.value.replace(/[^0-9.,]/g,'').replace(/,/g,'.'); const i=t.indexOf('.'); if(i!==-1) t=t.slice(0,i+1)+t.slice(i+1).replace(/\./g,''); t=t.slice(0,4); el.value=t;
   const v=parseFloat(t); if(isNaN(v)||v<SHARE_MIN||v>SHARE_MAX) return;      // while typing only a valid number is applied ("7" on the way to "75" is not); leaving the box clamps it
   custShare=v/100; syncShareInputs(el); runOptimizer();
 }
 function onShareBlur(el){ let v=parseFloat(String(el.value).replace(',','.')); if(isNaN(v)) v=custShare*100; v=Math.min(SHARE_MAX,Math.max(SHARE_MIN,v)); custShare=v/100; el.value=sharePct(); syncShareInputs(null); runOptimizer(); }
-const SPOT_FALLBACK_DATE='12 Nov 2026';
-let viewMode='pair', tenAlt='USD', dispPair='total', dispTen='cust', lastTenor=null, lastPairRows=null, lastPairDates=null;
+const SPOT_FALLBACK_DATE='12 Nov 2026', MON_EN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+let viewMode='pair', tenAlt='USD', dispPair='total', dispTen='total', tenPick=-1, lastTenor=null, lastPairRows=null, lastPairDates=null;
 const tfmtR=(pi,v)=>pi.dec===0?Math.round(v).toLocaleString('en-US'):v.toFixed(pi.dec);
 const tAmt=(ccy,n)=>ccy==='IDR'?Math.round(n).toLocaleString('en-US'):n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 const pipsTxt=p=>p===0?'':(p>0?'+':'-')+Math.abs(p);
 
-function spotRefText(){          // where the spot comes from: the dashboard's timestamp, or the fallback date
-  if(spotRatesUpdatedAt){ const ms=Date.parse(spotRatesUpdatedAt); if(!isNaN(ms)) return 'last updated '+fmtWIB(ms,wibParts(ms).date!==wibParts(Date.now()).date); }
-  return 'ref. '+SPOT_FALLBACK_DATE;
+function spotRefText(){          // the dashboard's timestamp: date AND hour:minute (WIB). Without a timestamp (no dashboard) only the date of the data.
+  if(spotRatesUpdatedAt){ const ms=Date.parse(spotRatesUpdatedAt); if(!isNaN(ms)) return 'last updated '+updatedText(ms); }
+  return 'last updated '+SPOT_FALLBACK_DATE;
 }
 let tenSpotOv=null;                                                           // a spot typed by the user in module 2: {val, ms, pair}; null = automatic (Rates Dashboard)
 const spotLabelFor=pi=>pi.mode==='PUT'?'Spot Offer Rate':'Spot Bid Rate';     // the calculator's wording: PUT = Offer, CALL = Bid
-const stampText=ms=>'last updated '+fmtWIB(ms,wibParts(ms).date!==wibParts(Date.now()).date);
+const stampText=ms=>'last updated '+updatedText(ms);
 function parseSpotText(t,dec){                                               // 18,000 · 18000 · 18.000 · 0.2198 · 0,2198
   t=String(t||'').replace(/\s/g,''); if(!t) return 0;
   if(dec===0){ if(/^\d{1,3}(\.\d{3})+$/.test(t)) t=t.replace(/\./g,''); else t=t.replace(/,/g,''); }
@@ -1110,14 +1120,19 @@ function onTenSpotInput(el){
 }
 function onTenSpotBlur(el){ const pi=getPairInfo(depositCCY,tenAlt); if(!el.value.trim()) tenSpotOv=null; else if(tenSpotOv) el.value=fmtSpotVal(pi,tenSpotOv.val); runOptimizer(); }
 function resetTenSpot(){ tenSpotOv=null; runOptimizer(); }
+const bigDot=c=>'<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:'+c+';margin-right:6px;vertical-align:middle"></span>';
+function updatedText(ms){ const w=wibParts(ms), d=w.date.split('-'); return d[2]+' '+MON_EN[+d[1]-1]+' '+d[0]+', '+_p2(w.h)+':'+_p2(w.m)+' WIB'; }
 function syncTenSpotUI(m){
   const pi=m.pi, el=document.getElementById('iTenSpot'); if(!el) return;
   document.getElementById('tenSpotLabel').textContent=m.spotLbl+' ('+pi.name+')'; document.getElementById('tenSpotSuf').textContent=pi.name;
   const newPair=el.dataset.pair!==pi.name; el.dataset.pair=pi.name;                    // a different pair always refreshes the box, even while it still has the focus
   if(!m.spotManual&&(document.activeElement!==el||newPair)) el.value=fmtSpotVal(pi,pi.spot);
-  const hint=document.getElementById('tenSpotHint'), w=m.spotManual?wibParts(tenSpotOv.ms):null; let html;
-  if(m.spotManual){ const off=pi.spot&&(m.spot<pi.spot*0.5||m.spot>pi.spot*2); html='Manual, diisi '+_p2(w.h)+':'+_p2(w.m)+' WIB. <a href="#" onclick="resetTenSpot();return false" style="color:#790008;font-weight:600">Kembali ke otomatis</a>'+(off?'<br><span style="color:#B45309">\u26a0 Angka ini jauh dari spot Rates Dashboard ('+fmtSpotVal(pi,pi.spot)+'). Pastikan sudah benar.</span>':''); }
-  else html=spotRatesUpdatedAt?'Otomatis dari Rates Dashboard ('+spotRefText()+'). Ketik angka untuk mengganti.':'Otomatis dari data fallback ('+SPOT_FALLBACK_DATE+', jam update tidak tersedia). Ketik angka untuk mengganti dan mencatat jamnya.';
+  const hint=document.getElementById('tenSpotHint'); let html;
+  if(m.spotManual){ const off=pi.spot&&(m.spot<pi.spot*0.5||m.spot>pi.spot*2);
+    html=bigDot('#22C55E')+'<b>Manual, last updated '+updatedText(tenSpotOv.ms)+'</b>. <a href="#" onclick="resetTenSpot();return false" style="color:#790008;font-weight:600">Kembali ke otomatis</a>'+(off?'<br><span style="color:#B45309">\u26a0 Angka ini jauh dari spot Rates Dashboard ('+fmtSpotVal(pi,pi.spot)+'). Pastikan sudah benar.</span>':''); }
+  else if(spotRatesUpdatedAt&&!isNaN(Date.parse(spotRatesUpdatedAt))){
+    html=bigDot(getFreshnessInfo(spotRatesUpdatedAt).color)+'<b>Last updated '+updatedText(Date.parse(spotRatesUpdatedAt))+'</b> (SC Rates Dashboard). Ketik angka untuk mengganti.'; }
+  else html=bigDot('#EF4444')+'<b>Last updated '+SPOT_FALLBACK_DATE+'</b>. Ketik angka untuk mengganti.';
   if(hint.dataset.h!==html){ hint.innerHTML=html; hint.dataset.h=html; }              // only redraw when the text really changed, so a click on the "Kembali ke otomatis" link is never lost to a re-render
 }
 function tenorDates(days){       // the SAME date engine as the Strike Currency Calculator: T+2 value date, maturity snapped FORWARD to a business day, fixing 2 business days earlier
@@ -1149,8 +1164,8 @@ function computeTenorMatrix(){
 }
 function initToggle(elId,key){          // built ONCE (so the percentage box keeps the focus while you type); renderToggle only moves the highlight and shows / hides the box
   const el=document.getElementById(elId); if(!el) return;
-  el.innerHTML='<div class="disp-toggle"><button type="button" class="dt-total" onclick="setDisp(\''+key+'\',\'total\')">Total implied yield</button><button type="button" class="dt-cust" onclick="setDisp(\''+key+'\',\'cust\')">Return nasabah (<span class="share-lbl">'+sharePct()+'</span>%)</button></div>'
-   +'<div class="share-box" style="display:none"><span class="sb-t">Persentase return untuk nasabah</span><span class="sb-in"><input type="text" class="share-in" inputmode="decimal" autocomplete="off" maxlength="4" value="'+sharePct()+'" oninput="onShareInput(this)" onblur="onShareBlur(this)" onkeydown="if(event.key===\'Enter\')this.blur()"> %</span><span class="sb-h">Isi 50 sampai 90. Return nasabah tidak pernah di bawah deposit rate.</span></div>';
+  el.innerHTML='<div class="disp-toggle"><button type="button" class="dt-total" onclick="setDisp(\''+key+'\',\'total\')">Total implied yield</button><button type="button" class="dt-cust" onclick="setDisp(\''+key+'\',\'cust\')">Yield ke nasabah</button></div>'
+   +'<div class="share-box" style="display:none"><span class="sb-t">Persentase yield ke nasabah</span><span class="sb-in"><input type="text" class="share-in" inputmode="decimal" autocomplete="off" maxlength="4" value="'+sharePct()+'" oninput="onShareInput(this)" onblur="onShareBlur(this)" onkeydown="if(event.key===\'Enter\')this.blur()"> %</span></div>';
 }
 function renderToggle(elId,key){
   const cur=key==='dispPair'?dispPair:dispTen, el=document.getElementById(elId); if(!el||!el.querySelector('.dt-total')) return;
@@ -1158,7 +1173,20 @@ function renderToggle(elId,key){
   el.querySelector('.share-box').style.display=cur==='cust'?'flex':'none'; syncShareInputs(null);
 }
 function setDisp(key,val){ if(key==='dispPair') dispPair=val; else dispTen=val; runOptimizer(); }
-function runOptimizer(){ if(viewMode==='tenor') renderTenorMatrix(); else runPairOptimizer(); }
+function runOptimizer(){ if(viewMode==='tenor') renderTenorMatrix(); else runPairOptimizer(); updateShareButtons(); }
+function setPick(i){ tenPick=i; runOptimizer(); }
+function initPick(){ const el=document.getElementById('tenPickChips'); if(el) el.innerHTML=ITM_LABELS.map((l,i)=>'<button type="button" class="pick-chip" data-i="'+i+'" onclick="setPick('+i+')">'+l+'</button>').join(''); }
+function updateShareButtons(){      // Generate PDF and Copy for WhatsApp exist ONLY in the "Yield ke nasabah" view (hidden in "Total implied yield"); in Return per Tenor a strike must be chosen first
+  const pdf=document.getElementById('pdfBtn'), wa=document.getElementById('waSendBtn'), hint=document.getElementById('shareHint'), pick=document.getElementById('tenPick'); if(!pdf||!wa||!hint||!pick) return;
+  const cust=(viewMode==='tenor'?dispTen:dispPair)==='cust'; let ok=false, msg='';
+  pdf.style.display=wa.style.display=cust?'flex':'none'; pick.style.display=(cust&&viewMode==='tenor')?'block':'none';
+  if(viewMode==='tenor'){
+    const has=!!lastTenor, picked=tenPick>=0; ok=has&&picked;
+    document.querySelectorAll('#tenPickChips .pick-chip').forEach(c=>c.classList.toggle('on',+c.dataset.i===tenPick));
+    if(cust&&has&&!picked) msg='Pilih strike di atas (ITM 100, ITM 50, ITM 25, atau At Spot) untuk membuat PDF dan menyalin WhatsApp.';
+  } else ok=!!(lastOptimizerFlatResults&&lastOptimizerFlatResults.length&&lastPairRows);
+  pdf.disabled=!(cust&&ok); wa.disabled=!(cust&&ok); hint.textContent=msg; hint.style.display=msg?'block':'none';
+}
 
 function renderTenorMatrix(){
   const m=computeTenorMatrix(); lastTenor=m.hasVol?m:null; syncTenSpotUI(m);
@@ -1170,17 +1198,19 @@ function renderTenorMatrix(){
   const mode=dispTen, val=c=>mode==='cust'?c.cust:c.total;
   const bo=mode==='cust'?m.bestCust:m.bestTotal, bcol=mode==='cust'?m.bestColCust:m.bestColTotal;
   if(bo){
-    const r=m.rows[bo.i], s=m.strikes[bo.j], c=bo.cell, other=mode==='cust'?'Total implied yield '+c.total.toFixed(2)+'% p.a.':'Return nasabah '+c.cust.toFixed(2)+'% p.a.';
+    const r=m.rows[bo.i], s=m.strikes[bo.j], c=bo.cell, other=mode==='cust'?'Total implied yield '+c.total.toFixed(2)+'% p.a.':'Yield ke nasabah '+c.cust.toFixed(2)+'% p.a.';
     document.getElementById('tenBestValue').textContent=val(c).toFixed(2)+'% p.a.';
     document.getElementById('tenBestSub').textContent=r.t.lbl+' · '+s.lbl+' · '+other+(m.notional>0?' · bunga gross '+m.dep+' '+tAmt(m.dep,m.notional*c.cust/100*r.d.depDays/365)+' ('+r.d.depDays+' hari)':'');
   }
   const base=m.dashVol, adj=Math.max(0,...m.rows.map(r=>r.volUsed===null?0:r.volUsed-base));
-  document.getElementById('tenInfo').innerHTML='<b>'+m.pi.name+'</b> <span class="opt-mode-badge opt-mode-'+m.pi.mode+'">'+m.pi.mode+'</span> · '+m.spotLbl+' '+tfmtR(m.pi,m.spot)+' ('+m.spotText+') · Vol '+Number(base).toFixed(2)+'%'+(adj>0?' <span style="color:#B45309">(+'+adj.toFixed(2)+'% sesuai Vol Adjustment Rules untuk tenor ≥ '+adjRules.tenorDays+' hari / nominal besar)</span>':'');
+  document.getElementById('tenInfo').innerHTML='<div><b>'+m.pi.name+'</b> <span class="opt-mode-badge opt-mode-'+m.pi.mode+'">'+m.pi.mode+'</span></div>'
+    +'<div>'+m.spotLbl+' '+tfmtR(m.pi,m.spot)+' ('+m.spotText+')</div>'
+    +'<div>Vol '+Number(base).toFixed(2)+'%'+(adj>0?' <span style="color:#B45309">(+'+adj.toFixed(2)+'% sesuai Vol Adjustment Rules untuk tenor ≥ '+adjRules.tenorDays+' hari / nominal besar)</span>':'')+'</div>';
   renderToggle('tenToggle','dispTen');
-  document.getElementById('tenHead').innerHTML='<th>Tenor</th>'+m.strikes.map(s=>'<th>'+s.lbl+'</th>').join('');
+  document.getElementById('tenHead').innerHTML='<th>Tenor</th>'+m.strikes.map((s,j)=>'<th'+(tenPick===j?' class="sel"':'')+'>'+s.lbl+'</th>').join('');
   const skRow='<tr class="sk"><td>Strike</td>'+m.strikes.map(s=>'<td>'+tfmtR(m.pi,s.K)+(s.pips?'<br><span style="font-size:9px">('+pipsTxt(s.pips)+')</span>':'')+'</td>').join('')+'</tr>';
-  document.getElementById('tenBody').innerHTML=skRow+m.rows.map((r,i)=>'<tr><td>'+r.t.lbl+'</td>'+r.cells.map((c,j)=>c===null?'<td class="opt-none">—</td>':'<td class="'+(bcol[j]===i?'opt-best':'')+'">'+val(c).toFixed(2)+'</td>').join('')+'</tr>').join('');
-  document.getElementById('tenFoot').textContent='Hijau = tenor terbaik untuk strike tersebut. Angka dalam % p.a. · 1m = 30 hari, 2m = 60, 3m = 90, 6m = 180, 12m = 360 hari (dihitung dari tanggal valuta T+2, jatuh tempo digeser ke hari kerja berikutnya). Return nasabah = '+sharePct()+'% dari total implied yield, minimal sebesar deposit rate.';
+  document.getElementById('tenBody').innerHTML=skRow+m.rows.map((r,i)=>'<tr><td>'+r.t.lbl+(r.volUsed!==null?'<small class="vol">vol '+r.volUsed.toFixed(2)+'%</small>':'')+'</td>'+r.cells.map((c,j)=>c===null?'<td class="opt-none">—</td>':'<td class="'+(bcol[j]===i?'opt-best':'')+'">'+val(c).toFixed(2)+'</td>').join('')+'</tr>').join('');
+  document.getElementById('tenFoot').textContent='Hijau = tenor terbaik untuk strike tersebut. Angka dalam % p.a. · 1m = 30 hari, 2m = 60, 3m = 90, 6m = 180, 12m = 360 hari (dihitung dari tanggal valuta T+2, jatuh tempo digeser ke hari kerja berikutnya). Yield ke nasabah = '+sharePct()+'% dari total implied yield, minimal sebesar deposit rate. Volatility kecil di bawah tenor = volatility yang dipakai pada tenor itu (sudah termasuk Vol Adjustment Rules).';
 }
 
 // ── alternate currency dropdown for module 2 (same widget as the deposit currency) ──
@@ -1209,13 +1239,14 @@ const ymd=()=>wibParts(Date.now()).date.replace(/-/g,'');
 const DOC_RISK=(dep,alt)=>'Produk Strike Currency memiliki risiko mata uang awal ('+dep+') terkonversi ke mata uang '+alt+'.';
 const DOC_NOTE='Indikasi return bersifat indikatif dan bukan penawaran yang mengikat. Spot rate dan return yang final akan diinformasikan oleh Treasury Sales saat dealing. Return gross adalah sebelum pajak (PPh Final 20%).';
 function buildTenorDoc(m){
-  const r0=m.pi, kv=[['Deposit Currency',m.dep],['Alternate Currency',m.alt],['Pair',m.pi.name+' ('+m.pi.mode+')'],[m.spotLbl+' ('+m.spotText+')',tfmtR(m.pi,m.spot)]];
+  const j=tenPick, st=m.strikes[j], bi=m.bestColCust[j];
+  const kv=[['Deposit Currency',m.dep],['Alternate Currency',m.alt],['Pair',m.pi.name+' ('+m.pi.mode+')'],[m.spotLbl+' ('+m.spotText+')',tfmtR(m.pi,m.spot)],['Strike price ('+st.lbl+')',tfmtR(m.pi,st.K)+(st.pips?' ('+pipsTxt(st.pips)+')':'')]];
   if(m.notional>0) kv.splice(2,0,['Placement',m.dep+' '+tAmt(m.dep,m.notional)]);
-  const rows=[{kind:'strike',label:'Strike price',cells:m.strikes.map(s=>({t:tfmtR(m.pi,s.K)+(s.pips?' ('+pipsTxt(s.pips)+')':'')}))}].concat(m.rows.map((r,i)=>({label:r.t.lbl,cells:r.cells.map((c,j)=>({t:c?c.cust.toFixed(2)+'%':'-',best:c&&m.bestColCust[j]===i}))})));
-  const blocks=[{type:'section',title:'Transaksi'},{type:'kv',rows:kv},{type:'section',title:'Indikasi return nasabah per tenor dan strike (% p.a., gross)'},{type:'matrix',head:['Tenor'].concat(m.strikes.map(s=>s.lbl)),rows,firstW:0.22}];
-  if(m.bestCust){ const r=m.rows[m.bestCust.i], s=m.strikes[m.bestCust.j]; blocks.push({type:'best',title:'Return tertinggi',text:r.t.lbl+' · '+s.lbl+' · '+m.bestCust.cell.cust.toFixed(2)+'% p.a. (gross)',sub:m.notional>0?'Gross return untuk placement '+m.dep+' '+tAmt(m.dep,m.notional)+' selama '+r.d.depDays+' hari: '+m.dep+' '+tAmt(m.dep,m.notional*m.bestCust.cell.cust/100*r.d.depDays/365):''}); }
-  blocks.push({type:'note',t:'Sel hijau menandai tenor dengan return tertinggi untuk masing-masing strike. 1m = 30 hari, 2m = 60 hari, 3m = 90 hari, 6m = 180 hari, 12m = 360 hari; hari deposito dihitung dari tanggal valuta (T+2) dan jatuh tempo digeser ke hari kerja berikutnya bila jatuh pada hari libur.'},{type:'note',t:DOC_NOTE+' '+DOC_RISK(m.dep,m.alt)});
-  return {title:'Indikasi Return Strike Currency',subtitle:'Return per tenor dan strike · '+m.pi.name,stamp:docStamp(),fileName:'Indikasi_Return_Strike_Currency_'+m.pi.name.replace('/','')+'_'+m.dep+'_'+ymd()+'.pdf',blocks};
+  const rows=m.rows.map((r,i)=>{ const c=r.cells[j]; return {label:r.t.long,cells:[{t:c?c.cust.toFixed(2)+'%':'-',best:!!c&&i===bi}]}; });
+  const blocks=[{type:'section',title:'Transaksi'},{type:'kv',rows:kv},{type:'section',title:'Indikasi return nasabah per tenor, '+st.lbl+' (% p.a., gross)'},{type:'matrix',head:['Tenor','Return nasabah (% p.a., gross)'],rows,firstW:0.34}];
+  if(bi>=0){ const r=m.rows[bi], c=r.cells[j]; blocks.push({type:'best',title:'Return tertinggi',text:r.t.long+' · '+c.cust.toFixed(2)+'% p.a. (gross)',sub:m.notional>0?'Gross return untuk placement '+m.dep+' '+tAmt(m.dep,m.notional)+' selama '+r.d.depDays+' hari: '+m.dep+' '+tAmt(m.dep,m.notional*c.cust/100*r.d.depDays/365):''}); }
+  blocks.push({type:'note',t:'Sel hijau menandai tenor dengan return tertinggi. 1 bulan = 30 hari, 2 bulan = 60 hari, 3 bulan = 90 hari, 6 bulan = 180 hari, 12 bulan = 360 hari; hari deposito dihitung dari tanggal valuta (T+2) dan jatuh tempo digeser ke hari kerja berikutnya bila jatuh pada hari libur.'},{type:'note',t:DOC_NOTE+' '+DOC_RISK(m.dep,m.alt)});
+  return {title:'Indikasi Return Strike Currency',subtitle:'Return per tenor · '+m.pi.name+' · '+st.lbl,stamp:docStamp(),fileName:'Indikasi_Return_Strike_Currency_'+m.pi.name.replace('/','')+'_'+m.dep+'_'+st.lbl.replace(/\s+/g,'')+'_'+ymd()+'.pdf',blocks};
 }
 function buildPairDoc(){
   const flat=lastOptimizerFlatResults, rowsIn=lastPairRows, dr=lastOptimizerDepRate, dd=lastPairDates, notional=getNum('iOptNotional');
@@ -1286,8 +1317,8 @@ function docPdfBytes(m){
   addS('trailer\n<< /Size '+total+' /Root 1 0 R /Info 6 0 R >>\nstartxref\n'+xref+'\n%%EOF\n');
   const out=new Uint8Array(pos); let o=0; for(const u of chunks){ out.set(u,o); o+=u.length; } return out;
 }
-function currentDoc(){ if(viewMode==='tenor') return lastTenor?buildTenorDoc(lastTenor):null; return (lastOptimizerFlatResults&&lastOptimizerFlatResults.length&&lastPairRows)?buildPairDoc():null; }
-function makePdf(){ const d=currentDoc(); if(!d){ alert('Belum ada hasil untuk dibuat PDF-nya. Pastikan data volatility tersedia dan tenor valid.'); return; } document.getElementById('pdfFrame').srcdoc=docHtml(d); document.getElementById('pdfModal').style.display='flex'; }
+function currentDoc(){ if(viewMode==='tenor') return (lastTenor&&tenPick>=0&&dispTen==='cust')?buildTenorDoc(lastTenor):null; return (lastOptimizerFlatResults&&lastOptimizerFlatResults.length&&lastPairRows&&dispPair==='cust')?buildPairDoc():null; }
+function makePdf(){ const d=currentDoc(); if(!d){ alert('PDF hanya bisa dibuat dari tampilan Yield ke nasabah' + (viewMode==='tenor'?', setelah memilih strike.':'.')); return; } document.getElementById('pdfFrame').srcdoc=docHtml(d); document.getElementById('pdfModal').style.display='flex'; }
 function closePdf(){ document.getElementById('pdfModal').style.display='none'; document.getElementById('pdfFrame').srcdoc=''; }
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closePdf(); });
 function printPdf(){ const fr=document.getElementById('pdfFrame'); try{ fr.contentWindow.focus(); fr.contentWindow.print(); }catch(e){ window.print(); } }
@@ -1295,11 +1326,11 @@ function downloadDocPdf(){ const d=currentDoc(); if(d) downloadBytes(d.fileName,
 
 // ═══════════ WhatsApp ═══════════
 function buildTenorWA(m){
+  const j=tenPick, st=m.strikes[j], bi=m.bestColCust[j];
   const L=[greetingWIB()+' Bapak/Ibu,','Berikut adalah indikasi return Strike Currency pada tanggal '+idDate(todayWIBdate()),''];
-  L.push(m.notional>0?'Placement: '+m.dep+' '+tAmt(m.dep,m.notional):'Deposit Currency: '+m.dep,'Alternate Currency: '+m.alt,m.spotLbl+': '+tfmtR(m.pi,m.spot)+' ('+m.spotText+')','');
-  L.push('Strike Price:'); m.strikes.forEach(s=>L.push(s.lbl+': '+tfmtR(m.pi,s.K)+(s.pips?' ('+pipsTxt(s.pips)+')':'')));
-  L.push('','Indikasi Return (% p.a, gross):'); m.rows.forEach(r=>L.push(r.t.lbl+': '+r.cells.map((c,j)=>m.strikes[j].lbl+' '+(c?c.cust.toFixed(2)+'%':'-')).join(' | ')));
-  if(m.bestCust){ const r=m.rows[m.bestCust.i], s=m.strikes[m.bestCust.j], c=m.bestCust.cell; L.push('','Return tertinggi: '+r.t.lbl+' · '+s.lbl+' · '+c.cust.toFixed(2)+'% p.a (gross)'); if(m.notional>0) L.push('Gross return: '+m.dep+' '+tAmt(m.dep,m.notional*c.cust/100*r.d.depDays/365)+' ('+r.d.depDays+' hari)'); }
+  L.push(m.notional>0?'Placement: '+m.dep+' '+tAmt(m.dep,m.notional):'Deposit Currency: '+m.dep,'Alternate Currency: '+m.alt,m.spotLbl+': '+tfmtR(m.pi,m.spot)+' ('+m.spotText+')','Strike Price: '+tfmtR(m.pi,st.K)+' ('+(st.pips?pipsTxt(st.pips):'At Spot')+')','');
+  L.push('Indikasi Return (% p.a, gross):'); m.rows.forEach(r=>{ const c=r.cells[j]; L.push(r.t.long+': '+(c?c.cust.toFixed(2)+'%':'-')); });
+  if(bi>=0){ const r=m.rows[bi], c=r.cells[j]; L.push('','Return tertinggi: '+r.t.long+' · '+c.cust.toFixed(2)+'% p.a (gross)'); if(m.notional>0) L.push('Gross return: '+m.dep+' '+tAmt(m.dep,m.notional*c.cust/100*r.d.depDays/365)+' ('+r.d.depDays+' hari)'); }
   L.push('','Thank you'); return L.join('\n');
 }
 function buildPairWA(){        // the message format that was already there (top 3 pairs), now with the calculator's customer-return rule
@@ -1310,16 +1341,17 @@ function buildPairWA(){        // the message format that was already there (top
   return 'Dear Pak/Bu\n\nBerikut best offer untuk strike currency hari ini ('+fmtDateID(new Date())+') :\n'+maturityLine+'\n\n'+blocks.join('\n\n')+'\n\nThank you';
 }
 async function copyWhatsApp(){
-  const text=viewMode==='tenor'?(lastTenor?buildTenorWA(lastTenor):null):buildPairWA();
-  if(!text){ alert('Belum ada hasil untuk dikirim — pastikan data volatility tersedia dan tenor valid.'); return; }
+  const text=viewMode==='tenor'?((lastTenor&&tenPick>=0)?buildTenorWA(lastTenor):null):buildPairWA();
+  if(!text){ alert(viewMode==='tenor'?'Pilih strike (ITM 100, ITM 50, ITM 25, atau At Spot) dulu.':'Belum ada hasil untuk disalin.'); return; }
   let ok=false; try{ if(navigator.clipboard&&navigator.clipboard.writeText){ await navigator.clipboard.writeText(text); ok=true; } }catch(e){}
   if(!ok){ fallbackCopy(text); ok=true; }
   const box=document.getElementById('waPrev'), label=document.getElementById('waSendBtnLabel');
   box.innerHTML='<div class="wa-ok">\u2713 Teks tersalin \u2014 tinggal paste ke chat nasabah.</div><pre class="wa-pre">'+_escH(text)+'</pre>'; box.style.display='block';
   label.dataset.l=label.dataset.l||label.textContent; label.textContent='Copied!'; setTimeout(()=>{ label.textContent=label.dataset.l; },1800);
 }
-initToggle('pairToggle','dispPair'); initToggle('tenToggle','dispTen');
+initToggle('pairToggle','dispPair'); initToggle('tenToggle','dispTen'); initPick();
 syncTenAlt();
+updateShareButtons();
 
 runOptimizer();
 // Fallback rates indicator — red dot, date only (no time). This is the
