@@ -176,20 +176,58 @@
   .dots-row{margin-top:5px;display:flex;flex-wrap:wrap;gap:2px;}
   .mini-dot{width:5px;height:5px;border-radius:50%;}
 
+  /* ---------- Monthly: Myself / Team + Calendar / List ---------- */
+  .month-opts{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:0 20px 14px;flex-wrap:wrap;}
+  .month-opts .view-toggle button{padding:6px 11px;font-size:11.5px;}
+  .nav-label-wrap{position:relative;display:flex;align-items:center;}
+  .nav-label-wrap.pickable .nav-label{padding:6px 12px;border:1px dashed rgba(255,255,255,.22);border-radius:9px;}
+  .nav-label-wrap.pickable .nav-label::after{content:' ▾';color:var(--text-2);}
+  #monthPick{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:0;padding:0;background:none;}
+  .month-list{padding:0 20px;}
+  .ml-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-family:var(--mono);font-size:11px;color:var(--text-1);margin:0 0 10px;letter-spacing:.02em;}
+  .ml-head b{color:var(--text-0);font-weight:600;}
+  .ml-day{display:flex;gap:12px;padding:12px 14px;margin-bottom:8px;background:var(--ink-2);border:1px solid var(--line);border-radius:14px;cursor:pointer;}
+  .ml-day:hover,.tl-day:hover{border-color:rgba(255,255,255,.22);}
+  .ml-day.today{border-color:rgba(138,0,9,.65);}
+  .ml-day.holiday{border-color:rgba(239,68,68,.55);}
+  .ml-date{flex:0 0 44px;display:flex;flex-direction:column;align-items:center;gap:2px;padding-top:1px;}
+  .ml-dow{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-2);}
+  .ml-num{font-size:20px;font-weight:600;color:var(--text-0);line-height:1.1;}
+  .ml-day.today .ml-num{background:var(--maroon-btn);color:#fff;border-radius:8px;padding:0 7px;}
+  .ml-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;}
+  .ml-row{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;line-height:1.4;min-width:0;}
+  .ml-tag{flex:none;font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:6px;margin-top:1px;}
+  .ml-rem{flex:1;min-width:0;color:var(--text-0);overflow-wrap:anywhere;}
+  .ml-rem.dim{color:var(--text-2);}
+  .ml-time{flex:none;font-family:var(--mono);font-size:10px;color:var(--text-1);margin-top:2px;white-space:nowrap;}
+  .ml-holiday{font-size:10px;color:#FCA5A5;font-weight:600;}
+  .ml-empty{text-align:center;color:var(--text-2);font-size:12.5px;padding:26px 10px;background:var(--ink-2);border:1px dashed var(--line);border-radius:14px;}
+  /* Team list = the on-screen version of the PDF report (one block per day, columns Nama / Keterangan) */
+  .tl-day{margin-bottom:10px;background:var(--ink-2);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;}
+  .tl-day.today{border-color:rgba(138,0,9,.65);}
+  .tl-title{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;font-size:12.5px;font-weight:600;padding:9px 13px;background:rgba(138,0,9,.28);color:var(--text-0);}
+  .tl-day.today .tl-title{background:linear-gradient(120deg,var(--maroon-1),var(--maroon-btn));}
+  .tl-head,.tl-row{display:grid;grid-template-columns:92px 1fr;gap:8px;padding:7px 13px;align-items:start;}
+  .tl-head{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-2);border-bottom:1px solid var(--line);}
+  .tl-row{border-bottom:1px solid rgba(255,255,255,.06);font-size:12.5px;}
+  .tl-row:last-child{border-bottom:none;}
+  .tl-name{display:flex;align-items:center;gap:6px;font-weight:600;min-width:0;line-height:1.4;}
+  .tl-name .dot{width:7px;height:7px;border-radius:50%;flex:none;}
+  .tl-name .n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
   /* ---------- Bottom actions ---------- */
   .bottom-actions{display:flex;flex-direction:column;gap:8px;padding:26px 20px 6px;}
   .icon-btn{
     background:var(--ink-2);border:1px solid var(--line);color:var(--text-1);
-    height:40px;padding:0 10px;border-radius:11px;cursor:pointer;
-    font-family:var(--sans);font-size:12px;font-weight:600;
-    display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap;width:100%;
-    overflow:hidden;text-overflow:ellipsis;min-width:0;
+    height:40px;padding:0 14px;border-radius:11px;cursor:pointer;
+    font-family:var(--sans);font-size:12.5px;font-weight:600;
+    display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;width:100%;
     transition:border-color .15s ease, color .15s ease;
   }
   .icon-btn:hover{border-color:var(--maroon-1);color:var(--text-0);}
   .logout-btn:hover{border-color:#EF4444;color:#FCA5A5;}
   .bottom-row{display:flex;gap:8px;}
-  .bottom-row .icon-btn{flex:1;min-width:0;}
+  .bottom-row .icon-btn{flex:1;}
 
   .footer{margin-top:20px;text-align:center;font-size:10px;font-family:var(--mono);color:rgba(255,255,255,.2);}
 
@@ -392,8 +430,22 @@
 
   <div class="nav-row">
     <button id="prevBtn">‹</button>
-    <div class="nav-label" id="navLabel">—</div>
+    <div class="nav-label-wrap" id="navLabelWrap">
+      <div class="nav-label" id="navLabel">—</div>
+      <input type="month" id="monthPick" aria-label="Pilih bulan" style="display:none;">
+    </div>
     <button id="nextBtn">›</button>
+  </div>
+
+  <div class="month-opts" id="monthOpts" style="display:none;">
+    <div class="view-toggle" id="scopeToggle">
+      <button type="button" data-scope="myself">Myself</button>
+      <button type="button" data-scope="team">Team</button>
+    </div>
+    <div class="view-toggle" id="formatToggle">
+      <button type="button" data-format="calendar">📅 Calendar</button>
+      <button type="button" data-format="list">📋 List</button>
+    </div>
   </div>
 
   <div class="legend" id="legend"></div>
@@ -407,13 +459,14 @@
     <div class="grid" id="grid"></div>
   </div>
 
+  <div class="month-list" id="monthList" style="display:none;"></div>
+
   <div class="month-summary" id="monthSummary" style="display:none;"></div>
 
   <div class="bottom-actions">
     <div class="bottom-row">
       <button class="icon-btn" id="resetPwBtn" style="display:none;" title="Reset Password">🔑 Reset Password</button>
       <button class="icon-btn" id="calcBtn" title="Kalkulator" onclick="window.location.href='/'">🧮 Kalkulator</button>
-      <button class="icon-btn" id="ratesDashBtn" title="SC Rates Dashboard" onclick="window.location.href='rates-dashboard.html'">📊 SC Rates</button>
     </div>
     <div class="bottom-row">
       <button class="icon-btn" id="exportBtn" title="Export">📤 Export</button>
@@ -642,6 +695,14 @@
 
   let viewYear = today.getFullYear();
   let viewMonth = today.getMonth();
+
+  // Monthly options (remembered on this device): whose schedule (Myself / Team) and how it is shown (Calendar / List)
+  let monthScope = 'team', monthFormat = 'calendar';
+  try {
+    const sc = localStorage.getItem('ebb_month_scope'), fm = localStorage.getItem('ebb_month_format');
+    if (sc === 'myself' || sc === 'team') monthScope = sc;
+    if (fm === 'calendar' || fm === 'list') monthFormat = fm;
+  } catch (e) {}
 
   function pad(n){ return n.toString().padStart(2,'0'); }
   function fmtDate(d){ return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
@@ -875,8 +936,153 @@
     const start = new Date(viewYear, viewMonth, 1);
     const end = new Date(viewYear, viewMonth + 1, 0);
     await loadEntriesRange(fmtDate(start), fmtDate(end));
+    drawMonthly();
+  }
 
+  // ---- scope + format helpers (Monthly) ----
+  const inScope = e => monthScope === 'team' || e.username === currentUser.username;
+  const scopedEntries = dateStr => (entriesByDate[dateStr] || []).filter(inScope);
+  const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  function applyMonthUI(){
+    const monthly = viewMode === 'monthly';
+    document.getElementById('monthOpts').style.display = monthly ? 'flex' : 'none';
+    monthCalendar.style.display = (monthly && monthFormat === 'calendar') ? 'block' : 'none';
+    document.getElementById('monthList').style.display = (monthly && monthFormat === 'list') ? 'block' : 'none';
+    // the colour legend only helps where several people's dots/names are mixed
+    legend.style.display = (!monthly || (monthFormat === 'calendar' && monthScope === 'team')) ? 'flex' : 'none';
+    document.getElementById('navLabelWrap').classList.toggle('pickable', monthly);
+    document.getElementById('monthPick').style.display = monthly ? 'block' : 'none';
+    document.querySelectorAll('#scopeToggle button').forEach(b => b.classList.toggle('active', b.dataset.scope === monthScope));
+    document.querySelectorAll('#formatToggle button').forEach(b => b.classList.toggle('active', b.dataset.format === monthFormat));
+  }
+  document.querySelectorAll('#scopeToggle button').forEach(b => b.addEventListener('click', () => {
+    monthScope = b.dataset.scope; try { localStorage.setItem('ebb_month_scope', monthScope); } catch (e) {}
+    drawMonthly();
+  }));
+  document.querySelectorAll('#formatToggle button').forEach(b => b.addEventListener('click', () => {
+    monthFormat = b.dataset.format; try { localStorage.setItem('ebb_month_format', monthFormat); } catch (e) {}
+    drawMonthly();
+  }));
+  // Pick any month: tapping the month name opens the native month picker
+  const monthPick = document.getElementById('monthPick');
+  monthPick.addEventListener('click', () => { try { monthPick.showPicker(); } catch (e) {} });
+  monthPick.addEventListener('change', () => {
+    const m = /^(\d{4})-(\d{2})$/.exec(monthPick.value || '');
+    if (!m) return;
+    viewYear = +m[1]; viewMonth = +m[2] - 1; render();
+  });
+
+  // ---- List view ----
+  const CAT_COLOR = { Visit:'#F87171', Internal:'#60A5FA', Izin:'#FBBF24', Cuti:'#34D399', Meeting:'#C084FC' };
+  function entryCategory(e){
+    if (e.slot === 'cuti') return 'Cuti';
+    if (e.slot === 'izin') return 'Izin';
+    const m = (e.type || '').match(/^(Visit|Cabang|Internal|Izin|Meeting):/);
+    return m ? (m[1] === 'Cabang' ? 'Internal' : m[1]) : '';
+  }
+  function entryRemarks(e){
+    const t = stripCategoryPrefix(e.type || '').trim();
+    return e.description ? (t ? `${t} — ${e.description}` : e.description) : t;
+  }
+  function slotsLabel(set){
+    const a = ['pagi','siang'].filter(x => set.has(x));
+    return a.length === 2 ? 'Pagi & Siang' : a.length === 1 ? SLOT_LABEL[a[0]] : '';
+  }
+  // One date's entries -> rows (same person + same category + same remarks: Pagi and Siang become one row;
+  // when every team member has the identical entry it becomes one "Semua tim" row, like the Weekly view)
+  function buildRows(entries){
+    const map = new Map();
+    entries.forEach(e => {
+      const cat = entryCategory(e), rem = entryRemarks(e), key = `${e.username}|${cat}|${rem}`;
+      let g = map.get(key);
+      if (!g) { g = { username:e.username, cat, rem, slots:new Set(), allday:false }; map.set(key, g); }
+      if (e.slot === 'pagi' || e.slot === 'siang') g.slots.add(e.slot); else g.allday = true;
+    });
+    let rows = Array.from(map.values());
+    if (allUsers.length > 1) {
+      const by = new Map();
+      rows.forEach(r => { const k = `${r.cat}|${r.rem}|${slotsLabel(r.slots)}|${r.allday}`; if (!by.has(k)) by.set(k, []); by.get(k).push(r); });
+      rows = [];
+      by.forEach(list => {
+        const names = new Set(list.map(r => r.username));
+        if (allUsers.every(u => names.has(u.username))) rows.push(Object.assign({}, list[0], { username:null, all:true }));
+        else rows.push(...list);
+      });
+    }
+    const uIdx = r => r.all ? -1 : Math.max(0, allUsers.findIndex(u => u.username === r.username));
+    const tIdx = r => r.allday ? 2 : (r.slots.has('pagi') ? 0 : 1);
+    rows.sort((a, b) => uIdx(a) - uIdx(b) || tIdx(a) - tIdx(b) || a.cat.localeCompare(b.cat));
+    return rows;
+  }
+  function rowInner(r){
+    const col = CAT_COLOR[r.cat] || '#94A3B8';
+    const tag = r.cat ? `<span class="ml-tag" style="color:${col};background:${col}22;">${r.cat}</span>` : '';
+    const rem = r.rem ? `<span class="ml-rem">${esc(r.rem)}</span>` : `<span class="ml-rem dim">—</span>`;
+    const time = slotsLabel(r.slots);
+    return `${tag}${rem}${time ? `<span class="ml-time">${time}</span>` : ''}`;
+  }
+  const addDaysStr = (dateStr, n) => { const d = new Date(dateStr + 'T00:00:00'); d.setDate(d.getDate() + n); return fmtDate(d); };
+  const dayLbl = dateStr => { const d = new Date(dateStr + 'T00:00:00'); return `${DOW_SHORT[d.getDay()]} ${d.getDate()} ${MONTH_NAMES[d.getMonth()].slice(0,3)}`; };
+
+  function buildMyList(dates, byDate){
+    // consecutive Cuti days (nothing else on them) are shown as one range instead of one card per day
+    const items = [];
+    dates.forEach(d => {
+      const rows = buildRows(byDate[d]);
+      const onlyCuti = rows.length > 0 && rows.every(r => r.cat === 'Cuti');
+      const sig = rows.map(r => `${r.cat}|${r.rem}`).join(';');
+      const prev = items[items.length - 1];
+      if (onlyCuti && prev && prev.onlyCuti && prev.sig === sig && addDaysStr(prev.last, 1) === d) { prev.last = d; prev.n++; }
+      else items.push({ first:d, last:d, n:1, rows, onlyCuti, sig });
+    });
+    return items.map(it => {
+      const d = new Date(it.first + 'T00:00:00');
+      const hol = HOLIDAYS[it.first];
+      const body = (it.n > 1)
+        ? `<div class="ml-row"><span class="ml-tag" style="color:${CAT_COLOR.Cuti};background:${CAT_COLOR.Cuti}22;">Cuti</span><span class="ml-rem">${dayLbl(it.first)} – ${dayLbl(it.last)}</span><span class="ml-time">${it.n} hari</span></div>`
+        : it.rows.map(r => `<div class="ml-row">${rowInner(r)}</div>`).join('');
+      return `<div class="ml-day${isSameDay(d, today) ? ' today' : ''}${hol ? ' holiday' : ''}" data-date="${it.first}">
+        <div class="ml-date"><span class="ml-dow">${DOW_SHORT[d.getDay()]}</span><span class="ml-num">${d.getDate()}</span></div>
+        <div class="ml-body">${hol ? `<div class="ml-holiday">🔴 Libur — ${esc(hol)}</div>` : ''}${body}</div>
+      </div>`;
+    }).join('');
+  }
+  function buildTeamList(dates, byDate){
+    return dates.map(dateStr => {
+      const d = new Date(dateStr + 'T00:00:00'), hol = HOLIDAYS[dateStr];
+      const rows = buildRows(byDate[dateStr]).map(r => {
+        const nm = r.all
+          ? `<span class="dot" style="background:var(--maroon-1)"></span><span class="n">Semua tim</span>`
+          : (() => { const u = userMeta(r.username); return `<span class="dot" style="background:${u.color}"></span><span class="n">${esc(u.display_name)}</span>`; })();
+        return `<div class="tl-row"><div class="tl-name">${nm}</div><div class="ml-row">${rowInner(r)}</div></div>`;
+      }).join('');
+      return `<div class="tl-day${isSameDay(d, today) ? ' today' : ''}" data-date="${dateStr}">
+        <div class="tl-title"><span>${DOW_FULL[d.getDay()]}, ${d.getDate()} ${MONTH_NAMES[d.getMonth()]} ${d.getFullYear()}</span>${hol ? `<span class="ml-holiday" style="color:#FECACA">🔴 Libur — ${esc(hol)}</span>` : ''}</div>
+        <div class="tl-head"><span>Nama</span><span>Keterangan</span></div>
+        ${rows}
+      </div>`;
+    }).join('');
+  }
+  function drawMonthList(){
+    const box = document.getElementById('monthList'), mine = monthScope === 'myself';
+    const byDate = {};
+    Object.keys(entriesByDate).forEach(d => { const l = scopedEntries(d); if (l.length) byDate[d] = l; });
+    const dates = Object.keys(byDate).sort(), lbl = `${MONTH_NAMES[viewMonth]} ${viewYear}`;
+    let html = `<div class="ml-head"><span>${mine ? 'Jadwal saya' : 'Jadwal tim'} · <b>${lbl}</b></span><span>${dates.length} hari</span></div>`;
+    if (!dates.length) html += `<div class="ml-empty">Tidak ada jadwal di ${lbl}</div>`;
+    else html += mine ? buildMyList(dates, byDate) : buildTeamList(dates, byDate);
+    box.innerHTML = html;
+    box.querySelectorAll('[data-date]').forEach(el => el.addEventListener('click', () => openModal(el.dataset.date)));
+  }
+
+  function drawMonthly(){
+    const start = new Date(viewYear, viewMonth, 1);
+    const end = new Date(viewYear, viewMonth + 1, 0);
+    applyMonthUI();
     navLabel.textContent = `${MONTH_NAMES[viewMonth]} ${viewYear}`;
+    monthPick.value = `${viewYear}-${pad(viewMonth + 1)}`;
+    drawMonthList();
     grid.innerHTML = '';
 
     const firstDay = start.getDay();
@@ -903,8 +1109,8 @@
       }
 
       let dotsHtml = '';
-      if (dateStr && entriesByDate[dateStr]) {
-        dotsHtml = '<div class="dots-row">' + entriesByDate[dateStr].slice(0,6).map(e => {
+      if (dateStr && scopedEntries(dateStr).length) {
+        dotsHtml = '<div class="dots-row">' + scopedEntries(dateStr).slice(0,6).map(e => {
           const u = userMeta(e.username);
           return `<span class="mini-dot" style="background:${u.color}"></span>`;
         }).join('') + '</div>';
@@ -924,7 +1130,7 @@
     let visitCount = 0;
     let internalCount = 0;
     Object.values(entriesByDate).forEach(dayEntries => {
-      dayEntries.forEach(e => {
+      dayEntries.filter(inScope).forEach(e => {
         if (e.type && e.type.startsWith('Visit:')) visitCount++;
         if (e.type && (e.type.startsWith('Internal:') || e.type.startsWith('Cabang:'))) internalCount++;
       });
@@ -934,11 +1140,11 @@
       summaryEl.innerHTML = `
         <div class="summary-item">
           <span class="summary-num">${visitCount}</span>
-          <span class="summary-lbl">Client Visit — ${MONTH_NAMES[viewMonth]}</span>
+          <span class="summary-lbl">Client Visit — ${MONTH_NAMES[viewMonth]}${monthScope === 'myself' ? ' (Saya)' : ''}</span>
         </div>
         <div class="summary-item">
           <span class="summary-num">${internalCount}</span>
-          <span class="summary-lbl">Internal — ${MONTH_NAMES[viewMonth]}</span>
+          <span class="summary-lbl">Internal — ${MONTH_NAMES[viewMonth]}${monthScope === 'myself' ? ' (Saya)' : ''}</span>
         </div>
       `;
     }
@@ -951,12 +1157,13 @@
       monthCalendar.style.display = 'none';
       monthSummaryEl.style.display = 'none';
       viewTitle.textContent = 'Weekly Schedule';
+      applyMonthUI();
       await renderWeekly();
     } else {
       weekList.style.display = 'none';
-      monthCalendar.style.display = 'block';
       monthSummaryEl.style.display = 'flex';
       viewTitle.textContent = 'Monthly Schedule';
+      applyMonthUI();
       await renderMonthly();
     }
   }
@@ -1725,11 +1932,42 @@
   }
 
   // ============================================================
+  // Supabase keep-alive
+  // A free Supabase project is paused after ~7 days without activity. So at least every 5 days this page writes one tiny
+  // row (dated 2000-01-01, so it never shows up in any view or export) and deletes it again. Nothing remains in the table.
+  // It runs when the page is opened, when the tab comes back to the foreground, and every 6 hours while the page stays open.
+  // ============================================================
+  const KEEPALIVE_EVERY_MS = 5 * 24 * 60 * 60 * 1000;
+  const KEEPALIVE_RETRY_MS = 60 * 60 * 1000;
+  async function supabaseKeepAlive(force){
+    try {
+      const now = Date.now();
+      const lastOk = +localStorage.getItem('ebb_keepalive_ok') || 0, lastTry = +localStorage.getItem('ebb_keepalive_try') || 0;
+      if (!force && (now - lastOk < KEEPALIVE_EVERY_MS || now - lastTry < KEEPALIVE_RETRY_MS)) return false;
+      localStorage.setItem('ebb_keepalive_try', String(now));
+      const MARK = '__keepalive__', DAY = '2000-01-01';
+      await sbClient.from('schedules').delete().eq('type', MARK).eq('date', DAY);          // clear a leftover from an earlier failed run
+      const ins = await sbClient.from('schedules').insert([{ username: currentUser.username, date: DAY, slot: 'pagi', type: MARK, description: null }]);
+      if (ins && ins.error) throw ins.error;
+      const del = await sbClient.from('schedules').delete().eq('type', MARK).eq('date', DAY);
+      if (del && del.error) throw del.error;
+      localStorage.setItem('ebb_keepalive_ok', String(Date.now()));
+      return true;
+    } catch (err) {
+      console.warn('Supabase keep-alive failed:', err);
+      return false;
+    }
+  }
+
+  // ============================================================
   // Init
   // ============================================================
   (async function init(){
     try { await loadUsers(); } catch (err) { console.error('init loadUsers failed:', err); }
     try { await render(); } catch (err) { console.error('init render failed:', err); }
+    supabaseKeepAlive();
+    setInterval(supabaseKeepAlive, 6 * 60 * 60 * 1000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) supabaseKeepAlive(); });
   })();
 </script>
 </body>
